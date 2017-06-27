@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="AlcoDBNMS.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Clients">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChatID" Type="int" Nullable="false" />
+          <Property Name="Subscription" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Enums">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemID" Type="int" Nullable="false" />
+          <Property Name="Category" Type="int" />
+          <Property Name="Name" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="Subscriptions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubsctiptionType" Type="int" Nullable="false" />
+          <Property Name="LastPostedKey" Type="nvarchar(max)" />
+        </EntityType>
+        <Association Name="FK_Clients_Subscriptions">
+          <End Role="Subscriptions" Type="Self.Subscriptions" Multiplicity="1" />
+          <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subscriptions">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Clients">
+              <PropertyRef Name="Subscription" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AlcoDBNMSStoreContainer">
+          <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Enums" EntityType="Self.Enums" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Subscriptions" EntityType="Self.Subscriptions" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Clients_Subscriptions" Association="Self.FK_Clients_Subscriptions">
+            <End Role="Subscriptions" EntitySet="Subscriptions" />
+            <End Role="Clients" EntitySet="Clients" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AlcoDBNMS" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Clients">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChatID" Type="Int32" Nullable="false" />
+          <Property Name="Subscription" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Subscriptions" Relationship="Self.FK_Clients_Subscriptions" FromRole="Clients" ToRole="Subscriptions" />
+        </EntityType>
+        <EntityType Name="Enums">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemID" Type="Int32" Nullable="false" />
+          <Property Name="Category" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Subscriptions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubsctiptionType" Type="Int32" Nullable="false" />
+          <Property Name="LastPostedKey" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Clients" Relationship="Self.FK_Clients_Subscriptions" FromRole="Subscriptions" ToRole="Clients" />
+        </EntityType>
+        <Association Name="FK_Clients_Subscriptions">
+          <End Role="Subscriptions" Type="Self.Subscriptions" Multiplicity="1" />
+          <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subscriptions">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Clients">
+              <PropertyRef Name="Subscription" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AlcoDB" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Clients" EntityType="Self.Clients" />
+          <EntitySet Name="Enums" EntityType="Self.Enums" />
+          <EntitySet Name="Subscriptions" EntityType="Self.Subscriptions" />
+          <AssociationSet Name="FK_Clients_Subscriptions" Association="Self.FK_Clients_Subscriptions">
+            <End Role="Subscriptions" EntitySet="Subscriptions" />
+            <End Role="Clients" EntitySet="Clients" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AlcoDBNMSStoreContainer" CdmEntityContainer="AlcoDB">
+          <EntitySetMapping Name="Clients">
+            <EntityTypeMapping TypeName="AlcoDBNMS.Clients">
+              <MappingFragment StoreEntitySet="Clients">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ChatID" ColumnName="ChatID" />
+                <ScalarProperty Name="Subscription" ColumnName="Subscription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Enums">
+            <EntityTypeMapping TypeName="AlcoDBNMS.Enums">
+              <MappingFragment StoreEntitySet="Enums">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Subscriptions">
+            <EntityTypeMapping TypeName="AlcoDBNMS.Subscriptions">
+              <MappingFragment StoreEntitySet="Subscriptions">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SubsctiptionType" ColumnName="SubsctiptionType" />
+                <ScalarProperty Name="LastPostedKey" ColumnName="LastPostedKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
