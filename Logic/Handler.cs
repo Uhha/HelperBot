@@ -57,6 +57,7 @@ namespace Logic
         {
             //await _bot.SendTextMessageAsync(myChatId, "OGLAF WORKS");
             //await _bot.SendPhotoAsync(myChatId, new FileToSend("http://media.oglaf.com/comic/princess_party.jpg"));
+
             try
             {
                 var result = OglafGrabber.GetOglafPicture(myChatId);
@@ -68,14 +69,14 @@ namespace Logic
                 }
                 else
                 {
-                    // await _bot.SendTextMessageAsync(myChatId, "Already there");
+                    await _bot.SendTextMessageAsync(myChatId, "Already there" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
                 }
             }
             catch (Exception ex)
             {
-                await _bot.SendTextMessageAsync(myChatId, ex.Message);
-                throw;
+                await _bot.SendTextMessageAsync(myChatId, ex.Message + Environment.NewLine + ex.InnerException);
             }
+            
 
             return;
 
