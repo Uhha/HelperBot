@@ -300,6 +300,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DatabaseInteractions\DatabaseInteractions.csproj">
+      <Project>{dd757e2b-bedf-4e31-8e84-ea9919a4296d}</Project>
+      <Name>DatabaseInteractions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logic\Logic.csproj">
       <Project>{9834FFD7-A634-4DEF-A8C2-0FD169824AF3}</Project>
       <Name>Logic</Name>
