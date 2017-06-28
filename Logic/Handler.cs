@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Logic
 {
@@ -21,8 +22,21 @@ namespace Logic
         /// </summary>
         public async void Handle(Message message)
         {
-			await _bot.SendTextMessageAsync(message.Chat.Id, "WEBHOOK works" );
-			return;
+			await _bot.SendTextMessageAsync(message.Chat.Id, "Hook works");
+
+            var asd = new InlineKeyboardMarkup();
+
+            var inlineKeyboardMarkup = new InlineKeyboardMarkup
+            {
+                InlineKeyboard = new[]
+                {
+                    new [] { new InlineKeyboardButton ("Inline Keyboard button", "demo") }
+                }
+            };
+            _bot.SendTextMessageAsync(message.Chat.Id, "kbd",replyMarkup: inlineKeyboardMarkup).Wait();
+
+
+            return;
 
 			var text = message.Text.Split(' ');
             if (text.First() != "/wol") return;
