@@ -4,11 +4,11 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="6dbe86bc9b734b209c4e0c97c286762a" Name="Diagram1">
-        <EntityTypeShape EntityType="***REMOVED***Model.Client" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="***REMOVED***Model.Enum" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="***REMOVED***Model.Subscription" Width="1.5" PointX="0.75" PointY="0.875" IsExpanded="true" />
-        <AssociationConnector Association="***REMOVED***Model.FK_Clients_Subscriptions" ManuallyRouted="false" />
+      <Diagram DiagramId="db70eaff1f5a4deca379e7bb3fb13ec3" Name="Diagram1">
+        <EntityTypeShape EntityType="AlcoDBNS.Clients" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AlcoDBNS.Enums" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AlcoDBNS.Subscriptions" Width="1.5" PointX="0.75" PointY="0.875" IsExpanded="true" />
+        <AssociationConnector Association="AlcoDBNS.FK_Clients_Subscriptions" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

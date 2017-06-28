@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="***REMOVED***Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="AlcoDBNS.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Clients">
           <Key>
             <PropertyRef Name="Id" />
@@ -42,7 +42,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="***REMOVED***ModelStoreContainer">
+        <EntityContainer Name="AlcoDBNSStoreContainer">
           <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Enums" EntityType="Self.Enums" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Subscriptions" EntityType="Self.Subscriptions" Schema="dbo" store:Type="Tables" />
@@ -55,17 +55,17 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="***REMOVED***Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Client">
+      <Schema Namespace="AlcoDBNS" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Clients">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ChatID" Type="Int32" Nullable="false" />
           <Property Name="Subscription" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Subscription1" Relationship="Self.FK_Clients_Subscriptions" FromRole="Clients" ToRole="Subscriptions" />
+          <NavigationProperty Name="Subscriptions" Relationship="Self.FK_Clients_Subscriptions" FromRole="Clients" ToRole="Subscriptions" />
         </EntityType>
-        <EntityType Name="Enum">
+        <EntityType Name="Enums">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -74,7 +74,7 @@
           <Property Name="Category" Type="Int32" />
           <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="Subscription">
+        <EntityType Name="Subscriptions">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -84,8 +84,8 @@
           <NavigationProperty Name="Clients" Relationship="Self.FK_Clients_Subscriptions" FromRole="Subscriptions" ToRole="Clients" />
         </EntityType>
         <Association Name="FK_Clients_Subscriptions">
-          <End Role="Subscriptions" Type="Self.Subscription" Multiplicity="1" />
-          <End Role="Clients" Type="Self.Client" Multiplicity="*" />
+          <End Role="Subscriptions" Type="Self.Subscriptions" Multiplicity="1" />
+          <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Subscriptions">
               <PropertyRef Name="Id" />
@@ -95,10 +95,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="***REMOVED***Entities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Clients" EntityType="Self.Client" />
-          <EntitySet Name="Enums" EntityType="Self.Enum" />
-          <EntitySet Name="Subscriptions" EntityType="Self.Subscription" />
+        <EntityContainer Name="AlcoDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Clients" EntityType="Self.Clients" />
+          <EntitySet Name="Enums" EntityType="Self.Enums" />
+          <EntitySet Name="Subscriptions" EntityType="Self.Subscriptions" />
           <AssociationSet Name="FK_Clients_Subscriptions" Association="Self.FK_Clients_Subscriptions">
             <End Role="Subscriptions" EntitySet="Subscriptions" />
             <End Role="Clients" EntitySet="Clients" />
@@ -109,9 +109,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="***REMOVED***ModelStoreContainer" CdmEntityContainer="***REMOVED***Entities">
+        <EntityContainerMapping StorageEntityContainer="AlcoDBNSStoreContainer" CdmEntityContainer="AlcoDBEntities">
           <EntitySetMapping Name="Clients">
-            <EntityTypeMapping TypeName="***REMOVED***Model.Client">
+            <EntityTypeMapping TypeName="AlcoDBNS.Clients">
               <MappingFragment StoreEntitySet="Clients">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ChatID" ColumnName="ChatID" />
@@ -120,7 +120,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Enums">
-            <EntityTypeMapping TypeName="***REMOVED***Model.Enum">
+            <EntityTypeMapping TypeName="AlcoDBNS.Enums">
               <MappingFragment StoreEntitySet="Enums">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ItemID" ColumnName="ItemID" />
@@ -130,7 +130,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Subscriptions">
-            <EntityTypeMapping TypeName="***REMOVED***Model.Subscription">
+            <EntityTypeMapping TypeName="AlcoDBNS.Subscriptions">
               <MappingFragment StoreEntitySet="Subscriptions">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="SubsctiptionType" ColumnName="SubsctiptionType" />
@@ -152,7 +152,7 @@
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
         <DesignerProperty Name="UseLegacyProvider" Value="false" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />

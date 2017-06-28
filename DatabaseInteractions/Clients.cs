@@ -12,12 +12,12 @@ namespace DatabaseInteractions
     using System;
     using System.Collections.Generic;
     
-    public partial class Client
+    public partial class Clients
     {
         public int Id { get; set; }
         public int ChatID { get; set; }
         public int Subscription { get; set; }
     
-        public virtual Subscription Subscription1 { get; set; }
+        public virtual Subscriptions Subscriptions { get; set; }
     }
 }
