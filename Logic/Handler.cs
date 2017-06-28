@@ -69,7 +69,7 @@ namespace Logic
                 }
                 else
                 {
-                    await _bot.SendTextMessageAsync(myChatId, "Already there" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+                    //await _bot.SendTextMessageAsync(myChatId, "Already there" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
                 }
             }
             catch (Exception ex)
