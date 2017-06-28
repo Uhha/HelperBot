@@ -12,12 +12,12 @@ namespace DatabaseInteractions
     using System;
     using System.Collections.Generic;
     
-    public partial class Subscriptions
+    public partial class Subscription
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Subscriptions()
+        public Subscription()
         {
-            this.Clients = new HashSet<Clients>();
+            this.Clients = new HashSet<Client>();
         }
     
         public int Id { get; set; }
@@ -25,6 +25,6 @@ namespace DatabaseInteractions
         public string LastPostedKey { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Clients> Clients { get; set; }
+        public virtual ICollection<Client> Clients { get; set; }
     }
 }

@@ -13,10 +13,10 @@ namespace DatabaseInteractions
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class AlcoDB : DbContext
+    public partial class ***REMOVED***Entities : DbContext
     {
-        public AlcoDB()
-            : base("name=AlcoDB")
+        public ***REMOVED***Entities()
+            : base("name=***REMOVED***Entities")
         {
         }
     
@@ -25,8 +25,8 @@ namespace DatabaseInteractions
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Clients> Clients { get; set; }
-        public virtual DbSet<Enums> Enums { get; set; }
-        public virtual DbSet<Subscriptions> Subscriptions { get; set; }
+        public virtual DbSet<Client> Clients { get; set; }
+        public virtual DbSet<Enum> Enums { get; set; }
+        public virtual DbSet<Subscription> Subscriptions { get; set; }
     }
 }

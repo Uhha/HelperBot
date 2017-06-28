@@ -39,7 +39,7 @@ namespace Logic.Oglaf
 
         private static bool NotSent(int client, string alt)
         {
-            using (AlcoDB db = new AlcoDB())
+            using (***REMOVED***Entities db = new ***REMOVED***Entities())
             {
                 var lastPostedKey = (from cli in db.Clients
                            join sub in db.Subscriptions on cli.Subscription equals sub.Id

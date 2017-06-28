@@ -12,7 +12,7 @@ namespace DatabaseInteractions
     using System;
     using System.Collections.Generic;
     
-    public partial class Enums
+    public partial class Enum
     {
         public int Id { get; set; }
         public int ItemID { get; set; }
