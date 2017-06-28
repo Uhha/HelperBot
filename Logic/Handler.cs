@@ -57,16 +57,24 @@ namespace Logic
         {
             //await _bot.SendTextMessageAsync(myChatId, "OGLAF WORKS");
             //await _bot.SendPhotoAsync(myChatId, new FileToSend("http://media.oglaf.com/comic/princess_party.jpg"));
-            var result = OglafGrabber.GetOglafPicture(myChatId);
-            if (result.doSend)
+            try
             {
-                await _bot.SendTextMessageAsync(myChatId, result.alt.ToUpper());
-                await _bot.SendTextMessageAsync(myChatId, result.title);
-                await _bot.SendPhotoAsync(myChatId, new FileToSend(result.scr));
+                var result = OglafGrabber.GetOglafPicture(myChatId);
+                if (result.doSend)
+                {
+                    await _bot.SendTextMessageAsync(myChatId, result.alt.ToUpper());
+                    await _bot.SendTextMessageAsync(myChatId, result.title);
+                    await _bot.SendPhotoAsync(myChatId, new FileToSend(result.scr));
+                }
+                else
+                {
+                    // await _bot.SendTextMessageAsync(myChatId, "Already there");
+                }
             }
-            else
+            catch (Exception ex)
             {
-               // await _bot.SendTextMessageAsync(myChatId, "Already there");
+                await _bot.SendTextMessageAsync(myChatId, ex.Message);
+                throw;
             }
 
             return;
