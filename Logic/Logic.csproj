@@ -95,6 +95,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
+    <Compile Include="CallbackQueryCommandProcessor.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="TextMessageCommandProcessor.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="Oglaf\OglafGrabber.cs" />

@@ -43,7 +43,7 @@ namespace Logic.Oglaf
             {
                 var lastPostedKey = (from cli in db.Clients
                            join sub in db.Subscriptions on cli.Subscription equals sub.Id
-                           where cli.ChatID == client && sub.SubsctiptionType == 1
+                           where cli.ChatID == client && sub.SubsctiptionType == (int)Subscription.Oglaf
                            orderby sub.Id descending
                            select new
                            {
