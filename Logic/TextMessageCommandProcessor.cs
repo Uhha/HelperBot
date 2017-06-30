@@ -16,8 +16,8 @@ namespace Logic
                 {
                     InlineKeyboard = new[]
                     {
-                    new [] {  InlineKeyboardButton.WithCallbackData ("Subscribe to Oglaf", "subOglaf"),
-                             new InlineKeyboardButton ("Subscribe to xkcd", "subXkdc")}
+                    new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "subOglaf"),
+                             new InlineKeyboardButton ("xkcd", "subXkdc")}
                 }
                 };
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, "Choose what to subscribe to:", replyMarkup: inlineKeyboardMarkup);
@@ -29,8 +29,8 @@ namespace Logic
                 {
                     InlineKeyboard = new[]
                     {
-                    new [] {  InlineKeyboardButton.WithCallbackData ("UnSubscribe to Oglaf", "-subOglaf"),
-                             new InlineKeyboardButton ("UnSubscribe to xkcd", "-subXkdc")}
+                    new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "-subOglaf"),
+                             new InlineKeyboardButton ("xkcd", "-subXkdc")}
                 }
                 };
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, "Unsubscribe from:", replyMarkup: inlineKeyboardMarkup);

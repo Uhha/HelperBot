@@ -8,7 +8,9 @@ namespace Logic
 {
     public enum Subscription
     {
-        XKDC,
-        Oglaf
+        NoSubscription,
+        Oglaf,
+        XKDC
+        
     }
 }

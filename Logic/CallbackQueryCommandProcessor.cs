@@ -10,22 +10,26 @@ namespace Logic
     {
         internal static async void Process(TelegramBotClient bot, Update update)
         {
-            if (update.CallbackQuery.Data.Equals("subOglaf"))
+            if (update.CallbackQuery.Data.StartsWith("sub"))
             {
+                Subscription subscriptionType = Subscription.NoSubscription;
+                if (update.CallbackQuery.Data.Equals("subOglaf")) subscriptionType = Subscription.Oglaf;
+                if (update.CallbackQuery.Data.Equals("subXkcd")) subscriptionType = Subscription.XKDC;
+
                 var userId = update.CallbackQuery.From.Id;
                 int.TryParse(userId, out int ID);
                 using (AlcoDBEntities db = new AlcoDBEntities())
                 {
-                    if (!db.Clients.Any(x => x.ChatID.ToString() == userId && x.Subscription == (int)Subscription.Oglaf))
+                    if (!db.Clients.Any(x => x.ChatID.ToString() == userId && x.Subscription == (int)subscriptionType))
                     {
-                        var subscription = new Subscriptions { SubsctiptionType = (int)Subscription.Oglaf };
+                        var subscription = new Subscriptions { SubsctiptionType = (int)subscriptionType };
                         db.Subscriptions.Add(subscription);
                         db.SaveChanges();
                         var client = new Clients { ChatID = ID, Subscription = subscription.Id };
                         db.Clients.Add(client);
                         db.SaveChanges();
 
-                        await bot.SendTextMessageAsync(userId, "You've subscribed to Oglaf!");
+                        await bot.SendTextMessageAsync(userId, $"You've subscribed to {Enum.GetName(typeof(Subscription), subscriptionType)}!");
                     }
                     else
                     {
@@ -36,15 +40,19 @@ namespace Logic
                 
             }
 
-            if (update.CallbackQuery.Data.Equals("-subOglaf"))
+            if (update.CallbackQuery.Data.Equals("-sub"))
             {
+                Subscription subscriptionType = Subscription.NoSubscription;
+                if (update.CallbackQuery.Data.Equals("-subOglaf")) subscriptionType = Subscription.Oglaf;
+                if (update.CallbackQuery.Data.Equals("-subXkcd")) subscriptionType = Subscription.XKDC;
+
                 var userId = update.CallbackQuery.From.Id;
                 int.TryParse(userId, out int ID);
                 using (AlcoDBEntities db = new AlcoDBEntities())
                 {
-                    if (db.Clients.Any(x => x.ChatID.ToString() == userId && x.Subscription == (int)Subscription.Oglaf))
+                    if (db.Clients.Any(x => x.ChatID.ToString() == userId && x.Subscription == (int)subscriptionType))
                     {
-                        var clients = db.Clients.Where(x => x.ChatID.ToString() == userId && x.Subscription == (int)Subscription.Oglaf);
+                        var clients = db.Clients.Where(x => x.ChatID.ToString() == userId && x.Subscription == (int)subscriptionType);
                         foreach (var item in clients)
                         {
                             db.Clients.Remove(item);
@@ -52,7 +60,7 @@ namespace Logic
                             db.Subscriptions.Remove(sub);
                         }
                         db.SaveChanges();
-                        await bot.SendTextMessageAsync(userId, "Unsubscribed from Oglaf!");
+                        await bot.SendTextMessageAsync(userId, $"Unsubscribed from {Enum.GetName(typeof(Subscription), subscriptionType)}!");
                     }
                     else
                     {
