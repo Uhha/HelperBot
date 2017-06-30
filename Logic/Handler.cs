@@ -132,7 +132,7 @@ namespace Logic
             }
             catch (Exception ex)
             {
-                await _bot.SendTextMessageAsync(myChatId, ex.Message + Environment.NewLine + ex.InnerException);
+                //await _bot.SendTextMessageAsync(myChatId, ex.Message + Environment.NewLine + ex.InnerException);
             }
             return;
 
