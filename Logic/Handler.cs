@@ -1,4 +1,5 @@
-﻿using Logic.Oglaf;
+﻿using DatabaseInteractions;
+using Logic.Oglaf;
 using Logic.Processors;
 using System;
 using System.Collections.Generic;
@@ -115,27 +116,35 @@ namespace Logic
 
         }
 
-        private int myChatId = 182328439;
         public async void Handle()
         {
-            try
+            var clients = DB.GetList<int>("select c.chatId from Clients c" +
+                "join Subscriptions s on s.id = c.subscription " +
+                "where s.SubsctiptionType = 1");
+
+            foreach (var client in clients)
             {
-                var result = OglafGrabber.GetOglafPicture(myChatId);
-                if (result.doSend)
+                try
                 {
-                    await _bot.SendTextMessageAsync(myChatId, result.alt.ToUpper());
-                    await _bot.SendTextMessageAsync(myChatId, result.title);
-                    await _bot.SendPhotoAsync(myChatId, new FileToSend(result.scr));
+                    var result = OglafGrabber.GetOglafPicture(client);
+                    if (result.doSend)
+                    {
+                        await _bot.SendTextMessageAsync(client, result.alt.ToUpper());
+                        await _bot.SendTextMessageAsync(client, result.title);
+                        await _bot.SendPhotoAsync(client, new FileToSend(result.scr));
+                    }
+                    else
+                    {
+                        //await _bot.SendTextMessageAsync(myChatId, "Already there" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    //await _bot.SendTextMessageAsync(myChatId, "Already there" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+                    //await _bot.SendTextMessageAsync(myChatId, ex.Message + Environment.NewLine + ex.InnerException);
                 }
             }
-            catch (Exception)
-            {
-                //await _bot.SendTextMessageAsync(myChatId, ex.Message + Environment.NewLine + ex.InnerException);
-            }
+
+            
             return;
 
         }
