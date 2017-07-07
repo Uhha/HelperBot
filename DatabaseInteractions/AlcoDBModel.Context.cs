@@ -28,5 +28,6 @@ namespace DatabaseInteractions
         public virtual DbSet<Clients> Clients { get; set; }
         public virtual DbSet<Enums> Enums { get; set; }
         public virtual DbSet<Subscriptions> Subscriptions { get; set; }
+        public virtual DbSet<Words> Words { get; set; }
     }
 }

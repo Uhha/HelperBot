@@ -74,6 +74,9 @@
     <Compile Include="Subscriptions.cs">
       <DependentUpon>AlcoDBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Words.cs">
+      <DependentUpon>AlcoDBModel.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="AlcoDBModel.edmx">

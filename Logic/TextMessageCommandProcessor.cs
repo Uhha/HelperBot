@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DatabaseInteractions;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -35,7 +37,39 @@ namespace Logic
                 };
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, "Unsubscribe from:", replyMarkup: inlineKeyboardMarkup);
             }
-        }
 
+            if (update.Message.Text.Equals("/vocab"))
+            {
+                string[] words;
+                using (AlcoDBEntities db = new AlcoDBEntities())
+                {
+                    IQueryable<string> wrds = from p in db.Words
+                                                   select p.Stem;
+                    Random rnd = new Random();
+                    words = wrds.ToArray().OrderBy(x => rnd.Next()).ToArray();
+                }
+
+                var inlineKeyboardMarkup = new InlineKeyboardMarkup
+                {
+                    InlineKeyboard = new[]
+                    {
+                        new [] {  InlineKeyboardButton.WithCallBackGame ("Next Word", new VocabCallbackData{ vocabCallbackType = VocabCallbackType.Word, words = words }),
+                                InlineKeyboardButton.WithCallBackGame ("Definition", new VocabCallbackData{ vocabCallbackType = VocabCallbackType.Definition, words = words })},
+                        
+                    }
+                };
+
+                try
+                {
+
+                    await bot.SendTextMessageAsync(update.Message.Chat.Id, "xxx", replyMarkup: inlineKeyboardMarkup);
+                }
+                catch (Exception e)
+                {
+                    await bot.SendTextMessageAsync(update.Message.Chat.Id, e.Message);
+                    throw;
+                }
+            }
+        }
     }
 }

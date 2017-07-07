@@ -13,4 +13,14 @@ namespace Logic
         XKDC
         
     }
+    public enum GameType
+    {
+        VocabGame
+    }
+
+    public enum VocabCallbackType
+    {
+        Word,
+        Definition
+    }
 }

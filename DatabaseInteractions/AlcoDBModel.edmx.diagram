@@ -9,6 +9,7 @@
         <EntityTypeShape EntityType="AlcoDBNS.Enums" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AlcoDBNS.Subscriptions" Width="1.5" PointX="0.75" PointY="0.875" IsExpanded="true" />
         <AssociationConnector Association="AlcoDBNS.FK_Clients_Subscriptions" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="AlcoDBNS.Words" Width="1.5" PointX="3.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

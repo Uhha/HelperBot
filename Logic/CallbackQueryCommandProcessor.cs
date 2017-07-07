@@ -70,6 +70,11 @@ namespace Logic
                 }
 
             }
+
+            else
+            {
+                var ss = update.CallbackQuery.Data;
+            }
         }
     }
 }

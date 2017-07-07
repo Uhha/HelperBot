@@ -13,7 +13,7 @@ namespace Web
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
-            //NoHookLoop.Start();
+            NoHookLoop.Start();
         }
     }
 }

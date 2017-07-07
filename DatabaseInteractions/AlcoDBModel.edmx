@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="AlcoDBNS.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="AlcoDBNS.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Clients">
           <Key>
             <PropertyRef Name="Id" />
@@ -30,6 +30,19 @@
           <Property Name="SubsctiptionType" Type="int" Nullable="false" />
           <Property Name="LastPostedKey" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="Words">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WordID" Type="varchar" MaxLength="200" />
+          <Property Name="Word" Type="varchar" MaxLength="200" />
+          <Property Name="Stem" Type="varchar" MaxLength="200" />
+          <Property Name="Lang" Type="varchar" MaxLength="200" />
+          <Property Name="Category" Type="int" />
+          <Property Name="Timestamp" Type="int" />
+          <Property Name="ProfileID" Type="varchar" MaxLength="200" />
+        </EntityType>
         <Association Name="FK_Clients_Subscriptions">
           <End Role="Subscriptions" Type="Self.Subscriptions" Multiplicity="1" />
           <End Role="Clients" Type="Self.Clients" Multiplicity="*" />
@@ -46,13 +59,13 @@
           <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Enums" EntityType="Self.Enums" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Subscriptions" EntityType="Self.Subscriptions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Words" EntityType="Self.Words" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Clients_Subscriptions" Association="Self.FK_Clients_Subscriptions">
             <End Role="Subscriptions" EntitySet="Subscriptions" />
             <End Role="Clients" EntitySet="Clients" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AlcoDBNS" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -103,7 +116,21 @@
             <End Role="Subscriptions" EntitySet="Subscriptions" />
             <End Role="Clients" EntitySet="Clients" />
           </AssociationSet>
+          <EntitySet Name="Words" EntityType="AlcoDBNS.Words" />
         </EntityContainer>
+        <EntityType Name="Words">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WordID" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Word" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Stem" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Lang" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Category" Type="Int32" />
+          <Property Name="Timestamp" Type="Int32" />
+          <Property Name="ProfileID" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -135,6 +162,20 @@
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="SubsctiptionType" ColumnName="SubsctiptionType" />
                 <ScalarProperty Name="LastPostedKey" ColumnName="LastPostedKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Words">
+            <EntityTypeMapping TypeName="AlcoDBNS.Words">
+              <MappingFragment StoreEntitySet="Words">
+                <ScalarProperty Name="ProfileID" ColumnName="ProfileID" />
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Lang" ColumnName="Lang" />
+                <ScalarProperty Name="Stem" ColumnName="Stem" />
+                <ScalarProperty Name="Word" ColumnName="Word" />
+                <ScalarProperty Name="WordID" ColumnName="WordID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
