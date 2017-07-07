@@ -6,7 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Logic
+namespace Logic.Processors
 {
     internal static class TextMessageCommandProcessor
     {
@@ -19,7 +19,7 @@ namespace Logic
                     InlineKeyboard = new[]
                     {
                     new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "subOglaf"),
-                             new InlineKeyboardButton ("xkcd", "subXkdc")}
+                             new InlineKeyboardButton ("xkcd", "subXkcd")}
                 }
                 };
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, "Choose what to subscribe to:", replyMarkup: inlineKeyboardMarkup);
@@ -32,7 +32,7 @@ namespace Logic
                     InlineKeyboard = new[]
                     {
                     new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "-subOglaf"),
-                             new InlineKeyboardButton ("xkcd", "-subXkdc")}
+                             new InlineKeyboardButton ("xkcd", "-subXkcd")}
                 }
                 };
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, "Unsubscribe from:", replyMarkup: inlineKeyboardMarkup);
@@ -40,29 +40,24 @@ namespace Logic
 
             if (update.Message.Text.Equals("/vocab"))
             {
-                string[] words;
-                using (AlcoDBEntities db = new AlcoDBEntities())
-                {
-                    IQueryable<string> wrds = from p in db.Words
-                                                   select p.Stem;
-                    Random rnd = new Random();
-                    words = wrds.ToArray().OrderBy(x => rnd.Next()).ToArray();
-                }
-
                 var inlineKeyboardMarkup = new InlineKeyboardMarkup
                 {
                     InlineKeyboard = new[]
                     {
-                        new [] {  InlineKeyboardButton.WithCallBackGame ("Next Word", new VocabCallbackData{ vocabCallbackType = VocabCallbackType.Word, words = words }),
-                                InlineKeyboardButton.WithCallBackGame ("Definition", new VocabCallbackData{ vocabCallbackType = VocabCallbackType.Definition, words = words })},
-                        
+                        new [] {  InlineKeyboardButton.WithCallbackData (
+                                    "Next Word", "vocabNW"),
+                                InlineKeyboardButton.WithCallbackData (
+                                    "Definition", "vocabDefinition"  )
+                        }
+                        //new [] {  InlineKeyboardButton.WithCallbackData (
+                        //            "Next Word", "vocabNW" )
+                        //}
                     }
                 };
 
                 try
                 {
-
-                    await bot.SendTextMessageAsync(update.Message.Chat.Id, "xxx", replyMarkup: inlineKeyboardMarkup);
+                    await bot.SendTextMessageAsync(update.Message.Chat.Id, VocabCallbackData.Word, replyMarkup: inlineKeyboardMarkup);
                 }
                 catch (Exception e)
                 {

@@ -40,7 +40,7 @@
       <HintPath>..\packages\EntityFramework.6.2.0-beta1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.5.1.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.5.1-beta1\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <HintPath>..\packages\HtmlAgilityPack.1.5.1\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
@@ -105,10 +105,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
-    <Compile Include="CallbackQueryCommandProcessor.cs" />
-    <Compile Include="DocumentMessageCommandProcessor.cs" />
+    <Compile Include="Processors\CallbackQueryCommandProcessor.cs" />
+    <Compile Include="Processors\DocumentMessageCommandProcessor.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="TextMessageCommandProcessor.cs" />
+    <Compile Include="Processors\TextMessageCommandProcessor.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="Oglaf\OglafGrabber.cs" />

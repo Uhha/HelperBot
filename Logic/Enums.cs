@@ -10,7 +10,7 @@ namespace Logic
     {
         NoSubscription,
         Oglaf,
-        XKDC
+        XKCD
         
     }
     public enum GameType

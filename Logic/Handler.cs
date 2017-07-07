@@ -1,4 +1,5 @@
 ﻿using Logic.Oglaf;
+using Logic.Processors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,7 +132,7 @@ namespace Logic
                     //await _bot.SendTextMessageAsync(myChatId, "Already there" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //await _bot.SendTextMessageAsync(myChatId, ex.Message + Environment.NewLine + ex.InnerException);
             }

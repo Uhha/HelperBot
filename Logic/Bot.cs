@@ -7,9 +7,7 @@ namespace Logic
         private static TelegramBotClient _bot;
 
         /// <summary>
-        /// Получаем бота, а если он еще
-        /// не инициализирован - инициализируем
-        /// и возвращаем
+        /// Get the bot and set the hook
         /// </summary>
         public static TelegramBotClient Get()
         {

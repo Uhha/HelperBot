@@ -3,8 +3,9 @@ using System;
 using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Logic
+namespace Logic.Processors
 {
     internal static class CallbackQueryCommandProcessor
     {
@@ -14,13 +15,20 @@ namespace Logic
             {
                 Subscription subscriptionType = Subscription.NoSubscription;
                 if (update.CallbackQuery.Data.Equals("subOglaf")) subscriptionType = Subscription.Oglaf;
-                if (update.CallbackQuery.Data.Equals("subXkcd")) subscriptionType = Subscription.XKDC;
+                if (update.CallbackQuery.Data.Equals("subXkcd")) subscriptionType = Subscription.XKCD;
 
                 var userId = update.CallbackQuery.From.Id;
                 int.TryParse(userId, out int ID);
                 using (AlcoDBEntities db = new AlcoDBEntities())
                 {
-                    if (!db.Clients.Any(x => x.ChatID.ToString() == userId && x.Subscription == (int)subscriptionType))
+                    var exists = DB.GetValue<int>(@"select top 1 c.id from Clients c 
+                                        join Subscriptions s on s.id = c.subscription
+                                        where c.chatid = " + userId +
+                                        " and s.SubsctiptionType = " + ((int)subscriptionType).ToString());
+
+                   
+
+                    if (exists == 0)
                     {
                         var subscription = new Subscriptions { SubsctiptionType = (int)subscriptionType };
                         db.Subscriptions.Add(subscription);
@@ -29,7 +37,7 @@ namespace Logic
                         db.Clients.Add(client);
                         db.SaveChanges();
 
-                        await bot.SendTextMessageAsync(userId, $"You've subscribed to {Enum.GetName(typeof(Subscription), subscriptionType)}!");
+                        await bot.SendTextMessageAsync(userId, $"You've subscribed to { subscriptionType.ToString() }!");
                     }
                     else
                     {
@@ -40,19 +48,20 @@ namespace Logic
                 
             }
 
-            if (update.CallbackQuery.Data.Equals("-sub"))
+            if (update.CallbackQuery.Data.StartsWith("-sub"))
             {
                 Subscription subscriptionType = Subscription.NoSubscription;
                 if (update.CallbackQuery.Data.Equals("-subOglaf")) subscriptionType = Subscription.Oglaf;
-                if (update.CallbackQuery.Data.Equals("-subXkcd")) subscriptionType = Subscription.XKDC;
+                if (update.CallbackQuery.Data.Equals("-subXkcd")) subscriptionType = Subscription.XKCD;
 
                 var userId = update.CallbackQuery.From.Id;
                 int.TryParse(userId, out int ID);
                 using (AlcoDBEntities db = new AlcoDBEntities())
                 {
-                    if (db.Clients.Any(x => x.ChatID.ToString() == userId && x.Subscription == (int)subscriptionType))
+                    if (db.Clients.Any(x => x.ChatID.ToString() == userId && db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType ==(int)subscriptionType)))
                     {
-                        var clients = db.Clients.Where(x => x.ChatID.ToString() == userId && x.Subscription == (int)subscriptionType);
+                        var clients = db.Clients.Where(x => x.ChatID.ToString() == userId && 
+                            db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType == (int)subscriptionType));
                         foreach (var item in clients)
                         {
                             db.Clients.Remove(item);
@@ -60,7 +69,7 @@ namespace Logic
                             db.Subscriptions.Remove(sub);
                         }
                         db.SaveChanges();
-                        await bot.SendTextMessageAsync(userId, $"Unsubscribed from {Enum.GetName(typeof(Subscription), subscriptionType)}!");
+                        await bot.SendTextMessageAsync(userId, $"Unsubscribed from { subscriptionType.ToString() }!");
                     }
                     else
                     {
@@ -71,9 +80,20 @@ namespace Logic
 
             }
 
-            else
+            if (update.CallbackQuery.Data.Equals("vocabNW"))
             {
-                var ss = update.CallbackQuery.Data;
+                var inlineKeyboardMarkup = new InlineKeyboardMarkup
+                {
+                    InlineKeyboard = new[]
+                    {
+                         new [] {  InlineKeyboardButton.WithCallbackData (
+                                    "Next Word", "vocabNW"),
+                                InlineKeyboardButton.WithCallbackData (
+                                    "Definition", "vocabDefinition"  )
+                        }
+                    }
+                };
+                await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, VocabCallbackData.Word, replyMarkup: inlineKeyboardMarkup);
             }
         }
     }

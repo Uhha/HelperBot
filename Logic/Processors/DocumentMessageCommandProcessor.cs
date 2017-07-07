@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using DatabaseInteractions;
 using System.Data.Entity;
 
-namespace Logic
+namespace Logic.Processors
 {
     internal class DocumentMessageCommandProcessor
     {

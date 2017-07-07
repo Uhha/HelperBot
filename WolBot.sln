@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseInteractions", "DatabaseInteractions\DatabaseInteractions.csproj", "{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBCallsNetTest", "DBCallsNetTest\DBCallsNetTest.csproj", "{ACEF723D-4534-42D3-BC96-5F104D3A86DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACEF723D-4534-42D3-BC96-5F104D3A86DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACEF723D-4534-42D3-BC96-5F104D3A86DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACEF723D-4534-42D3-BC96-5F104D3A86DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACEF723D-4534-42D3-BC96-5F104D3A86DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

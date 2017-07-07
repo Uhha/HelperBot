@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DatabaseInteractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,25 +8,32 @@ using Telegram.Bot.Types;
 
 namespace Logic
 {
-    public class VocabCallbackData : CallbackGame
+    public static class VocabCallbackData
     {
-        public GameType gameType = GameType.VocabGame;
-        public VocabCallbackType vocabCallbackType;
-        public string[] words;
-        private int index;
-        public string Word
+        private static string[] _words;
+        private static int index;
+        public static string Word
         {
             get
             {
-                if (index < words.Length) { return words[index++]; } else { return words[index = 0]; }
+                if (_words == null) SetWords();
+                if (index < _words.Length) { return _words[index++]; } else { return _words[index = 0]; }
             }
             set { }
         }
 
-        public override string ToString()
+        private static void SetWords()
         {
-            return Word.ToString();
+            using (AlcoDBEntities db = new AlcoDBEntities())
+            {
+                IQueryable<string> wrds = from p in db.Words
+                                          select p.Stem;
+                Random rnd = new Random();
+                _words = wrds.ToArray().OrderBy(x => rnd.Next()).ToArray();
+            }
         }
+
+
 
     }
 }
