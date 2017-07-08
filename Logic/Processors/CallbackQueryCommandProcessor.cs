@@ -95,6 +95,11 @@ namespace Logic.Processors
                 };
                 await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, VocabCallbackData.Word, replyMarkup: inlineKeyboardMarkup);
             }
+
+            if (update.CallbackQuery.Data.Equals("vocabDefinition"))
+            {
+                await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, VocabCallbackData.GetDefinition());
+            }
         }
     }
 }

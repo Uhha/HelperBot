@@ -19,7 +19,7 @@ namespace Web
 
         static async Task Run()
         {
-            var TelegramBotClient = new TelegramBotClient(Config.BotApiKey);
+            var TelegramBotClient = new TelegramBotClient(Config.TestBotApiKey);
 
             var me = await TelegramBotClient.GetMeAsync();
 
