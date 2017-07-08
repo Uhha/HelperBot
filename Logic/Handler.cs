@@ -30,14 +30,14 @@ namespace Logic
                 case Telegram.Bot.Types.Enums.UpdateType.UnknownUpdate:
                     break;
                 case Telegram.Bot.Types.Enums.UpdateType.MessageUpdate:
-                    await MessageUpdate(update);
+                    MessageUpdate(update);
                     break;
                 case Telegram.Bot.Types.Enums.UpdateType.InlineQueryUpdate:
                     break;
                 case Telegram.Bot.Types.Enums.UpdateType.ChosenInlineResultUpdate:
                     break;
                 case Telegram.Bot.Types.Enums.UpdateType.CallbackQueryUpdate:
-                    await CallbackQuertUpdate(update);
+                    CallbackQuertUpdate(update);
                     break;
                 case Telegram.Bot.Types.Enums.UpdateType.EditedMessage:
                     break;
@@ -118,7 +118,7 @@ namespace Logic
 
         public async void Handle()
         {
-            var clients = DB.GetList<int>("select c.chatId from Clients c" +
+            var clients = DB.GetList<int>("select distinct c.chatId from Clients c" +
                 "join Subscriptions s on s.id = c.subscription " +
                 "where s.SubsctiptionType = 1");
 
