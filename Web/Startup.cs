@@ -13,7 +13,7 @@ namespace Web
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
-            if (Logic.Config.IsLocal == "true")
+            if (Logic.Config.Environment == "Debug")
             {
                 NoHookLoop.Start();
             }

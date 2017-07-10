@@ -12,7 +12,7 @@ namespace Logic
         public static TelegramBotClient Get()
         {
             if (_bot != null) return _bot;
-            if (Config.IsLocal == "true")
+            if (Config.Environment == "Debug")
             {
                 _bot = new TelegramBotClient(Config.TestBotApiKey);
                 _bot.SendTextMessageAsync(182328439, "Local Bot started!");
