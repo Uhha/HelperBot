@@ -15,11 +15,13 @@ namespace Logic
             if (Config.IsLocal == "true")
             {
                 _bot = new TelegramBotClient(Config.TestBotApiKey);
+                _bot.SendTextMessageAsync(182328439, "Local Bot started!");
             }
             else
             {
                 _bot = new TelegramBotClient(Config.BotApiKey);
                 _bot.SetWebhookAsync(Config.WebHookUrl);
+                _bot.SendTextMessageAsync(182328439, "Remote Bot started!");
             }
             return _bot;
 		}
