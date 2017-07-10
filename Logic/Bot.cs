@@ -12,8 +12,15 @@ namespace Logic
         public static TelegramBotClient Get()
         {
             if (_bot != null) return _bot;
-            _bot = new TelegramBotClient(Config.BotApiKey);
-            _bot.SetWebhookAsync(Config.WebHookUrl);
+            if (Config.IsLocal == "true")
+            {
+                _bot = new TelegramBotClient(Config.TestBotApiKey);
+            }
+            else
+            {
+                _bot = new TelegramBotClient(Config.BotApiKey);
+                _bot.SetWebhookAsync(Config.WebHookUrl);
+            }
             return _bot;
 		}
     }

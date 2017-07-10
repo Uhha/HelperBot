@@ -21,5 +21,10 @@ namespace Logic
         {
             get { return Appsettings["WebHookUrl"]; }
         }
+
+        public static string IsLocal
+        {
+            get { return Appsettings["IsLocal"]; }
+        }
     }
 }

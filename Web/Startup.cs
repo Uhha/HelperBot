@@ -13,7 +13,10 @@ namespace Web
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
-            //NoHookLoop.Start();
+            if (Logic.Config.IsLocal == "true")
+            {
+                NoHookLoop.Start();
+            }
         }
     }
 }

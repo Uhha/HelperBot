@@ -26,7 +26,7 @@ namespace Web
             //Console.WriteLine("Hello my name is {0}", me.Username);
 
             var offset = 0;
-
+            await TelegramBotClient.SendTextMessageAsync(182328439, "Bot started!");
             while (true)
             {
                 var updates = await TelegramBotClient.GetUpdatesAsync(offset);
