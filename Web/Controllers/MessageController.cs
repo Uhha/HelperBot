@@ -8,7 +8,7 @@ namespace Web.Controllers
 {
     public class MessageController : ApiController
     {
-        [Route(@"api/message/wol")]
+        [Route(@"api/command")]
         public OkResult Post([FromBody]Update update)
         {
             Task.Run(() => new Handler().Handle(update));

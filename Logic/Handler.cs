@@ -118,7 +118,7 @@ namespace Logic
 
         public async void Handle()
         {
-            await _bot.SendTextMessageAsync(182328439, "Ping " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+            //await _bot.SendTextMessageAsync(182328439, "Ping " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
 
             var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
                 "join Subscriptions s on s.id = c.subscription " +
