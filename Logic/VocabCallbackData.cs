@@ -65,8 +65,11 @@ namespace Logic
                 string pronunciation = dataObjects.results[0].lexicalEntries[0].pronunciations[0]?.phoneticSpelling;
                 string lexCategory = dataObjects.results[0].lexicalEntries[0].lexicalCategory;
                 string definition = dataObjects.results[0].lexicalEntries[0].entries[0].senses[0].definitions[0];
-                string example = dataObjects.results[0].lexicalEntries[0].entries[0].senses[0]?.examples[0]?.text;
-
+                string example = string.Empty;
+                if (dataObjects.results[0].lexicalEntries[0].entries[0].senses[0]?.examples != null)
+                {
+                    example = dataObjects.results[0].lexicalEntries[0].entries[0].senses[0]?.examples[0]?.text;
+                }
                 ret = $"[{pronunciation}]{Environment.NewLine}{lexCategory}{Environment.NewLine}{definition}{Environment.NewLine}{example}";
             }
             
