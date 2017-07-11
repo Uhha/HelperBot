@@ -62,6 +62,7 @@ namespace Logic
             {
                 // Parse the response body. Blocking!
                 var dataObjects = response.Content.ReadAsAsync<Rootobject>().Result;
+
                 string pronunciation = dataObjects.results[0].lexicalEntries[0].pronunciations[0]?.phoneticSpelling;
                 string lexCategory = dataObjects.results[0].lexicalEntries[0].lexicalCategory;
                 string definition = dataObjects.results[0].lexicalEntries[0].entries[0].senses[0].definitions[0];
@@ -70,17 +71,43 @@ namespace Logic
                 {
                     example = dataObjects.results[0].lexicalEntries[0].entries[0].senses[0]?.examples[0]?.text;
                 }
-                ret = $"[{pronunciation}]{Environment.NewLine}{lexCategory}{Environment.NewLine}{definition}{Environment.NewLine}{example}";
+                return ret = $"{wordid.FirstCap().Bold()}{Environment.NewLine}" + 
+                    $"[{pronunciation}]{Environment.NewLine}" +
+                    $"{lexCategory}{Environment.NewLine}" +
+                    $"{definition.FirstCap()}{Environment.NewLine}" +
+                    $"{example.FirstCap().Italic()}";
+
+
+                
             }
             
 
-            return ret;
+            return "No definition found";
         }
        
 
 
     }
 
+
+    public static class StringExtensions
+    {
+        public static string FirstCap(this string value)
+        {
+            if (String.IsNullOrEmpty(value))
+                throw new ArgumentException("Can't capitalize null string!");
+            return value.First().ToString().ToUpper() + value.Substring(1);
+        }
+        public static string Bold(this string value)
+        {
+            return "<b>" + value + "</b>";
+        }
+        public static string Italic(this string value)
+        {
+            return "<i>" + value + "</i>";
+        }
+
+    }
 
     public class Rootobject
     {

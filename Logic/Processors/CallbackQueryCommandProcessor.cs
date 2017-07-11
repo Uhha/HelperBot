@@ -98,7 +98,8 @@ namespace Logic.Processors
 
             if (update.CallbackQuery.Data.Equals("vocabDefinition"))
             {
-                await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, VocabCallbackData.GetDefinition());
+                await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, 
+                    VocabCallbackData.GetDefinition(), parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
             }
         }
     }
