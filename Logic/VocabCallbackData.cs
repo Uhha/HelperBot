@@ -71,21 +71,44 @@ namespace Logic
                 {
                     example = dataObjects.results[0].lexicalEntries[0].entries[0].senses[0]?.examples[0]?.text;
                 }
-                return ret = $"{wordid.FirstCap().Bold()}{Environment.NewLine}" + 
+
+                var translation = TranslateText(wordid, "en|ru");
+
+                return ret = $"{wordid.FirstCap().Bold()}{Environment.NewLine}" +
                     $"[{pronunciation}]{Environment.NewLine}" +
                     $"{lexCategory}{Environment.NewLine}" +
                     $"{definition.FirstCap()}{Environment.NewLine}" +
-                    $"{example.FirstCap().Italic()}";
+                    $"{example.FirstCap().Italic()}{Environment.NewLine}" +
+                    $"{translation.FirstCap()}";
+                    
 
 
                 
             }
+
             
 
             return "No definition found";
         }
-       
 
+        private static string TranslateText(string input, string languagePair)
+        {
+            try
+            {
+                string url = String.Format("http://www.google.com/translate_t?hl=en&ie=UTF8&text={0}&langpair={1}", input, languagePair);
+                WebClient webClient = new WebClient();
+                webClient.Encoding = Encoding.GetEncoding("windows-1251");
+                string result = webClient.DownloadString(url);
+                result = result.Substring(result.IndexOf("<span title=\"") + "<span title=\"".Length);
+                result = result.Substring(result.IndexOf(">") + 1);
+                result = result.Substring(0, result.IndexOf("</span>"));
+                return result.Trim();
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
 
     }
 
@@ -95,7 +118,7 @@ namespace Logic
         public static string FirstCap(this string value)
         {
             if (String.IsNullOrEmpty(value))
-                throw new ArgumentException("Can't capitalize null string!");
+                return "";
             return value.First().ToString().ToUpper() + value.Substring(1);
         }
         public static string Bold(this string value)
