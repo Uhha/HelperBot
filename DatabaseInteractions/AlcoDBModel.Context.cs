@@ -29,5 +29,7 @@ namespace DatabaseInteractions
         public virtual DbSet<Enums> Enums { get; set; }
         public virtual DbSet<Subscriptions> Subscriptions { get; set; }
         public virtual DbSet<Words> Words { get; set; }
+        public virtual DbSet<BookInfo> BookInfo { get; set; }
+        public virtual DbSet<Lookups> Lookups { get; set; }
     }
 }

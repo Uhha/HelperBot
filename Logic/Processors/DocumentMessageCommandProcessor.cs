@@ -34,6 +34,8 @@ namespace Logic.Processors
 
                 //get words from SQLite file
                 LinkedList<Words> words = new LinkedList<Words>();
+                LinkedList<Lookups> lookups = new LinkedList<Lookups>();
+                LinkedList<BookInfo> bookinfo = new LinkedList<BookInfo>();
                 using (SqliteConnection con = new SqliteConnection("URI = file:temp.db"))
                 {
                     con.Open();
@@ -59,18 +61,72 @@ namespace Logic.Processors
                                     }                                    
                                 );
                             }
-                            bot.SendTextMessageAsync(update.Message.Chat.Id, $"Extracted {words.Count.ToString()} words from the vocab.db");
+                            //bot.SendTextMessageAsync(update.Message.Chat.Id, $"Extracted {words.Count.ToString()} words from the vocab.db");
                         }
                     }
 
+                    stm = "SELECT * FROM Lookups";
+
+                    using (SqliteCommand cmd = new SqliteCommand(stm, con))
+                    {
+                        using (SqliteDataReader rdr = cmd.ExecuteReader())
+                        {
+                            while (rdr.Read())
+                            {
+                                lookups.AddFirst
+                                (
+                                    new Lookups
+                                    {
+                                        CRid = rdr.GetString(0),
+                                        WordID = rdr.GetString(1),
+                                        BookKey = rdr.GetString(2),
+                                        DicKey = rdr.GetString(3),
+                                        Pos = rdr.GetInt32(4),
+                                        Usage = rdr.GetString(5),
+                                        Timestamp = rdr.GetInt32(6)
+                                    }
+                                );
+                            }
+                        }
+                    }
+
+                    stm = "SELECT * FROM BOOK_INFO";
+
+                    using (SqliteCommand cmd = new SqliteCommand(stm, con))
+                    {
+                        using (SqliteDataReader rdr = cmd.ExecuteReader())
+                        {
+                            while (rdr.Read())
+                            {
+                                bookinfo.AddFirst
+                                (
+                                    new BookInfo
+                                    {
+                                        CRid = rdr.GetString(0),
+                                        asin = rdr.GetString(1),
+                                        guid = rdr.GetString(2),
+                                        lang = rdr.GetString(3),
+                                        title = rdr.GetString(4),
+                                        authors = rdr.GetString(5)
+                                    }
+                                );
+                            }
+                        }
+                    }
                     con.Close();
                 }
+                bot.SendTextMessageAsync(update.Message.Chat.Id, $"Extracted {words.Count.ToString()} words from the vocab.db");
 
                 //Add words to SQL Server
                 using (AlcoDBEntities db = new AlcoDBEntities())
                 {
                     db.Database.ExecuteSqlCommand("delete from Words");
                     db.Words.AddRange(words);
+                    db.Database.ExecuteSqlCommand("delete from Lookups");
+                    db.Lookups.AddRange(lookups);
+                    db.Database.ExecuteSqlCommand("delete from BookInfo");
+                    db.BookInfo.AddRange(bookinfo);
+
                     db.SaveChanges();
                     bot.SendTextMessageAsync(update.Message.Chat.Id, $"Added {words.Count.ToString()} words to the DB!");
                 }

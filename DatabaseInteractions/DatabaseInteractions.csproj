@@ -64,11 +64,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AlcoDBModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="BookInfo.cs">
+      <DependentUpon>AlcoDBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Clients.cs">
       <DependentUpon>AlcoDBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="DB.cs" />
     <Compile Include="Enums.cs">
+      <DependentUpon>AlcoDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Lookups.cs">
       <DependentUpon>AlcoDBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
