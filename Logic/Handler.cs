@@ -122,7 +122,7 @@ namespace Logic
 
             var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
                 "join Subscriptions s on s.id = c.subscription " +
-                "where s.SubsctiptionType = 1");
+                "where s.SubsctiptionType = " + (int)Subscription.Oglaf);
 
             foreach (var client in clients)
             {
@@ -146,7 +146,21 @@ namespace Logic
                 }
             }
 
-            
+            clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
+                "join Subscriptions s on s.id = c.subscription " +
+                "where s.SubsctiptionType = " + (int)Subscription.XKCD);
+            foreach (var client in clients)
+            {
+                var result = OglafGrabber.GetXKCDPicture(client);
+                if (result.doSend)
+                {
+                    await _bot.SendTextMessageAsync(client, result.alt.ToUpper());
+                    await _bot.SendTextMessageAsync(client, result.title);
+                    await _bot.SendPhotoAsync(client, new FileToSend(result.scr));
+                }
+            }
+
+
             return;
 
         }

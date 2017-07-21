@@ -12,7 +12,7 @@ namespace Web
 {
     public static class NoHookLoop
     {
-        public static void Start()
+        public static async void StartAsync()
         {
             Run().Wait();
         }

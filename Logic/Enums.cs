@@ -13,10 +13,6 @@ namespace Logic
         XKCD
         
     }
-    public enum GameType
-    {
-        VocabGame
-    }
 
     public enum VocabCallbackType
     {

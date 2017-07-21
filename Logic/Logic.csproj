@@ -111,7 +111,7 @@
     <Compile Include="Processors\TextMessageCommandProcessor.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Handler.cs" />
-    <Compile Include="Oglaf\OglafGrabber.cs" />
+    <Compile Include="Grabbers\OglafGrabber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VocabCallbackData.cs" />
     <Compile Include="WakeOnLan.cs" />

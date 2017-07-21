@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Owin;
 using Owin;
+using System.Threading;
 
 [assembly: OwinStartup(typeof(Web.Startup))]
 
@@ -15,8 +16,13 @@ namespace Web
             ConfigureAuth(app);
             if (Logic.Config.Environment == "Debug")
             {
-                NoHookLoop.Start();
+                new Thread(new ThreadStart(GO));
             }
+        }
+
+        private void GO()
+        {
+            NoHookLoop.StartAsync();
         }
     }
 }

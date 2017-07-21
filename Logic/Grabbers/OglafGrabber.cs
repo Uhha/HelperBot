@@ -30,20 +30,45 @@ namespace Logic.Oglaf
             var attrs = imageNodes[0]?.Attributes;
 
             return (
-                NotSent(client, attrs["alt"]?.Value),
+                NotSent(client, attrs["alt"]?.Value, Subscription.Oglaf),
                 attrs["alt"]?.Value,
                 attrs["title"]?.Value,
                 attrs["src"]?.Value
                 );
         }
 
-        private static bool NotSent(int client, string alt)
+        public static (bool doSend, string alt, string title, string scr) GetXKCDPicture(int client)
+        {
+            WebClient webclient = new WebClient();
+            string html = webclient.DownloadString("https://xkcd.com/");
+
+
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            List<HtmlNode> imageNodes = null;
+            imageNodes = (from HtmlNode node in doc.DocumentNode.SelectNodes("//img")
+                          where node.Name == "img"
+                          && !string.IsNullOrEmpty(node.Attributes["title"]?.Value)
+                          select node).ToList();
+
+            var attrs = imageNodes[0]?.Attributes;
+
+            return (
+                NotSent(client, attrs["alt"]?.Value, Subscription.XKCD),
+                attrs["alt"]?.Value,
+                attrs["title"]?.Value,
+                attrs["src"]?.Value.Substring(2)
+                );
+        }
+
+        private static bool NotSent(int client, string alt, Subscription subscription)
         {
             using (AlcoDBEntities db = new AlcoDBEntities())
             {
                 var lastPostedKey = (from cli in db.Clients
                            join sub in db.Subscriptions on cli.Subscription equals sub.Id
-                           where cli.ChatID == client && sub.SubsctiptionType == (int)Subscription.Oglaf
+                           where cli.ChatID == client && sub.SubsctiptionType == (int)subscription
                            orderby sub.Id descending
                            select new
                            {
