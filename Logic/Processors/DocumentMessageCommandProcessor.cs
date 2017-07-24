@@ -16,104 +16,120 @@ namespace Logic.Processors
         {
             if (update.Message.Document.FileName.Equals("vocab.db"))
             {
-                //Save a db file locally
-                var file = bot.GetFileAsync(update.Message.Document.FileId);
-                using (Stream ff = System.IO.File.Create("temp.db"))
+                try
                 {
-                    CopyStream(file.Result.FileStream, ff);
-                    void CopyStream(Stream input, Stream output)
+                    //Save a db file locally
+                    var file = bot.GetFileAsync(update.Message.Document.FileId);
+                    using (Stream ff = System.IO.File.Create("temp.db"))
                     {
-                        byte[] buffer = new byte[8 * 1024];
-                        int len;
-                        while ((len = input.Read(buffer, 0, buffer.Length)) > 0)
+                        CopyStream(file.Result.FileStream, ff);
+                        void CopyStream(Stream input, Stream output)
                         {
-                            output.Write(buffer, 0, len);
+                            byte[] buffer = new byte[8 * 1024];
+                            int len;
+                            while ((len = input.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                output.Write(buffer, 0, len);
+                            }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    var asd = e.Message;
+                    throw;
                 }
 
                 //get words from SQLite file
                 LinkedList<Words> words = new LinkedList<Words>();
                 LinkedList<Lookups> lookups = new LinkedList<Lookups>();
                 LinkedList<BookInfo> bookinfo = new LinkedList<BookInfo>();
-                using (SqliteConnection con = new SqliteConnection("URI = file:temp.db"))
+                try
                 {
-                    con.Open();
-                    string stm = "SELECT * FROM Words";
-
-                    using (SqliteCommand cmd = new SqliteCommand(stm, con))
+                    using (SqliteConnection con = new SqliteConnection("URI = file:temp.db"))
                     {
-                        using (SqliteDataReader rdr = cmd.ExecuteReader())
-                        {
-                            while (rdr.Read())
-                            {
-                                words.AddFirst
-                                (
-                                    new Words
-                                    {
-                                        WordID = rdr.GetString(0),
-                                        Word = rdr.GetString(1),
-                                        Stem = rdr.GetString(2),
-                                        Lang = rdr.GetString(3),
-                                        Category = rdr.GetInt32(4),
-                                        Timestamp = rdr.GetInt32(5),
-                                        ProfileID = rdr.GetString(6)
-                                    }                                    
-                                );
-                            }
-                            //bot.SendTextMessageAsync(update.Message.Chat.Id, $"Extracted {words.Count.ToString()} words from the vocab.db");
-                        }
-                    }
+                        con.Open();
+                        string stm = "SELECT * FROM Words";
 
-                    stm = "SELECT * FROM Lookups";
-
-                    using (SqliteCommand cmd = new SqliteCommand(stm, con))
-                    {
-                        using (SqliteDataReader rdr = cmd.ExecuteReader())
+                        using (SqliteCommand cmd = new SqliteCommand(stm, con))
                         {
-                            while (rdr.Read())
+                            using (SqliteDataReader rdr = cmd.ExecuteReader())
                             {
-                                lookups.AddFirst
-                                (
-                                    new Lookups
-                                    {
-                                        CRid = rdr.GetString(0),
-                                        WordID = rdr.GetString(1),
-                                        BookKey = rdr.GetString(2),
-                                        DicKey = rdr.GetString(3),
-                                        Pos = rdr.GetInt32(4),
-                                        Usage = rdr.GetString(5),
-                                        Timestamp = rdr.GetInt32(6)
-                                    }
-                                );
+                                while (rdr.Read())
+                                {
+                                    words.AddFirst
+                                    (
+                                        new Words
+                                        {
+                                            WordID = rdr.GetString(0),
+                                            Word = rdr.GetString(1),
+                                            Stem = rdr.GetString(2),
+                                            Lang = rdr.GetString(3),
+                                            Category = rdr.GetInt32(4),
+                                            Timestamp = rdr.GetInt32(5),
+                                            ProfileID = rdr.GetString(6)
+                                        }
+                                    );
+                                }
+                                //bot.SendTextMessageAsync(update.Message.Chat.Id, $"Extracted {words.Count.ToString()} words from the vocab.db");
                             }
                         }
-                    }
 
-                    stm = "SELECT * FROM BOOK_INFO";
+                        stm = "SELECT * FROM Lookups";
 
-                    using (SqliteCommand cmd = new SqliteCommand(stm, con))
-                    {
-                        using (SqliteDataReader rdr = cmd.ExecuteReader())
+                        using (SqliteCommand cmd = new SqliteCommand(stm, con))
                         {
-                            while (rdr.Read())
+                            using (SqliteDataReader rdr = cmd.ExecuteReader())
                             {
-                                bookinfo.AddFirst
-                                (
-                                    new BookInfo
-                                    {
-                                        CRid = rdr.GetString(0),
-                                        asin = rdr.GetString(1),
-                                        guid = rdr.GetString(2),
-                                        lang = rdr.GetString(3),
-                                        title = rdr.GetString(4),
-                                        authors = rdr.GetString(5)
-                                    }
-                                );
+                                while (rdr.Read())
+                                {
+                                    lookups.AddFirst
+                                    (
+                                        new Lookups
+                                        {
+                                            CRid = rdr.GetString(0),
+                                            WordID = rdr.GetString(1),
+                                            BookKey = rdr.GetString(2),
+                                            DicKey = rdr.GetString(3),
+                                            Pos = rdr.GetString(4),
+                                            Usage = rdr.GetString(5),
+                                            Timestamp = rdr.GetInt32(6)
+                                        }
+                                    );
+                                }
                             }
                         }
+
+                        stm = "SELECT * FROM BOOK_INFO";
+
+                        using (SqliteCommand cmd = new SqliteCommand(stm, con))
+                        {
+                            using (SqliteDataReader rdr = cmd.ExecuteReader())
+                            {
+                                while (rdr.Read())
+                                {
+                                    bookinfo.AddFirst
+                                    (
+                                        new BookInfo
+                                        {
+                                            CRid = rdr.GetString(0),
+                                            asin = rdr.GetString(1),
+                                            guid = rdr.GetString(2),
+                                            lang = rdr.GetString(3),
+                                            title = rdr.GetString(4),
+                                            authors = rdr.GetString(5)
+                                        }
+                                    );
+                                }
+                            }
+                        }
+                        con.Close();
                     }
-                    con.Close();
+                }
+                catch (Exception e2)
+                {
+                    var asdad = e2.Message;
+                    throw;
                 }
                 bot.SendTextMessageAsync(update.Message.Chat.Id, $"Extracted {words.Count.ToString()} words from the vocab.db");
 

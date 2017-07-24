@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DatabaseInteractions;
 using System.Data.Entity.Core;
+using System.Linq;
 
 namespace DBCallsNetTest
 {
@@ -49,7 +50,7 @@ namespace DBCallsNetTest
         {
             var value = DB.GetList<string>("select Name from enums");
             Assert.AreEqual("Oglaf", value[0]);
-            Assert.AreEqual("Oglaf", value[1]);
+            Assert.AreEqual("XKCD", value[1]);
         }
 
         [TestMethod]
@@ -64,6 +65,19 @@ namespace DBCallsNetTest
         public void GetTableValues()
         {
             var value = DB.GetTable<TestResult>("select id, Name from enums");
+
+            var wrds = DB.GetTable<WordLookup>(@"SELECT distinct
+                                                w.word as WordText,
+                                                STUFF((select '\n' + l2.usage from Lookups l2 
+                                                        where l2.WordID = w.wordid for xml path(''), TYPE).value('.', 'varchar(max)'), 1, 2, '') as Lookup
+                                                FROM
+                                                WORDS w
+                                                LEFT JOIN LOOKUPS l
+                                                on l.wordID = w.WordID
+                                                LEFT JOIN BOOKINFO b
+                                                on b.guid = l.bookkey");
+
+
         }
 
         public class TestResult
@@ -71,5 +85,12 @@ namespace DBCallsNetTest
             public int Id { get; set; }
             public string Name { get; set; }
         }
+
+        public class WordLookup
+        {
+            public string WordText { get; set; }
+            public string Lookup { get; set; }
+        }
+
     }
 }

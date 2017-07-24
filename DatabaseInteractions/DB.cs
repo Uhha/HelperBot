@@ -32,6 +32,7 @@ namespace DatabaseInteractions
 
         public static IList<T> GetTable<T>(string sql)
         {
+           
             using (AlcoDBEntities db = new AlcoDBEntities())
             {
                 DbRawSqlQuery<T> rows = db.Database.SqlQuery<T>(sql);
@@ -39,6 +40,7 @@ namespace DatabaseInteractions
             }
 
         }
+
 
     }
 }

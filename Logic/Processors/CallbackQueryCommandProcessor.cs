@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Logic.Processors
@@ -93,13 +94,14 @@ namespace Logic.Processors
                         }
                     }
                 };
-                await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, VocabCallbackData.Word, replyMarkup: inlineKeyboardMarkup);
+                await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, VocabCallbackData.Message, 
+                    replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
             }
 
             if (update.CallbackQuery.Data.Equals("vocabDefinition"))
             {
                 await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, 
-                    VocabCallbackData.GetDefinition(), parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+                    VocabCallbackData.GetDefinition(), parseMode: ParseMode.Html);
             }
         }
     }

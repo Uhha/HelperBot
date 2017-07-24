@@ -16,13 +16,14 @@ namespace Web
             ConfigureAuth(app);
             if (Logic.Config.Environment == "Debug")
             {
-                new Thread(new ThreadStart(GO));
+                new Thread(() =>
+                {
+                    Thread.CurrentThread.IsBackground = true;
+                    NoHookLoop.StartAsync();
+                }).Start();
             }
         }
 
-        private void GO()
-        {
-            NoHookLoop.StartAsync();
-        }
+       
     }
 }

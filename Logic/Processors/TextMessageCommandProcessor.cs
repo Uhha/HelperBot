@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Logic.Processors
@@ -57,7 +58,8 @@ namespace Logic.Processors
 
                 try
                 {
-                    await bot.SendTextMessageAsync(update.Message.Chat.Id, VocabCallbackData.Word, replyMarkup: inlineKeyboardMarkup);
+                    await bot.SendTextMessageAsync(update.Message.Chat.Id, VocabCallbackData.Message, 
+                        replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
                 }
                 catch (Exception e)
                 {

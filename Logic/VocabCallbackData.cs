@@ -13,9 +13,17 @@ namespace Logic
 {
     public static class VocabCallbackData
     {
-        private static string[] _words;
+        private static WordLookup[] _words;
         private static int index;
-        public static string Word
+        public static string Message
+        {
+            get
+            {
+                var lp = Word;
+                return lp.WordText.Bold() + Environment.NewLine + lp.Lookup.Italic();
+            }
+        }
+        private static WordLookup Word
         {
             get
             {
@@ -29,8 +37,19 @@ namespace Logic
         {
             using (AlcoDBEntities db = new AlcoDBEntities())
             {
-                IQueryable<string> wrds = from p in db.Words
-                                          select p.Stem;
+                //IQueryable<(string, string)> wrds = from p in db.Words
+                                        //  select ValueTuple.Create(p.Stem, p.Stem);
+                var wrds = DB.GetTable<WordLookup>(@"SELECT distinct
+                                                w.word as WordText,
+                                                STUFF((select ' ' + l2.usage from Lookups l2 
+                                                        where l2.WordID = w.wordid for xml path(''), TYPE).value('.', 'varchar(max)'), 1, 1, '') as Lookup
+                                                FROM
+                                                WORDS w
+                                                LEFT JOIN LOOKUPS l
+                                                on l.wordID = w.WordID
+                                                LEFT JOIN BOOKINFO b
+                                                on b.guid = l.bookkey");
+
                 Random rnd = new Random();
                 _words = wrds.ToArray().OrderBy(x => rnd.Next()).ToArray();
             }
@@ -43,7 +62,7 @@ namespace Logic
             string appkey = "***REMOVED***";
             string sourcelang = "en";
             string wordid;
-            if (_words != null && index != 0) { wordid = _words[index - 1]; } else { return "No word have chosen"; };
+            if (_words != null && index != 0) { wordid = _words[index - 1].WordText; } else { return "No word have chosen"; };
             string urlParameters = sourcelang + "/" + wordid;
 
             HttpClient client = new HttpClient();
@@ -56,37 +75,62 @@ namespace Logic
             client.DefaultRequestHeaders.Add("app_key", appkey);
 
             // List data response.
-            string ret = string.Empty;
             HttpResponseMessage response = client.GetAsync(urlParameters).Result;  // Blocking call!
             if (response.IsSuccessStatusCode)
             {
                 // Parse the response body. Blocking!
                 var dataObjects = response.Content.ReadAsAsync<Rootobject>().Result;
 
-                string pronunciation = dataObjects.results[0].lexicalEntries[0].pronunciations[0]?.phoneticSpelling;
-                string lexCategory = dataObjects.results[0].lexicalEntries[0].lexicalCategory;
-                string definition = dataObjects.results[0].lexicalEntries[0].entries[0].senses[0].definitions[0];
-                string example = string.Empty;
-                if (dataObjects.results[0].lexicalEntries[0].entries[0].senses[0]?.examples != null)
+                StringBuilder sb = new StringBuilder();
+
+                //Word Itself
+                sb.Append(wordid.FirstCap().Bold() + Environment.NewLine);
+                //Phonetic Spelling
+                sb.Append($"[{dataObjects.results[0]?.lexicalEntries[0]?.pronunciations[0]?.phoneticSpelling}]{Environment.NewLine}");
+                foreach (var lentry in dataObjects.results[0].lexicalEntries)
                 {
-                    example = dataObjects.results[0].lexicalEntries[0].entries[0].senses[0]?.examples[0]?.text;
+                    if (Array.IndexOf(dataObjects.results[0].lexicalEntries, lentry) != 0)
+                    {
+                        sb.Append("___________" + Environment.NewLine);
+                    }
+                    sb.Append(lentry.lexicalCategory + Environment.NewLine);
+                    foreach (var entry in lentry.entries)
+                    {
+                        foreach (var sense in entry.senses)
+                        {
+                            if (Array.IndexOf(entry.senses, sense) != 0)
+                            {
+                                sb.Append("..........." + Environment.NewLine); 
+                            }
+
+                            for (int i = 0; i < sense.definitions.Length; i++)
+                            {
+                                sb.Append(sense.definitions[i].FirstCap() + Environment.NewLine);
+                                if (sense.examples != null && i < sense.examples.Length)
+                                {
+                                    sb.Append(sense.examples[i].text.FirstCap().Italic());
+                                    if (sense.domains != null && i < sense.domains.Length)
+                                    {
+                                        sb.Append($" [{sense.domains[i].FirstCap().Italic()}]" + Environment.NewLine);
+                                    }
+                                    else
+                                    {
+                                        sb.Append(Environment.NewLine);
+                                    }
+                                }
+                                
+
+                            }
+
+                        }
+                    }
                 }
 
                 var translation = TranslateText(wordid, "en|ru");
-
-                return ret = $"{wordid.FirstCap().Bold()}{Environment.NewLine}" +
-                    $"[{pronunciation}]{Environment.NewLine}" +
-                    $"{lexCategory}{Environment.NewLine}" +
-                    $"{definition.FirstCap()}{Environment.NewLine}" +
-                    $"{example.FirstCap().Italic()}{Environment.NewLine}" +
-                    $"{translation.FirstCap()}";
-                    
-
-
+                sb.Append("rus: " + translation.FirstCap() + Environment.NewLine);
+                return sb.ToString();
                 
             }
-
-            
 
             return "No definition found";
         }
@@ -108,6 +152,13 @@ namespace Logic
             {
                 return "";
             }
+
+        }
+
+        public class WordLookup
+        {
+            public string WordText { get; set; }
+            public string Lookup { get; set; }
         }
 
     }

@@ -18,7 +18,7 @@ namespace DatabaseInteractions
         public string WordID { get; set; }
         public string BookKey { get; set; }
         public string DicKey { get; set; }
-        public Nullable<int> Pos { get; set; }
+        public string Pos { get; set; }
         public string Usage { get; set; }
         public Nullable<int> Timestamp { get; set; }
     }

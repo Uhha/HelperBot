@@ -41,7 +41,7 @@
           <Property Name="WordID" Type="varchar" MaxLength="250" />
           <Property Name="BookKey" Type="varchar" MaxLength="250" />
           <Property Name="DicKey" Type="varchar" MaxLength="250" />
-          <Property Name="Pos" Type="int" />
+          <Property Name="Pos" Type="varchar" MaxLength="250" />
           <Property Name="Usage" Type="varchar(max)" />
           <Property Name="Timestamp" Type="int" />
         </EntityType>
@@ -177,7 +177,7 @@
           <Property Name="WordID" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="BookKey" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="DicKey" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Pos" Type="Int32" />
+          <Property Name="Pos" Type="String" />
           <Property Name="Usage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Timestamp" Type="Int32" />
         </EntityType>

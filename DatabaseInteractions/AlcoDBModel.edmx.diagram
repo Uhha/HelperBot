@@ -11,7 +11,7 @@
         <AssociationConnector Association="AlcoDBNS.FK_Clients_Subscriptions" ManuallyRouted="false" />
         <EntityTypeShape EntityType="AlcoDBNS.Words" Width="1.5" PointX="3.375" PointY="3.75" />
         <EntityTypeShape EntityType="AlcoDBNS.BookInfo" Width="1.5" PointX="5.375" PointY="0.75" />
-        <EntityTypeShape EntityType="AlcoDBNS.Lookups" Width="1.5" PointX="5.375" PointY="3.75" />
+        <EntityTypeShape EntityType="AlcoDBNS.Lookups" Width="1.5" PointX="6.25" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
