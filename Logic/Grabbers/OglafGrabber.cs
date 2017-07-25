@@ -50,6 +50,7 @@ namespace Logic.Oglaf
             imageNodes = (from HtmlNode node in doc.DocumentNode.SelectNodes("//img")
                           where node.Name == "img"
                           && !string.IsNullOrEmpty(node.Attributes["title"]?.Value)
+                          && node.Attributes["src"].Value.Contains("comics")
                           select node).ToList();
 
             var attrs = imageNodes[0]?.Attributes;
