@@ -87,6 +87,14 @@ namespace Logic.Processors
                 if (string.IsNullOrEmpty(result.Item1)) return;
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, result.Item1, parseMode: ParseMode.Html);
             }
+
+            if (update.Message.Text.StartsWith("/define"))
+            {
+                var word = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
+                var result = VocabCallbackData.GetDefinition(word);
+                if (string.IsNullOrEmpty(result)) return;
+                await bot.SendTextMessageAsync(update.Message.Chat.Id, result, parseMode: ParseMode.Html);
+            }
         }
     }
 }
