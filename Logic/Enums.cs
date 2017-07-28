@@ -10,7 +10,8 @@ namespace Logic
     {
         NoSubscription,
         Oglaf,
-        XKCD
+        XKCD,
+        CoinCapMarket
         
     }
 

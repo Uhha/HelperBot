@@ -1,4 +1,5 @@
 ﻿using Logic;
+using Logic.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -50,7 +51,7 @@ namespace Web
 
                     //}
 
-                    Task.Run(() => new Handler().Handle(update));
+                    Task.Run(() => new MessageHandler().Handle(update));
 
                     offset = update.Id + 1;
                 }

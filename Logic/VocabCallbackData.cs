@@ -14,7 +14,7 @@ namespace Logic
     public static class VocabCallbackData
     {
         private static WordLookup[] _words;
-        private static int index;
+        private static int _index;
         public static string Message
         {
             get
@@ -23,15 +23,30 @@ namespace Logic
                 return lp.WordText.Bold() + Environment.NewLine + lp.Lookup.Italic();
             }
         }
-        private static WordLookup Word
+        public static WordLookup Word
         {
             get
             {
                 if (_words == null) SetWords();
-                if (index < _words.Length) { return _words[index++]; } else { return _words[index = 0]; }
+                //if (_index < _words.Length) { return _words[_index]; } else { return _words[_index = 0]; }
+                return _words[_index];
             }
             set { }
         }
+
+        public static void PrepareNextWord()
+        {
+            if (_index < _words.Length) { _index++; } else { _index = 0; }
+        }
+
+        //public static string CurrentWord
+        //{
+        //    get
+        //    {
+        //        if (index == 0) { return _words[_words.Length - 1].WordText; }
+        //        return _words[index - 1].WordText;
+        //    }
+        //}
 
         private static void SetWords()
         {
@@ -55,15 +70,15 @@ namespace Logic
             }
         }
 
-        public static string GetDefinition()
+        public static string GetDefinition(string word)
         {
             string url = "***REMOVED***";
             string appid = "***REMOVED***";
             string appkey = "***REMOVED***";
             string sourcelang = "en";
-            string wordid;
-            if (_words != null && index != 0) { wordid = _words[index - 1].WordText; } else { return "No word have chosen"; };
-            string urlParameters = sourcelang + "/" + wordid;
+            //string wordid;
+            //if (_words != null && _index != 0) { wordid = _words[_index - 1].WordText; } else { return "No word have chosen"; };
+            string urlParameters = sourcelang + "/" + word;
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(url);
@@ -84,7 +99,7 @@ namespace Logic
                 StringBuilder sb = new StringBuilder();
 
                 //Word Itself
-                sb.Append(wordid.FirstCap().Bold() + Environment.NewLine);
+                sb.Append(word.FirstCap().Bold() + Environment.NewLine);
                 //Phonetic Spelling
                 sb.Append($"[{dataObjects.results[0]?.lexicalEntries[0]?.pronunciations[0]?.phoneticSpelling}]{Environment.NewLine}");
                 foreach (var lentry in dataObjects.results[0].lexicalEntries)
@@ -126,13 +141,13 @@ namespace Logic
                     }
                 }
 
-                var translation = TranslateText(wordid, "en|ru");
+                var translation = TranslateText(word, "en|ru");
                 sb.Append("rus: " + translation.FirstCap() + Environment.NewLine);
                 return sb.ToString();
                 
             }
-
-            return "No definition found";
+            
+            return "No english definition found" + Environment.NewLine + TranslateText(word, "en|ru"); ;
         }
 
         private static string TranslateText(string input, string languagePair)
@@ -182,6 +197,7 @@ namespace Logic
         }
 
     }
+#region OxfordDic return object
 
     public class Rootobject
     {
@@ -418,5 +434,5 @@ namespace Logic
         public string phoneticSpelling { get; set; }
         public string[] regions { get; set; }
     }
-
+#endregion
 }

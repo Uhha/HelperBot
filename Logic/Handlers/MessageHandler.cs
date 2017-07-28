@@ -1,5 +1,5 @@
 ﻿using DatabaseInteractions;
-using Logic.Oglaf;
+using Logic.Grabbers;
 using Logic.Processors;
 using System;
 using System.Collections.Generic;
@@ -9,13 +9,13 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Logic
+namespace Logic.Handlers
 {
-    public class Handler
+    public class MessageHandler
     {
         private readonly TelegramBotClient _bot;
 
-        public Handler()
+        public MessageHandler()
         {
             _bot = Bot.Get();
         }
@@ -128,7 +128,7 @@ namespace Logic
             {
                 try
                 {
-                    var result = OglafGrabber.GetOglafPicture(client);
+                    var result = ComicGrabber.GetOglafPicture(client);
                     if (result.doSend)
                     {
                         await _bot.SendTextMessageAsync(client, result.alt.ToUpper());
@@ -153,7 +153,7 @@ namespace Logic
             {
                 foreach (var client in clients)
                 {
-                    var result = OglafGrabber.GetXKCDPicture(client);
+                    var result = ComicGrabber.GetXKCDPicture(client);
                     if (result.doSend)
                     {
                         await _bot.SendTextMessageAsync(client, result.alt.ToUpper());

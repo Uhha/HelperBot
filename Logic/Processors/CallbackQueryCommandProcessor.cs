@@ -17,6 +17,7 @@ namespace Logic.Processors
                 Subscription subscriptionType = Subscription.NoSubscription;
                 if (update.CallbackQuery.Data.Equals("subOglaf")) subscriptionType = Subscription.Oglaf;
                 if (update.CallbackQuery.Data.Equals("subXkcd")) subscriptionType = Subscription.XKCD;
+                if (update.CallbackQuery.Data.Equals("subCoinCM")) subscriptionType = Subscription.CoinCapMarket;
 
                 var userId = update.CallbackQuery.From.Id;
                 int.TryParse(userId, out int ID);
@@ -42,26 +43,8 @@ namespace Logic.Processors
                     }
                     else
                     {
-                        await bot.SendTextMessageAsync(userId, "Already subscribed");
-                    }
-
-                }
-                
-            }
-
-            if (update.CallbackQuery.Data.StartsWith("-sub"))
-            {
-                Subscription subscriptionType = Subscription.NoSubscription;
-                if (update.CallbackQuery.Data.Equals("-subOglaf")) subscriptionType = Subscription.Oglaf;
-                if (update.CallbackQuery.Data.Equals("-subXkcd")) subscriptionType = Subscription.XKCD;
-
-                var userId = update.CallbackQuery.From.Id;
-                int.TryParse(userId, out int ID);
-                using (AlcoDBEntities db = new AlcoDBEntities())
-                {
-                    if (db.Clients.Any(x => x.ChatID.ToString() == userId && db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType ==(int)subscriptionType)))
-                    {
-                        var clients = db.Clients.Where(x => x.ChatID.ToString() == userId && 
+                        //await bot.SendTextMessageAsync(userId, "Already subscribed");
+                        var clients = db.Clients.Where(x => x.ChatID.ToString() == userId &&
                             db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType == (int)subscriptionType));
                         foreach (var item in clients)
                         {
@@ -72,14 +55,42 @@ namespace Logic.Processors
                         db.SaveChanges();
                         await bot.SendTextMessageAsync(userId, $"Unsubscribed from { subscriptionType.ToString() }!");
                     }
-                    else
-                    {
-                        await bot.SendTextMessageAsync(userId, "You are not subscribed");
-                    }
 
                 }
-
+                
             }
+
+            //if (update.CallbackQuery.Data.StartsWith("-sub"))
+            //{
+            //    Subscription subscriptionType = Subscription.NoSubscription;
+            //    if (update.CallbackQuery.Data.Equals("-subOglaf")) subscriptionType = Subscription.Oglaf;
+            //    if (update.CallbackQuery.Data.Equals("-subXkcd")) subscriptionType = Subscription.XKCD;
+
+            //    var userId = update.CallbackQuery.From.Id;
+            //    int.TryParse(userId, out int ID);
+            //    using (AlcoDBEntities db = new AlcoDBEntities())
+            //    {
+            //        if (db.Clients.Any(x => x.ChatID.ToString() == userId && db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType ==(int)subscriptionType)))
+            //        {
+            //            var clients = db.Clients.Where(x => x.ChatID.ToString() == userId && 
+            //                db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType == (int)subscriptionType));
+            //            foreach (var item in clients)
+            //            {
+            //                db.Clients.Remove(item);
+            //                var sub = db.Subscriptions.Where(x => x.Id == item.Subscription).FirstOrDefault();
+            //                db.Subscriptions.Remove(sub);
+            //            }
+            //            db.SaveChanges();
+            //            await bot.SendTextMessageAsync(userId, $"Unsubscribed from { subscriptionType.ToString() }!");
+            //        }
+            //        else
+            //        {
+            //            await bot.SendTextMessageAsync(userId, "You are not subscribed");
+            //        }
+
+            //    }
+
+            //}
 
             if (update.CallbackQuery.Data.Equals("vocabNW"))
             {
@@ -90,18 +101,20 @@ namespace Logic.Processors
                          new [] {  InlineKeyboardButton.WithCallbackData (
                                     "Next Word", "vocabNW"),
                                 InlineKeyboardButton.WithCallbackData (
-                                    "Definition", "vocabDefinition"  )
+                                    "Definition", "vocabDefinition=" + VocabCallbackData.Word.WordText)
                         }
                     }
                 };
                 await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, VocabCallbackData.Message, 
                     replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
+                VocabCallbackData.PrepareNextWord();
             }
 
-            if (update.CallbackQuery.Data.Equals("vocabDefinition"))
+            if (update.CallbackQuery.Data.StartsWith("vocabDefinition"))
             {
+                var word = update.CallbackQuery.Data.Substring(update.CallbackQuery.Data.IndexOf('='));
                 await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, 
-                    VocabCallbackData.GetDefinition(), parseMode: ParseMode.Html);
+                    VocabCallbackData.GetDefinition(word), parseMode: ParseMode.Html);
             }
         }
     }

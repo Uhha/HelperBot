@@ -7,9 +7,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.Oglaf
+namespace Logic.Grabbers
 {
-    static class OglafGrabber
+    static class ComicGrabber
     {
 
         public static (bool doSend, string alt, string title, string scr) GetOglafPicture(int client)
