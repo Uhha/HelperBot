@@ -81,7 +81,7 @@ namespace Logic.Processors
 
             if (update.Message.Text.StartsWith("/coins"))
             {
-                var number = update.Message.Text.Substring(update.Message.Text.IndexOf(' '));
+                var number = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
                 int.TryParse(number, out int currenciesNumber);
                 var result = await CoinGrabber.GetPricesAsync(currenciesNumber);
                 if (string.IsNullOrEmpty(result.Item1)) return;

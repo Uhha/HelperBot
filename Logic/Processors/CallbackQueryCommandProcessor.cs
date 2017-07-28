@@ -112,7 +112,7 @@ namespace Logic.Processors
 
             if (update.CallbackQuery.Data.StartsWith("vocabDefinition"))
             {
-                var word = update.CallbackQuery.Data.Substring(update.CallbackQuery.Data.IndexOf('='));
+                var word = update.CallbackQuery.Data.Substring(update.CallbackQuery.Data.IndexOf('=') + 1);
                 await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, 
                     VocabCallbackData.GetDefinition(word), parseMode: ParseMode.Html);
             }
