@@ -140,7 +140,7 @@ namespace Logic
                         }
                     }
                 }
-
+                if (sb.Length > 4000) sb.Remove(4000, sb.Length);
                 var translation = TranslateText(word, "en|ru");
                 sb.Append("rus: " + translation.FirstCap() + Environment.NewLine);
                 return sb.ToString();

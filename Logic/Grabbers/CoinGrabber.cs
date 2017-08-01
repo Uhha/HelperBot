@@ -13,7 +13,8 @@ namespace Logic.Grabbers
         {
             HttpClient client = new HttpClient();
             if (currenciesNumber > 20) currenciesNumber = 20;
-            if (currenciesNumber <= 0) return ("Incorrect number", true);
+            if (currenciesNumber < 0) return ("Incorrect number", true);
+            if (currenciesNumber == 0) currenciesNumber = 5;
             try
             {
                 var response = await client.GetAsync(string.Format("https://api.coinmarketcap.com/v1/ticker?limit={0}", currenciesNumber));
@@ -27,10 +28,17 @@ namespace Logic.Grabbers
                         sb.Append($"{item.symbol.Bold()}: ${item.price_usd}, {item.percent_change_24h.Italic()}%{Environment.NewLine}");
                     }
 
-                    double.TryParse(result[0].percent_change_24h, out double BTCchange);
-                    double.TryParse(result[1].percent_change_24h, out double ETHchange);
-                    var change = (Math.Abs(BTCchange) >= 10 || Math.Abs(ETHchange) >= 10) ? true : false;
-                    return (sb.ToString(), change);
+                    if (currenciesNumber == 1)
+                    {
+                        return (sb.ToString(), true);
+                    }
+                    else
+                    {
+                        double.TryParse(result[0].percent_change_24h, out double BTCchange);
+                        double.TryParse(result[1].percent_change_24h, out double ETHchange);
+                        var change = (Math.Abs(BTCchange) >= 10 || Math.Abs(ETHchange) >= 10) ? true : false;
+                        return (sb.ToString(), change);
+                    }
                 }
                 return (string.Empty, false);
             }
