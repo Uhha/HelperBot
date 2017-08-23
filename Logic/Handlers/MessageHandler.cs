@@ -67,6 +67,7 @@ namespace Logic.Handlers
 
         private async Task MessageUpdate(Update update)
         {
+            await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
             switch (update.Message.Type)
             {
                 case Telegram.Bot.Types.Enums.MessageType.UnknownMessage:
