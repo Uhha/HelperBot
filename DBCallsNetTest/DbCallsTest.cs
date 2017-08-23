@@ -92,5 +92,16 @@ namespace DBCallsNetTest
             public string Lookup { get; set; }
         }
 
+        [TestMethod]
+        public void SimpleTest()
+        {
+            var worddef = "/definition=Theword";
+            var callback = "/vocabNewWord";
+            var callbackPrefix = worddef.Substring(worddef.IndexOf('=') + 1);
+            var callbackPrefix2 = callback.Substring(callback.IndexOf('=') + 1);
+            var wordsp = "/define someword";
+            var callbackPrefix3 = wordsp.Substring(0, wordsp.IndexOf(' '));
+
+        }
     }
 }

@@ -1,15 +1,54 @@
-﻿using System;
+﻿using DatabaseInteractions;
+using NLog;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
-namespace Logic.Grabbers
+namespace Logic.Modules
 {
-    class CoinGrabber
+    class CoinModule : IModule
     {
-        internal async static Task<(string, bool)> GetPricesAsync(int currenciesNumber)
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
+        {
+            var number = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
+            int.TryParse(number, out int currenciesNumber);
+            var result = await GetPricesAsync(currenciesNumber);
+            if (string.IsNullOrEmpty(result.Item1)) return;
+            await bot.SendTextMessageAsync(update.Message.Chat.Id, result.Item1, parseMode: ParseMode.Html);
+        }
+
+        public Task GenerateAndSendCallbackAsync(TelegramBotClient bot, Update update)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task GenerateAndSendWorkerAsync(TelegramBotClient bot, IList<string> parameters)
+        {
+            var currenciesNumber = 5;
+            bool.TryParse(parameters[0], out bool sendAnyway);
+            var result = await GetPricesAsync(currenciesNumber);
+            if ((!sendAnyway && !result.Item2) || string.IsNullOrEmpty(result.Item1)) return;
+
+            var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
+                "join Subscriptions s on s.id = c.subscription " +
+                "where s.SubsctiptionType = " + (int)Subscription.CoinCapMarket);
+
+            foreach (var client in clients)
+            {
+                await bot.SendTextMessageAsync(client, result.Item1, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+            }
+        }
+
+        private async static Task<(string, bool)> GetPricesAsync(int currenciesNumber)
         {
             HttpClient client = new HttpClient();
             if (currenciesNumber > 20) currenciesNumber = 20;
@@ -44,22 +83,15 @@ namespace Logic.Grabbers
             }
             catch (Exception e)
             {
-                return("", false);
+                logger.Error(e.Message + e.InnerException?.Message);
+                return ("", false);
             }
         }
 
-
-
-
+        
     }
 
-
-    //public class Rootobject
-    //{
-    //    public Class1[] Property1 { get; set; }
-    //}
-
-    public class CoinPrice
+    internal class CoinPrice
     {
         public string id { get; set; }
         public string name { get; set; }

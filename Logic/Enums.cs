@@ -20,4 +20,23 @@ namespace Logic
         Word,
         Definition
     }
+
+    public enum Command
+    {
+        ComicSubscribe,
+        FincanceSubscribe,
+        Coins,
+        Vocabulary,
+        DefineWord,
+        WakeOnLan,
+        Unknown
+    }
+
+    public enum CallbackCommand
+    {
+        ComicSubscribe,
+        VocabNewWord,
+        VocabDefinition,
+        Unknown
+    }
 }

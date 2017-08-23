@@ -8,11 +8,17 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
+using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Bot.Types.Enums;
+using NLog;
+using Telegram.Bot.Types.InlineKeyboardButtons;
 
-namespace Logic
+namespace Logic.Modules
 {
-    public static class VocabCallbackData
+    public class VocabModule : IModule
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         private static WordLookup[] _words;
         private static int _index;
         public static string Message
@@ -28,7 +34,6 @@ namespace Logic
             get
             {
                 if (_words == null) SetWords();
-                //if (_index < _words.Length) { return _words[_index]; } else { return _words[_index = 0]; }
                 return _words[_index];
             }
             set { }
@@ -39,14 +44,71 @@ namespace Logic
             if (_index < _words.Length) { _index++; } else { _index = 0; }
         }
 
-        //public static string CurrentWord
-        //{
-        //    get
-        //    {
-        //        if (index == 0) { return _words[_words.Length - 1].WordText; }
-        //        return _words[index - 1].WordText;
-        //    }
-        //}
+        public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
+        {
+            var inlineKeyboardMarkup = new InlineKeyboardMarkup
+            {
+                InlineKeyboard = new[]
+                    {
+                        new [] {  InlineKeyboardButton.WithCallbackData (
+                                    "Next Word", "/vocabNewWord"),
+                                InlineKeyboardButton.WithCallbackData (
+                                    "Definition", "/vocabDefinition=" + VocabModule.Word.WordText )
+                        }
+                    }
+            };
+
+            try
+            {
+                await bot.SendTextMessageAsync(update.Message.Chat.Id, Message,
+                    replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
+                PrepareNextWord();
+            }
+            catch (Exception )
+            {
+                //await bot.SendTextMessageAsync(update.Message.Chat.Id, e.Message);
+                //throw;
+            }
+        }
+
+        public async Task GenerateAndSendCallbackAsync(TelegramBotClient bot, Update update)
+        {
+            var inlineKeyboardMarkup = new InlineKeyboardMarkup
+            {
+                InlineKeyboard = new[]
+                    {
+                         new [] {  InlineKeyboardButton.WithCallbackData (
+                                    "Next Word", "/vocabNewWord"),
+                                InlineKeyboardButton.WithCallbackData (
+                                    "Definition", "/vocabDefinition=" + VocabModule.Word.WordText)
+                        }
+                    }
+            };
+            await bot.SendTextMessageAsync(update.CallbackQuery.From.Id, VocabModule.Message,
+                replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
+            VocabModule.PrepareNextWord();
+        }
+
+        internal async Task GenerateAndSendDefineAsync(TelegramBotClient bot, Update update)
+        {
+            var word = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
+            var result = VocabModule.GetDefinition(word);
+            if (string.IsNullOrEmpty(result)) return;
+            await bot.SendTextMessageAsync(update.Message.Chat.Id, result, parseMode: ParseMode.Html);
+        }
+
+        public async Task GenerateAndSendDefineCallbackAsync(TelegramBotClient bot, Update update)
+        {
+            var word = update.CallbackQuery.Data.Substring(update.CallbackQuery.Data.IndexOf('=') + 1);
+            await bot.SendTextMessageAsync(update.CallbackQuery.From.Id,
+                VocabModule.GetDefinition(word), parseMode: ParseMode.Html);
+        }
+
+        public Task GenerateAndSendWorkerAsync(TelegramBotClient bot, IList<string> parameters = null)
+        {
+            throw new NotImplementedException();
+        }
+
 
         private static void SetWords()
         {
@@ -72,104 +134,122 @@ namespace Logic
 
         public static string GetDefinition(string word)
         {
-            string url = "***REMOVED***";
-            string appid = "***REMOVED***";
-            string appkey = "***REMOVED***";
-            string sourcelang = "en";
-            //string wordid;
-            //if (_words != null && _index != 0) { wordid = _words[_index - 1].WordText; } else { return "No word have chosen"; };
-            string urlParameters = sourcelang + "/" + word;
+            //Oxford Definition
+            var definition = OxfordDefinition(word);
 
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(url);
+            //Google Translate
+            var translation = TranslateTextWithGoogle(word, "en|ru");
+
+            return definition + Environment.NewLine + translation;
+        }
+
+
+        private static string OxfordDefinition(string word)
+        {
+            string urlParameters = Config.OxfordLang + "/" + word;
+
+            HttpClient client = new HttpClient()
+            {
+                BaseAddress = new Uri(Config.OxfordUrl)
+            };
 
             // Add an Accept header for JSON format.
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("app_id", appid);
-            client.DefaultRequestHeaders.Add("app_key", appkey);
+            client.DefaultRequestHeaders.Add("app_id", Config.OxfordAppId);
+            client.DefaultRequestHeaders.Add("app_key", Config.OxfordAppKey);
 
             // List data response.
-            HttpResponseMessage response = client.GetAsync(urlParameters).Result;  // Blocking call!
-            if (response.IsSuccessStatusCode)
+            try
             {
-                // Parse the response body. Blocking!
-                var dataObjects = response.Content.ReadAsAsync<Rootobject>().Result;
-
-                StringBuilder sb = new StringBuilder();
-
-                //Word Itself
-                sb.Append(word.FirstCap().Bold() + Environment.NewLine);
-                //Phonetic Spelling
-                sb.Append($"[{dataObjects.results[0]?.lexicalEntries[0]?.pronunciations[0]?.phoneticSpelling}]{Environment.NewLine}");
-                foreach (var lentry in dataObjects.results[0].lexicalEntries)
+                HttpResponseMessage response = client.GetAsync(urlParameters).Result;  // Blocking call!
+                if (response.IsSuccessStatusCode)
                 {
-                    if (Array.IndexOf(dataObjects.results[0].lexicalEntries, lentry) != 0)
+                    // Parse the response body. Blocking!
+                    var dataObjects = response.Content.ReadAsAsync<Rootobject>().Result;
+
+                    StringBuilder sb = new StringBuilder();
+
+                    //Word Itself
+                    sb.Append(word.FirstCap().Bold() + Environment.NewLine);
+                    //Phonetic Spelling
+                    sb.Append($"[{dataObjects?.results?[0]?.lexicalEntries?[0]?.pronunciations?[0]?.phoneticSpelling}]{Environment.NewLine}");
+                    foreach (var lentry in dataObjects.results[0].lexicalEntries)
                     {
-                        sb.Append("___________" + Environment.NewLine);
-                    }
-                    sb.Append(lentry.lexicalCategory + Environment.NewLine);
-                    foreach (var entry in lentry.entries)
-                    {
-                        foreach (var sense in entry.senses)
+                        if (Array.IndexOf(dataObjects.results[0].lexicalEntries, lentry) != 0)
                         {
-                            if (Array.IndexOf(entry.senses, sense) != 0)
+                            sb.Append("___________" + Environment.NewLine);
+                        }
+                        sb.Append(lentry.lexicalCategory + Environment.NewLine);
+                        foreach (var entry in lentry.entries)
+                        {
+                            foreach (var sense in entry.senses)
                             {
-                                sb.Append("..........." + Environment.NewLine); 
-                            }
-
-                            for (int i = 0; i < sense.definitions.Length; i++)
-                            {
-                                sb.Append(sense.definitions[i].FirstCap() + Environment.NewLine);
-                                if (sense.examples != null && i < sense.examples.Length)
+                                if (Array.IndexOf(entry.senses, sense) != 0)
                                 {
-                                    sb.Append(sense.examples[i].text.FirstCap().Italic());
-                                    if (sense.domains != null && i < sense.domains.Length)
-                                    {
-                                        sb.Append($" [{sense.domains[i].FirstCap().Italic()}]" + Environment.NewLine);
-                                    }
-                                    else
-                                    {
-                                        sb.Append(Environment.NewLine);
-                                    }
+                                    sb.Append("..........." + Environment.NewLine);
                                 }
-                                
+
+                                for (int i = 0; i < sense.definitions?.Length; i++)
+                                {
+                                    if (sb.Length + sense.definitions[i].Length > 4000) break;
+                                    sb.Append(sense.definitions[i].FirstCap() + Environment.NewLine);
+                                    if (sense.examples != null && i < sense.examples.Length)
+                                    {
+                                        sb.Append(sense.examples[i].text.FirstCap().Italic());
+                                        if (sense.domains != null && i < sense.domains.Length)
+                                        {
+                                            sb.Append($" [{sense.domains[i].FirstCap().Italic()}]" + Environment.NewLine);
+                                        }
+                                        else
+                                        {
+                                            sb.Append(Environment.NewLine);
+                                        }
+                                    }
+
+
+                                }
 
                             }
-
                         }
                     }
+                    return sb.ToString();
                 }
-                if (sb.Length > 4000) sb.Remove(4000, sb.Length);
-                var translation = TranslateText(word, "en|ru");
-                sb.Append("rus: " + translation.FirstCap() + Environment.NewLine);
-                return sb.ToString();
-                
             }
-            
-            return "No english definition found" + Environment.NewLine + TranslateText(word, "en|ru"); ;
+            catch (Exception e)
+            {
+                logger.Error(e);
+            }
+            return "No Oxford Definition Found.";
         }
 
-        private static string TranslateText(string input, string languagePair)
+        private static string TranslateTextWithGoogle(string input, string languagePair)
         {
             try
             {
                 string url = String.Format("http://www.google.com/translate_t?hl=en&ie=UTF8&text={0}&langpair={1}", input, languagePair);
-                WebClient webClient = new WebClient();
-                webClient.Encoding = Encoding.GetEncoding("windows-1251");
+                WebClient webClient = new WebClient()
+                {
+                    Encoding = Encoding.GetEncoding("windows-1251")
+                };
                 string result = webClient.DownloadString(url);
                 result = result.Substring(result.IndexOf("<span title=\"") + "<span title=\"".Length);
                 result = result.Substring(result.IndexOf(">") + 1);
                 result = result.Substring(0, result.IndexOf("</span>"));
-                return result.Trim();
+                result = result.Trim();
+                if (string.IsNullOrEmpty(result)) return "No Russian Translation Found.";
+                result = "rus: " + result.FirstCap() + Environment.NewLine;
+                return result;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                logger.Error(e.Message + e.InnerException?.Message);
                 return "";
             }
 
         }
 
+        
         public class WordLookup
         {
             public string WordText { get; set; }

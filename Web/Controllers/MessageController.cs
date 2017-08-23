@@ -28,8 +28,7 @@ namespace Web.Controllers
         [Route(@"api/coinUpdate")]
         public OkResult CoinUpdate([FromUri]string sendAnyway = "false")
         {
-            bool.TryParse(sendAnyway, out bool result);
-            Task.Run(() => new WorkerHandler().HandleCoinAsync(result));
+            Task.Run(() => new WorkerHandler().HandleCoinAsync(sendAnyway));
             return Ok();
         }
     }

@@ -19,7 +19,7 @@ namespace Web
                 new Thread(() =>
                 {
                     Thread.CurrentThread.IsBackground = true;
-                    NoHookLoop.StartAsync();
+                    NoHookLoop.Start();
                 }).Start();
             }
         }

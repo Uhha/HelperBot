@@ -13,7 +13,7 @@ namespace Web
 {
     public static class NoHookLoop
     {
-        public static async void StartAsync()
+        public static void Start()
         {
             Run().Wait();
         }
@@ -51,7 +51,7 @@ namespace Web
 
                     //}
 
-                    Task.Run(() => new MessageHandler().Handle(update));
+                    await Task.Run(() => new MessageHandler().Handle(update));
 
                     offset = update.Id + 1;
                 }

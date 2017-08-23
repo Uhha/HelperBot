@@ -1,6 +1,7 @@
 ﻿using DatabaseInteractions;
-using Logic.Grabbers;
+using Logic.Modules;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -12,88 +13,45 @@ namespace Logic.Processors
 {
     internal static class TextMessageCommandProcessor
     {
+        private static Dictionary<string, Command> _commands = new Dictionary<string, Command>
+        {
+            {"/subs", Command.ComicSubscribe },
+            {"/finance", Command.FincanceSubscribe },
+            {"/coins", Command.Coins },
+            {"/vocab", Command.Vocabulary },
+            {"/define", Command.DefineWord },
+            {"/wol", Command.WakeOnLan },
+        };
+
         internal static async Task ProcessAsync(TelegramBotClient bot, Update update)
         {
-            if (update.Message.Text.Equals("/subs"))
+            var callbackPrefix = Helper.ExtractCommand(update);
+            var command = (_commands.ContainsKey(callbackPrefix)) ? _commands[callbackPrefix] : Command.Unknown;
+
+            switch (command)
             {
-                var inlineKeyboardMarkup = new InlineKeyboardMarkup
-                {
-                    InlineKeyboard = new[]
-                    {
-                    new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "subOglaf"),
-                             new InlineKeyboardButton ("xkcd", "subXkcd")}
-                }
-                };
-                await bot.SendTextMessageAsync(update.Message.Chat.Id, "Choose what to subscribe to:", replyMarkup: inlineKeyboardMarkup);
-            }
-
-            //if (update.Message.Text.Equals("/unsubs"))
-            //{
-            //    var inlineKeyboardMarkup = new InlineKeyboardMarkup
-            //    {
-            //        InlineKeyboard = new[]
-            //        {
-            //        new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "-subOglaf"),
-            //                 new InlineKeyboardButton ("xkcd", "-subXkcd")}
-            //    }
-            //    };
-            //    await bot.SendTextMessageAsync(update.Message.Chat.Id, "Unsubscribe from:", replyMarkup: inlineKeyboardMarkup);
-            //}
-
-            if (update.Message.Text.Equals("/vocab"))
-            {
-                var inlineKeyboardMarkup = new InlineKeyboardMarkup
-                {
-                    InlineKeyboard = new[]
-                    {
-                        new [] {  InlineKeyboardButton.WithCallbackData (
-                                    "Next Word", "vocabNW"),
-                                InlineKeyboardButton.WithCallbackData (
-                                    "Definition", "vocabDefinition=" + VocabCallbackData.Word.WordText )
-                        }
-                    }
-                };
-
-                try
-                {
-                    await bot.SendTextMessageAsync(update.Message.Chat.Id, VocabCallbackData.Message, 
-                        replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
-                    VocabCallbackData.PrepareNextWord();
-                }
-                catch (Exception e)
-                {
-                    //await bot.SendTextMessageAsync(update.Message.Chat.Id, e.Message);
-                    //throw;
-                }
-            }
-
-            if (update.Message.Text.Equals("/finance"))
-            {
-                var inlineKeyboardMarkup = new InlineKeyboardMarkup
-                {
-                    InlineKeyboard = new[]
-                    {
-                        new [] {  InlineKeyboardButton.WithCallbackData ("CoinCapMarket", "subCoinCM") }
-                    }
-                };
-                await bot.SendTextMessageAsync(update.Message.Chat.Id, "Choose what to subscribe to:", replyMarkup: inlineKeyboardMarkup);
-            }
-
-            if (update.Message.Text.StartsWith("/coins"))
-            {
-                var number = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
-                int.TryParse(number, out int currenciesNumber);
-                var result = await CoinGrabber.GetPricesAsync(currenciesNumber);
-                if (string.IsNullOrEmpty(result.Item1)) return;
-                await bot.SendTextMessageAsync(update.Message.Chat.Id, result.Item1, parseMode: ParseMode.Html);
-            }
-
-            if (update.Message.Text.StartsWith("/define"))
-            {
-                var word = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
-                var result = VocabCallbackData.GetDefinition(word);
-                if (string.IsNullOrEmpty(result)) return;
-                await bot.SendTextMessageAsync(update.Message.Chat.Id, result, parseMode: ParseMode.Html);
+                case Command.ComicSubscribe:
+                    await new ComicModule().GenerateAndSendAsync(bot, update);
+                    break;
+                case Command.FincanceSubscribe:
+                    await new FinanceModule().GenerateAndSendAsync(bot, update);
+                    break;
+                case Command.Coins:
+                    await new CoinModule().GenerateAndSendAsync(bot, update);
+                    break;
+                case Command.Vocabulary:
+                    await new VocabModule().GenerateAndSendAsync(bot, update);
+                    break;
+                case Command.DefineWord:
+                    await new VocabModule().GenerateAndSendDefineAsync(bot, update);
+                    break;
+                case Command.WakeOnLan:
+                    await new WakeOnLanModule().GenerateAndSendAsync(bot, update);
+                    break;
+                case Command.Unknown:
+                    break;
+                default:
+                    break;
             }
         }
     }
