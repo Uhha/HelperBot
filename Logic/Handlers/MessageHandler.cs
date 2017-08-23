@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using NLog;
 
 namespace Logic.Handlers
 {
     public class MessageHandler
     {
+        private Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly TelegramBotClient _bot;
 
         public MessageHandler()

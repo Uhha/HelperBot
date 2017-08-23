@@ -8,11 +8,14 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using NLog;
 
 namespace Logic.Processors
 {
     internal static class TextMessageCommandProcessor
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         private static Dictionary<string, Command> _commands = new Dictionary<string, Command>
         {
             {"/subs", Command.ComicSubscribe },
@@ -37,7 +40,16 @@ namespace Logic.Processors
                     await new FinanceModule().GenerateAndSendAsync(bot, update);
                     break;
                 case Command.Coins:
-                    await new CoinModule().GenerateAndSendAsync(bot, update);
+                    try
+                    {
+                        await new CoinModule().GenerateAndSendAsync(bot, update);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e);
+                        await bot.SendTextMessageAsync(update.Message.Chat.Id, e.Message);
+                        //throw;
+                    }
                     break;
                 case Command.Vocabulary:
                     await new VocabModule().GenerateAndSendAsync(bot, update);

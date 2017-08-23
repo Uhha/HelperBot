@@ -15,7 +15,7 @@ namespace Logic.Modules
 {
     class CoinModule : IModule
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
@@ -83,7 +83,7 @@ namespace Logic.Modules
             }
             catch (Exception e)
             {
-                logger.Error(e.Message + e.InnerException?.Message);
+                _logger.Error(e.Message + e.InnerException?.Message);
                 return ("", false);
             }
         }
