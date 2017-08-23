@@ -27,6 +27,7 @@ namespace Logic.Handlers
         /// </summary>
         public async void Handle(Update update)
         {
+            _logger.Info($"Message from {update.Message.Chat.Username}: {update.Message.Text}");
             switch (update.Type)
             {
                 case Telegram.Bot.Types.Enums.UpdateType.UnknownUpdate:
