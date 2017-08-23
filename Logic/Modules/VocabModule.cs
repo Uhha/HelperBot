@@ -92,14 +92,15 @@ namespace Logic.Modules
         internal async Task GenerateAndSendDefineAsync(TelegramBotClient bot, Update update)
         {
             var word = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
+            if (string.IsNullOrEmpty(word)) return;
             var result = VocabModule.GetDefinition(word);
-            if (string.IsNullOrEmpty(result)) return;
             await bot.SendTextMessageAsync(update.Message.Chat.Id, result, parseMode: ParseMode.Html);
         }
 
         public async Task GenerateAndSendDefineCallbackAsync(TelegramBotClient bot, Update update)
         {
             var word = update.CallbackQuery.Data.Substring(update.CallbackQuery.Data.IndexOf('=') + 1);
+            if (string.IsNullOrEmpty(word)) return;
             await bot.SendTextMessageAsync(update.CallbackQuery.From.Id,
                 VocabModule.GetDefinition(word), parseMode: ParseMode.Html);
         }
