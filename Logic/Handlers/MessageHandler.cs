@@ -28,6 +28,11 @@ namespace Logic.Handlers
         public async void Handle(Update update)
         {
             _logger.Info(update);
+            if (update == null)
+            {
+                _logger.Error("Unpdate is null");
+                return;
+            }
             switch (update.Type)
             {
                 case Telegram.Bot.Types.Enums.UpdateType.UnknownUpdate:
@@ -113,6 +118,7 @@ namespace Logic.Handlers
 
         private async Task TextMessageUpdate(Update update)
         {
+            if (string.IsNullOrEmpty(update.Message?.Text)) return;
             if (update.Message.Text.StartsWith("/"))
             {
                 await TextMessageCommandProcessor.ProcessAsync(_bot, update);
