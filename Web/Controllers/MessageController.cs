@@ -47,5 +47,14 @@ namespace Web.Controllers
             Task.Run(() => new WorkerHandler().HandleCoinAsync(sendAnyway));
             return Ok();
         }
+
+        [HttpGet]
+        [Route(@"api/recordCoinPrice")]
+        public OkResult RecordCoinPrice()
+        {
+            _logger.Info("api/recordCoinPrice called");
+            Task.Run(() => new WorkerHandler().RecordCoinPrice());
+            return Ok();
+        }
     }
 }

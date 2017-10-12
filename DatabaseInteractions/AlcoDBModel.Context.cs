@@ -31,5 +31,6 @@ namespace DatabaseInteractions
         public virtual DbSet<Words> Words { get; set; }
         public virtual DbSet<BookInfo> BookInfo { get; set; }
         public virtual DbSet<Lookups> Lookups { get; set; }
+        public virtual DbSet<CoinPriceRecords> CoinPriceRecords { get; set; }
     }
 }

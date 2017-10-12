@@ -24,6 +24,15 @@
           <Property Name="ChatID" Type="int" Nullable="false" />
           <Property Name="Subscription" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="CoinPriceRecords">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dtRecorded" Type="datetime" />
+          <Property Name="CoinSymbol" Type="varchar" MaxLength="20" />
+          <Property Name="Price" Type="money" />
+        </EntityType>
         <EntityType Name="Enums">
           <Key>
             <PropertyRef Name="Id" />
@@ -81,6 +90,7 @@
         <EntityContainer Name="AlcoDBNSStoreContainer">
           <EntitySet Name="BookInfo" EntityType="Self.BookInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CoinPriceRecords" EntityType="Self.CoinPriceRecords" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Enums" EntityType="Self.Enums" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lookups" EntityType="Self.Lookups" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Subscriptions" EntityType="Self.Subscriptions" Schema="dbo" store:Type="Tables" />
@@ -144,6 +154,7 @@
           <EntitySet Name="Words" EntityType="AlcoDBNS.Words" />
           <EntitySet Name="BookInfo" EntityType="AlcoDBNS.BookInfo" />
           <EntitySet Name="Lookups" EntityType="AlcoDBNS.Lookups" />
+          <EntitySet Name="CoinPriceRecords" EntityType="AlcoDBNS.CoinPriceRecords" />
         </EntityContainer>
         <EntityType Name="Words">
           <Key>
@@ -177,9 +188,18 @@
           <Property Name="WordID" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="BookKey" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="DicKey" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Pos" Type="String" />
+          <Property Name="Pos" Type="String" MaxLength="250" Unicode="false" FixedLength="false" />
           <Property Name="Usage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Timestamp" Type="Int32" />
+        </EntityType>
+        <EntityType Name="CoinPriceRecords">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dtRecorded" Type="DateTime" Precision="3" />
+          <Property Name="CoinSymbol" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Price" Type="Decimal" Precision="19" Scale="4" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -251,6 +271,16 @@
                 <ScalarProperty Name="BookKey" ColumnName="BookKey" />
                 <ScalarProperty Name="WordID" ColumnName="WordID" />
                 <ScalarProperty Name="CRid" ColumnName="CRid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CoinPriceRecords">
+            <EntityTypeMapping TypeName="AlcoDBNS.CoinPriceRecords">
+              <MappingFragment StoreEntitySet="CoinPriceRecords">
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="CoinSymbol" ColumnName="CoinSymbol" />
+                <ScalarProperty Name="dtRecorded" ColumnName="dtRecorded" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

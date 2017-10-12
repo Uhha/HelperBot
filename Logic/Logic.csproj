@@ -121,6 +121,7 @@
     <Compile Include="Bot.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="Modules\TrendModule.cs" />
     <Compile Include="Modules\CoinModule.cs" />
     <Compile Include="Handlers\WorkerHandler.cs" />
     <Compile Include="Modules\FinanceModule.cs" />

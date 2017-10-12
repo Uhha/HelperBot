@@ -33,5 +33,11 @@ namespace Logic.Handlers
             await new CoinModule().GenerateAndSendWorkerAsync(_bot, new List<string>() { sendAnyway } );
             logger.Info("HandleCoinAsync called from Worker");
         }
+
+        public async void RecordCoinPrice()
+        {
+            new TrendModule().RecordCoinPrice();
+            logger.Info("HandleCoinAsync called from Worker");
+        }
     }
 }

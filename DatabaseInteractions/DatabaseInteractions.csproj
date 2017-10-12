@@ -87,6 +87,9 @@
     <Compile Include="Clients.cs">
       <DependentUpon>AlcoDBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="CoinPriceRecords.cs">
+      <DependentUpon>AlcoDBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="DB.cs" />
     <Compile Include="Enums.cs">
       <DependentUpon>AlcoDBModel.tt</DependentUpon>

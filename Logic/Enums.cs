@@ -29,6 +29,7 @@ namespace Logic
         Vocabulary,
         DefineWord,
         WakeOnLan,
+        Trend,
         Unknown
     }
 

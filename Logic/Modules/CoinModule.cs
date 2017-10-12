@@ -87,8 +87,6 @@ namespace Logic.Modules
                 return ("", false);
             }
         }
-
-        
     }
 
     internal class CoinPrice

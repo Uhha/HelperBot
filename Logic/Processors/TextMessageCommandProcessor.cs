@@ -24,6 +24,7 @@ namespace Logic.Processors
             {"/vocab", Command.Vocabulary },
             {"/define", Command.DefineWord },
             {"/wol", Command.WakeOnLan },
+            {"/trend", Command.Trend }
         };
 
         internal static async Task ProcessAsync(TelegramBotClient bot, Update update)
