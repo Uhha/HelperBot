@@ -29,17 +29,11 @@ namespace Logic.Modules
 
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
-            var number = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
-            int.TryParse(number, out int hoursBack);
-            if (hoursBack <= 0) hoursBack = 5;
-            if (hoursBack > 500) hoursBack = 500;
-            string style = "h:mm";
-            if (hoursBack < 2) style = "mm";
-            //if (hoursBack > 24) style = "D";
+            //var number = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
+            SetParameters(update, out int hoursBack, out string ticker, out string style);
 
 
-
-            PlotModel pm = new PlotModel() { Title = $"BTC - {hoursBack}H" };
+            PlotModel pm = new PlotModel() { Title = $"{ticker} - {hoursBack}H" };
             var datimeAxis = new TimeSpanAxis { Position = AxisPosition.Bottom, StringFormat = style };
             datimeAxis.IntervalLength = 37;
             datimeAxis.StartPosition = 1;
@@ -47,7 +41,12 @@ namespace Logic.Modules
             datimeAxis.MinorGridlineStyle = LineStyle.Dot;
             pm.Axes.Add(datimeAxis);
             LineSeries series = new LineSeries();
-            InsertData(series, hoursBack);
+            bool dataOk = InsertData(series, hoursBack, ticker);
+            if (!dataOk)
+            {
+                await bot.SendTextMessageAsync(update.Message.Chat.Id, "Wrong parameters / No data for the entered ticker");
+                return;
+            }
             pm.Series.Add(series);
 
             var stream = new MemoryStream();
@@ -63,7 +62,33 @@ namespace Logic.Modules
             var test = await bot.SendPhotoAsync(update.Message.Chat.Id, new FileToSend() { Filename = "chart", Content = ConvertStream(stream) });
         }
 
-        private void InsertData(LineSeries series, int hoursBack)
+        private void SetParameters(Update update, out int hoursBack, out string ticker, out string style)
+        {
+            ticker = "BTC";
+            hoursBack = 5;
+            var strings = update.Message.Text.Split(' ');
+            if (strings.Length == 3)
+            {
+                int.TryParse(strings[1], out hoursBack);
+                ticker = (!string.IsNullOrEmpty(strings[2])) ? strings[2] : "WrongTicker";
+            }
+            else if (strings.Length == 2)
+            {
+                var parsed = int.TryParse(strings[1], out hoursBack);
+                if (!parsed)
+                {
+                    ticker = (!string.IsNullOrEmpty(strings[1])) ? strings[1] : "WrongTicker";
+                }
+            }
+
+            if (hoursBack <= 0) hoursBack = 5;
+            if (hoursBack > 500) hoursBack = 500;
+            style = "h:mm";
+            if (hoursBack < 2) style = "mm";
+        }
+
+
+        private bool InsertData(LineSeries series, int hoursBack, string ticker)
         {
             List<DataPoint> list = new List<DataPoint>();
             using (AlcoDBEntities db = new AlcoDBEntities())
@@ -71,13 +96,14 @@ namespace Logic.Modules
                 var botLimit = DateTime.UtcNow.AddHours(-hoursBack);
                 var prices = db.CoinPriceRecords
                     .Where(o => o.dtRecorded >= botLimit && o.dtRecorded <= DateTime.UtcNow
-                    && o.CoinSymbol == "BTC");
+                    && o.CoinSymbol == ticker);
                 foreach (var price in prices)
                 {
                     list.Add(new DataPoint(TimeSpanAxis.ToDouble(DateTime.UtcNow - price.dtRecorded), Axis.ToDouble(price.Price)));
                 }
             }
             series.ItemsSource = list;
+            return list.Count > 0;
         }
 
         private FileStream ConvertStream(Stream stream)
