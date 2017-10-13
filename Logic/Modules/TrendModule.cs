@@ -34,21 +34,58 @@ namespace Logic.Modules
 
 
             PlotModel pm = new PlotModel() { Title = $"{ticker} - {hoursBack}H" };
+            pm.LegendPosition = LegendPosition.BottomLeft;
+            pm.LegendBackground = OxyColor.FromArgb(255, 255,255,255);
+            pm.LegendBorder = OxyColor.FromArgb(255, 0, 0, 0);
             var datimeAxis = new TimeSpanAxis { Position = AxisPosition.Bottom, StringFormat = style };
             datimeAxis.IntervalLength = 37;
             datimeAxis.StartPosition = 1;
             datimeAxis.EndPosition = 0;
             datimeAxis.MinorGridlineStyle = LineStyle.Dot;
             pm.Axes.Add(datimeAxis);
-            LineSeries series = new LineSeries();
-            bool dataOk = InsertData(series, hoursBack, ticker);
+
+            bool dataOk = AddLineSeries(pm, hoursBack, ticker);
             if (!dataOk)
             {
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, "Wrong parameters / No data for the entered ticker");
                 return;
             }
-            pm.Series.Add(series);
 
+            FileStream stream = ConvertToPNG(pm);
+            var test = await bot.SendPhotoAsync(update.Message.Chat.Id, new FileToSend() { Filename = "chart", Content = stream });
+        }
+
+        private bool AddLineSeries(PlotModel pm, int hoursBack, string ticker)
+        {
+            if (ticker.ToLower() == "all")
+            {
+                var tickers = new string[] { "BTC", "ETH", "XRP", "BCH", "LTC" };
+                var colors = new OxyColor[] { OxyColors.Green, OxyColors.Yellow, OxyColors.Red, OxyColors.Blue, OxyColors.Violet};
+                for (int i = 0; i < tickers.Length; i++)
+                {
+                    LineSeries series = new LineSeries();
+                    series.Title = tickers[i];
+                    series.Color = colors[i];
+                    bool dataOk = InsertData(series, hoursBack, tickers[i], true);
+                    if (dataOk)
+                    {
+                        pm.Series.Add(series);
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                LineSeries series = new LineSeries();
+                bool dataOk = InsertData(series, hoursBack, ticker);
+                pm.Series.Add(series);
+                return dataOk;
+            }
+            
+        }
+
+        private FileStream ConvertToPNG(PlotModel pm)
+        {
             var stream = new MemoryStream();
             var thread = new Thread(() =>
             {
@@ -59,7 +96,7 @@ namespace Logic.Modules
             thread.Start();
             thread.Join();
 
-            var test = await bot.SendPhotoAsync(update.Message.Chat.Id, new FileToSend() { Filename = "chart", Content = ConvertStream(stream) });
+            return ConvertStream(stream);
         }
 
         private void SetParameters(Update update, out int hoursBack, out string ticker, out string style)
@@ -88,7 +125,7 @@ namespace Logic.Modules
         }
 
 
-        private bool InsertData(LineSeries series, int hoursBack, string ticker)
+        private bool InsertData(LineSeries series, int hoursBack, string ticker, bool normalize = false)
         {
             List<DataPoint> list = new List<DataPoint>();
             using (AlcoDBEntities db = new AlcoDBEntities())
@@ -97,9 +134,10 @@ namespace Logic.Modules
                 var prices = db.CoinPriceRecords
                     .Where(o => o.dtRecorded >= botLimit && o.dtRecorded <= DateTime.UtcNow
                     && o.CoinSymbol == ticker);
+                var normalizeMax = (normalize) ? prices.Max(o => o.Price) : 1;
                 foreach (var price in prices)
                 {
-                    list.Add(new DataPoint(TimeSpanAxis.ToDouble(DateTime.UtcNow - price.dtRecorded), Axis.ToDouble(price.Price)));
+                    list.Add(new DataPoint(TimeSpanAxis.ToDouble(DateTime.UtcNow - price.dtRecorded), Axis.ToDouble(price.Price / normalizeMax)));
                 }
             }
             series.ItemsSource = list;
