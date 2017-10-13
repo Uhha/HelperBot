@@ -25,6 +25,7 @@ namespace Logic.Handlers
         /// <summary>
         /// Update handling
         /// </summary>
+        /// 
         public async void Handle(Update update)
         {
             _logger.Info(update);
@@ -72,7 +73,6 @@ namespace Logic.Handlers
 
         private async Task MessageUpdate(Update update)
         {
-            await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
             switch (update.Message.Type)
             {
                 case Telegram.Bot.Types.Enums.MessageType.UnknownMessage:
@@ -121,6 +121,7 @@ namespace Logic.Handlers
             if (string.IsNullOrEmpty(update.Message?.Text)) return;
             if (update.Message.Text.StartsWith("/"))
             {
+                await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
                 await TextMessageCommandProcessor.ProcessAsync(_bot, update);
             }
 

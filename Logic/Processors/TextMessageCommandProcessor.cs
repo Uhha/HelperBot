@@ -61,6 +61,9 @@ namespace Logic.Processors
                 case Command.WakeOnLan:
                     await new WakeOnLanModule().GenerateAndSendAsync(bot, update);
                     break;
+                case Command.Trend:
+                    await new TrendModule().GenerateAndSendAsync(bot, update);
+                    break;
                 case Command.Unknown:
                     break;
                 default:

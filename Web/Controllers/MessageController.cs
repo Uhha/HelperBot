@@ -8,6 +8,7 @@ using NLog;
 using Microsoft.Ajax.Utilities;
 using System.Data.Entity.Core.Objects;
 
+
 namespace Web.Controllers
 {
     public class MessageController : ApiController
