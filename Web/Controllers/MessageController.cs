@@ -20,7 +20,10 @@ namespace Web.Controllers
         {
             try
             {
-                _logger.Info("api/command called with: " + update?.Message?.Text);
+                if (update?.Message?.Text != null && update.Message.Text.StartsWith("/"))
+                {
+                    _logger.Info("api/command called with: " + update?.Message?.Text);
+                }
                 Task.Run(() => new MessageHandler().Handle(update));
                 return Ok();
             }
