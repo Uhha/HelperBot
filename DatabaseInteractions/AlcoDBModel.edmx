@@ -5,6 +5,15 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AlcoDBNS.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Balances">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Client" Type="int" Nullable="false" />
+          <Property Name="Symbol" Type="varchar" MaxLength="10" />
+          <Property Name="Shares" Type="float" />
+        </EntityType>
         <EntityType Name="BookInfo">
           <Key>
             <PropertyRef Name="CRid" />
@@ -88,6 +97,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="AlcoDBNSStoreContainer">
+          <EntitySet Name="Balances" EntityType="Self.Balances" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BookInfo" EntityType="Self.BookInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CoinPriceRecords" EntityType="Self.CoinPriceRecords" Schema="dbo" store:Type="Tables" />
@@ -155,6 +165,7 @@
           <EntitySet Name="BookInfo" EntityType="AlcoDBNS.BookInfo" />
           <EntitySet Name="Lookups" EntityType="AlcoDBNS.Lookups" />
           <EntitySet Name="CoinPriceRecords" EntityType="AlcoDBNS.CoinPriceRecords" />
+          <EntitySet Name="Balances" EntityType="AlcoDBNS.Balances" />
         </EntityContainer>
         <EntityType Name="Words">
           <Key>
@@ -200,6 +211,15 @@
           <Property Name="dtRecorded" Type="DateTime" Precision="3" />
           <Property Name="CoinSymbol" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Price" Type="Decimal" Precision="19" Scale="4" />
+        </EntityType>
+        <EntityType Name="Balances">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Client" Type="Int32" Nullable="false" />
+          <Property Name="Symbol" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Shares" Type="Double" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -280,6 +300,16 @@
                 <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="CoinSymbol" ColumnName="CoinSymbol" />
                 <ScalarProperty Name="dtRecorded" ColumnName="dtRecorded" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Balances">
+            <EntityTypeMapping TypeName="AlcoDBNS.Balances">
+              <MappingFragment StoreEntitySet="Balances">
+                <ScalarProperty Name="Shares" ColumnName="Shares" />
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="Client" ColumnName="Client" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

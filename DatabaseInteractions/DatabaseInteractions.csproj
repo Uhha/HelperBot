@@ -81,6 +81,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AlcoDBModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Balances.cs">
+      <DependentUpon>AlcoDBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="BookInfo.cs">
       <DependentUpon>AlcoDBModel.tt</DependentUpon>
     </Compile>

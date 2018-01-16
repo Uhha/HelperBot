@@ -15,7 +15,7 @@ namespace Logic.Processors
     {
         private static Dictionary<string, CallbackCommand> _commands = new Dictionary<string, CallbackCommand>
         {
-            {"/sub", CallbackCommand.ComicSubscribe },
+            {"/subs", CallbackCommand.ComicSubscribe },
             {"/vocabNewWord", CallbackCommand.VocabNewWord },
             {"/vocabDefinition", CallbackCommand.VocabDefinition },
         };

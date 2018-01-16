@@ -21,19 +21,19 @@ namespace Logic.Modules
             {
                 InlineKeyboard = new[]
                     {
-                    new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "sub=Oglaf"),
-                             InlineKeyboardButton.WithCallbackData ("xkcd", "sub=Xkcd")}
+                    new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "/subs=Oglaf"),
+                             InlineKeyboardButton.WithCallbackData ("xkcd", "/subs=Xkcd")}
                 }
             };
-            await bot.SendTextMessageAsync(update.Message.Chat.Id, "Choose what to subscribe to:", replyMarkup: inlineKeyboardMarkup);
+            await bot.SendTextMessageAsync(update.Message.Chat.Id, "Subscribe/Unsubscribe:", replyMarkup: inlineKeyboardMarkup);
         }
 
         public async Task GenerateAndSendCallbackAsync(TelegramBotClient bot, Update update)
         {
             Subscription subscriptionType = Subscription.NoSubscription;
-            if (update.CallbackQuery.Data.Equals("sub=Oglaf")) subscriptionType = Subscription.Oglaf;
-            if (update.CallbackQuery.Data.Equals("sub=Xkcd")) subscriptionType = Subscription.XKCD;
-            if (update.CallbackQuery.Data.Equals("sub=CoinCM")) subscriptionType = Subscription.CoinCapMarket;
+            if (update.CallbackQuery.Data.Equals("/subs=Oglaf")) subscriptionType = Subscription.Oglaf;
+            if (update.CallbackQuery.Data.Equals("/subs=Xkcd")) subscriptionType = Subscription.XKCD;
+            if (update.CallbackQuery.Data.Equals("/subs=CoinCM")) subscriptionType = Subscription.CoinCapMarket;
 
             var userId = update.CallbackQuery.From.Id;
             using (AlcoDBEntities db = new AlcoDBEntities())
@@ -152,8 +152,20 @@ namespace Logic.Modules
         private static (bool doSend, string alt, string title, string scr) GetXKCDPicture(int client)
         {
             WebClient webclient = new WebClient();
-            string html = webclient.DownloadString("https://xkcd.com/");
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            // Use SecurityProtocolType.Ssl3 if needed for compatibility reasons
+            string html;
+            try
+            {
+                 html = webclient.DownloadString("https://xkcd.com/");
 
+            }
+            catch (Exception e )
+            {
+                String someshit = e.Message;
+                throw;
+            }
 
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(html);
@@ -169,8 +181,8 @@ namespace Logic.Modules
 
             return (
                 NotSent(client, attrs["alt"]?.Value, Subscription.XKCD),
-                attrs["alt"]?.Value,
-                attrs["title"]?.Value,
+                attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
+                attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
                 attrs["src"]?.Value.Substring(2)
                 );
         }

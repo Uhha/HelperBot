@@ -30,6 +30,7 @@ namespace Logic
         DefineWord,
         WakeOnLan,
         Trend,
+        Balance,
         Unknown
     }
 
