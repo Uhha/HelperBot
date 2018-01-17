@@ -25,7 +25,10 @@ namespace Logic.Processors
             {"/define", Command.DefineWord },
             {"/wol", Command.WakeOnLan },
             {"/trend", Command.Trend },
-            {"/balance", Command.Balance }
+            {"/balance", Command.Balance },
+            {"/balanceAdd", Command.BalanceAdd },
+            {"/balanceRemove", Command.BalanceRemove },
+            {"/balanceDetails", Command.BalanceDetails }
         };
 
         internal static async Task ProcessAsync(TelegramBotClient bot, Update update)
@@ -68,11 +71,25 @@ namespace Logic.Processors
                 case Command.Balance:
                     await new BalanceModule().GenerateAndSendAsync(bot, update);
                     break;
+                case Command.BalanceAdd:
+                    await new BalanceModule().BalanceAddAsync(bot, update);
+                    break;
+                case Command.BalanceRemove:
+                    await new BalanceModule().BalanceRemoveAsync(bot, update);
+                    break;
+                case Command.BalanceDetails:
+                    await new BalanceModule().BalanceDetailsAsync(bot, update);
+                    break;
                 case Command.Unknown:
                     break;
                 default:
                     break;
             }
+        }
+
+        internal static async Task ProcessAwaitableMessageAsync(TelegramBotClient bot, Update update)
+        {
+            
         }
     }
 }

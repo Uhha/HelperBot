@@ -31,7 +31,10 @@ namespace Logic
         WakeOnLan,
         Trend,
         Balance,
-        Unknown
+        BalanceAdd,
+        BalanceRemove,
+        Unknown,
+        BalanceDetails
     }
 
     public enum CallbackCommand
@@ -41,4 +44,6 @@ namespace Logic
         VocabDefinition,
         Unknown
     }
+
+
 }

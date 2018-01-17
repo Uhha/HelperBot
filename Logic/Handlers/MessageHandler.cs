@@ -119,11 +119,13 @@ namespace Logic.Handlers
         private async Task TextMessageUpdate(Update update)
         {
             if (string.IsNullOrEmpty(update.Message?.Text)) return;
+
             if (update.Message.Text.StartsWith("/"))
             {
                 await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
                 await TextMessageCommandProcessor.ProcessAsync(_bot, update);
             }
+
 
         }
     }
