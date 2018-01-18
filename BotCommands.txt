@@ -1,0 +1,9 @@
+coins - enter a number to see crypto prices (coins 5)
+trend - enter to see crypto trend (trend {SYMBOL} {TIMEFRAME} | trend all {TIMEFRAME})
+balance - see you crypto balance
+balanceadd - add/update a coin on your balance (balanceadd BTC 0.55)
+balanceremove - remove a coin from your balance
+subs - subscribe/unsubscribe to a comic
+finance - subscribe/unsubscribe to a crypto activity monitor
+vocab - vocabulary builder
+define - enter a world to see a definition (define word)

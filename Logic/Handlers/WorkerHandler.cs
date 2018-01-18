@@ -39,5 +39,10 @@ namespace Logic.Handlers
             new TrendModule().RecordCoinPrice();
             logger.Info("HandleCoinAsync called from Worker");
         }
+
+        public async void RemoveOldRecords()
+        {
+            new TrendModule().GenerateAndSendWorkerAsync(_bot);
+        }
     }
 }

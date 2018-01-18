@@ -156,7 +156,12 @@ namespace Logic.Modules
 
         public Task GenerateAndSendWorkerAsync(TelegramBotClient bot, IList<string> parameters = null)
         {
-            throw new NotImplementedException();
+            using (AlcoDBEntities db = new AlcoDBEntities())
+            {
+                db.CoinPriceRecords.RemoveRange(db.CoinPriceRecords.Where(o => o.dtRecorded < DateTime.UtcNow.AddMonths(-1)));
+                db.SaveChanges();
+            }
+            return null;
         }
 
         public async void RecordCoinPrice()

@@ -60,5 +60,14 @@ namespace Web.Controllers
             Task.Run(() => new WorkerHandler().RecordCoinPrice());
             return Ok();
         }
+
+        [HttpGet]
+        [Route(@"api/removeOldRecords")]
+        public OkResult RemoveOldRecords()
+        {
+            _logger.Info("api/removeOldRecords called");
+            Task.Run(() => new WorkerHandler().RemoveOldRecords());
+            return Ok();
+        }
     }
 }
