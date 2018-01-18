@@ -17,6 +17,6 @@ namespace DatabaseInteractions
         public int ID { get; set; }
         public int Client { get; set; }
         public string Symbol { get; set; }
-        public Nullable<double> Shares { get; set; }
+        public Nullable<decimal> Shares { get; set; }
     }
 }

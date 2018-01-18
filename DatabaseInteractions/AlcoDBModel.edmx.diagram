@@ -13,7 +13,7 @@
         <EntityTypeShape EntityType="AlcoDBNS.BookInfo" Width="1.5" PointX="5.375" PointY="0.75" />
         <EntityTypeShape EntityType="AlcoDBNS.Lookups" Width="1.5" PointX="6.25" PointY="3.75" />
         <EntityTypeShape EntityType="AlcoDBNS.CoinPriceRecords" Width="1.5" PointX="0.75" PointY="6.75" />
-        <EntityTypeShape EntityType="AlcoDBNS.Balances" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="AlcoDBNS.Balances" Width="1.5" PointX="7.75" PointY="0.875" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

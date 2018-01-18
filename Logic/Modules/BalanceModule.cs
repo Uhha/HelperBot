@@ -15,14 +15,14 @@ namespace Logic.Modules
 {
     class BalanceModule : IModule
     {
-        private Dictionary<String, float> _prices;
+        private Dictionary<String, double> _prices;
 
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
-            _prices = new Dictionary<string, float>();
-            double? totalAmount = 0;
-            double? BTCtotalAmount = 0;
-            double? ALTtotalAmount = 0;
+            _prices = new Dictionary<string, double>();
+            double totalAmount = 0;
+            double BTCtotalAmount = 0;
+            double ALTtotalAmount = 0;
             using (AlcoDBEntities db = new AlcoDBEntities())
             {
                 var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
@@ -35,7 +35,7 @@ namespace Logic.Modules
                     var result = response.Content.ReadAsAsync<CoinPrice[]>().Result;
                     foreach (var item in result)
                     {
-                        float.TryParse(item.price_usd, out float price);
+                        double.TryParse(item.price_usd, out double price);
                         _prices.Add(item.symbol, price);
                     }
                 }
@@ -43,13 +43,13 @@ namespace Logic.Modules
                 
                 foreach (var item in balances)
                 {
-                    _prices.TryGetValue(item.Symbol, out float price);
-                    totalAmount += (item.Shares * price);
-                    if (item.Symbol == "BTC") BTCtotalAmount += (item.Shares * price);
-                    if (item.Symbol != "BTC") ALTtotalAmount += (item.Shares * price);
+                    _prices.TryGetValue(item.Symbol, out double price);
+                    totalAmount += ((double)item.Shares * price);
+                    if (item.Symbol == "BTC") BTCtotalAmount += ((double)item.Shares * price);
+                    if (item.Symbol != "BTC") ALTtotalAmount += ((double)item.Shares * price);
                 }
             }
-            string msg = $"BTC: ${BTCtotalAmount}{Environment.NewLine}ALT: ${ALTtotalAmount}{Environment.NewLine}TOTAL: ${totalAmount}";
+            string msg = $"BTC: ${Math.Round(BTCtotalAmount, 2)}{Environment.NewLine}ALT: ${Math.Round(ALTtotalAmount, 2)}{Environment.NewLine}TOTAL: ${Math.Round(totalAmount,2)}";
             await bot.SendTextMessageAsync(update.Message.From.Id, msg, parseMode: ParseMode.Html);
         }
 
@@ -74,7 +74,7 @@ namespace Logic.Modules
             }
 
             var symbol = params1[1].ToUpper();
-            var parsed = float.TryParse(params1[2], out float value);
+            var parsed = double.TryParse(params1[2], out double value);
             var client = update.Message.From.Id;
             if (string.IsNullOrEmpty(symbol) && parsed)
             {
@@ -87,7 +87,7 @@ namespace Logic.Modules
                 var result = db.Balances.SingleOrDefault(o => o.Client == client && o.Symbol == symbol);
                 if (result != null)
                 {
-                    result.Shares = value;
+                    result.Shares = (decimal)value;
                     message = symbol + " Record Updated!";
                 }
                 else
@@ -96,7 +96,7 @@ namespace Logic.Modules
                     {
                         Client = client,
                         Symbol = symbol,
-                        Shares = value
+                        Shares = (decimal)value
                     };
                     db.Balances.Add(balance);
                     message = symbol + " Record Added!";
@@ -152,7 +152,7 @@ namespace Logic.Modules
 
         internal async Task BalanceDetailsAsync(TelegramBotClient bot, Update update)
         {
-            _prices = new Dictionary<string, float>();
+            _prices = new Dictionary<string, double>();
             StringBuilder message = new StringBuilder();
             using (AlcoDBEntities db = new AlcoDBEntities())
             {
@@ -166,7 +166,7 @@ namespace Logic.Modules
                     var result = response.Content.ReadAsAsync<CoinPrice[]>().Result;
                     foreach (var item in result)
                     {
-                        float.TryParse(item.price_usd, out float price);
+                        double.TryParse(item.price_usd, out double price);
                         _prices.Add(item.symbol, price);
                     }
                 }
@@ -174,8 +174,8 @@ namespace Logic.Modules
 
                 foreach (var item in balances)
                 {
-                    _prices.TryGetValue(item.Symbol, out float price);
-                    message.Append($"{item.Symbol}: {item.Shares} ${price}{Environment.NewLine}");
+                    _prices.TryGetValue(item.Symbol, out double price);
+                    message.Append($"{item.Symbol}:   {Helper.DecimalToString(item.Shares)}    ${Math.Round(price,2)}     ${Math.Round((double)item.Shares*price, 2).ToString().Bold()}{Environment.NewLine}");
                 }
             }
             await bot.SendTextMessageAsync(update.Message.From.Id, message.ToString(), parseMode: ParseMode.Html);
