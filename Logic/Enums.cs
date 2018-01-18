@@ -33,8 +33,8 @@ namespace Logic
         Balance,
         BalanceAdd,
         BalanceRemove,
+        BalanceDetails,
         Unknown,
-        BalanceDetails
     }
 
     public enum CallbackCommand

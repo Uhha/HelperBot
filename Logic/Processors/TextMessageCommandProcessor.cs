@@ -26,9 +26,9 @@ namespace Logic.Processors
             {"/wol", Command.WakeOnLan },
             {"/trend", Command.Trend },
             {"/balance", Command.Balance },
-            {"/balanceAdd", Command.BalanceAdd },
-            {"/balanceRemove", Command.BalanceRemove },
-            {"/balanceDetails", Command.BalanceDetails }
+            {"/balanceadd", Command.BalanceAdd },
+            {"/balanceremove", Command.BalanceRemove },
+            {"/balancedetails", Command.BalanceDetails }
         };
 
         internal static async Task ProcessAsync(TelegramBotClient bot, Update update)
@@ -85,11 +85,6 @@ namespace Logic.Processors
                 default:
                     break;
             }
-        }
-
-        internal static async Task ProcessAwaitableMessageAsync(TelegramBotClient bot, Update update)
-        {
-            
         }
     }
 }
