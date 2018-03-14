@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using NLog;
+using Tracer;
 
 namespace Logic.Handlers
 {
     public class MessageHandler
     {
-        private Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly TelegramBotClient _bot;
 
         public MessageHandler()
@@ -28,10 +27,9 @@ namespace Logic.Handlers
         /// 
         public async void Handle(Update update)
         {
-            _logger.Info(update);
             if (update == null)
             {
-                _logger.Error("Unpdate is null");
+                TraceError.Error("Unpdate is null");
                 return;
             }
             switch (update.Type)

@@ -4,17 +4,14 @@ using System.Web.Http.Results;
 using Logic;
 using Telegram.Bot.Types;
 using Logic.Handlers;
-using NLog;
 using Microsoft.Ajax.Utilities;
 using System.Data.Entity.Core.Objects;
-
+using Tracer;
 
 namespace Web.Controllers
 {
     public class MessageController : ApiController
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
-
         [Route(@"api/command")]
         public OkResult Post([FromBody]Update update)
         {
@@ -22,14 +19,14 @@ namespace Web.Controllers
             {
                 if (update?.Message?.Text != null && update.Message.Text.StartsWith("/"))
                 {
-                    _logger.Info("api/command called with: " + update?.Message?.Text);
+                    TraceError.Info("api/command called with: " + update?.Message?.Text);
                 }
                 Task.Run(() => new MessageHandler().Handle(update));
                 return Ok();
             }
             catch (System.Exception e)
             {
-                _logger.Error("Upper level Exception", e.Message + e.InnerException?.Message);
+                TraceError.Error("Upper level Exception", e.Message + e.InnerException?.Message);
                 return Ok();
             }
         }
@@ -38,7 +35,7 @@ namespace Web.Controllers
         [Route(@"api/comicUpdate")]
         public OkResult ComicUpdate()
         {
-            _logger.Info("api/comicUpdate called");
+            TraceError.Info("api/comicUpdate called");
             Task.Run(() => new WorkerHandler().HandleComicAsync());
             return Ok();
         }
@@ -47,7 +44,7 @@ namespace Web.Controllers
         [Route(@"api/coinUpdate")]
         public OkResult CoinUpdate([FromUri]string sendAnyway = "false")
         {
-            _logger.Info("api/CoinUpdate called");
+            TraceError.Info("api/CoinUpdate called");
             Task.Run(() => new WorkerHandler().HandleCoinAsync(sendAnyway));
             return Ok();
         }
@@ -56,7 +53,7 @@ namespace Web.Controllers
         [Route(@"api/recordCoinPrice")]
         public OkResult RecordCoinPrice()
         {
-            _logger.Info("api/recordCoinPrice called");
+            TraceError.Info("api/recordCoinPrice called");
             Task.Run(() => new WorkerHandler().RecordCoinPrice());
             return Ok();
         }
@@ -65,7 +62,7 @@ namespace Web.Controllers
         [Route(@"api/removeOldRecords")]
         public OkResult RemoveOldRecords()
         {
-            _logger.Info("api/removeOldRecords called");
+            TraceError.Info("api/removeOldRecords called");
             Task.Run(() => new WorkerHandler().RemoveOldRecords());
             return Ok();
         }

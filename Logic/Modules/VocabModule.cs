@@ -11,14 +11,14 @@ using Telegram.Bot.Types;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types.Enums;
-using NLog;
 using Telegram.Bot.Types.InlineKeyboardButtons;
+using Tracer;
 
 namespace Logic.Modules
 {
     public class VocabModule : IModule
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        
         private static WordLookup[] _words;
         private static int _index;
         public static string Message
@@ -219,7 +219,7 @@ namespace Logic.Modules
             }
             catch (Exception e)
             {
-                logger.Error(e);
+                TraceError.Error(e);
             }
             return "No Oxford Definition Found.";
         }
@@ -244,7 +244,7 @@ namespace Logic.Modules
             }
             catch (Exception e)
             {
-                logger.Error(e.Message + e.InnerException?.Message);
+                TraceError.Error(e.Message + e.InnerException?.Message);
                 return "";
             }
 

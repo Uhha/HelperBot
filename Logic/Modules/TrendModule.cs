@@ -1,5 +1,4 @@
 ﻿using DatabaseInteractions;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +17,6 @@ namespace Logic.Modules
 {
     class TrendModule : IModule
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
-
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
             //var number = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);

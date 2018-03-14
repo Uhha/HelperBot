@@ -1,5 +1,4 @@
 ﻿using DatabaseInteractions;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -10,13 +9,12 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Tracer;
 
 namespace Logic.Modules
 {
     class CoinModule : IModule
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
-
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
             var number = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
@@ -83,7 +81,7 @@ namespace Logic.Modules
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message + e.InnerException?.Message);
+                TraceError.Error(e.Message + e.InnerException?.Message);
                 return ("", false);
             }
         }
