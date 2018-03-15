@@ -12,6 +12,7 @@ using System.Drawing;
 using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Axes;
+using Tracer;
 
 namespace Logic.Modules
 {
@@ -165,20 +166,27 @@ namespace Logic.Modules
         {
             HttpClient client = new HttpClient();
             int currenciesNumber = 5;
-            var response = await client.GetAsync(string.Format("https://api.coinmarketcap.com/v1/ticker?limit={0}", currenciesNumber));
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var result = response.Content.ReadAsAsync<CoinPrice[]>().Result;
-                using (AlcoDBEntities db = new AlcoDBEntities())
+                var response = await client.GetAsync(string.Format("https://api.coinmarketcap.com/v1/ticker?limit={0}", currenciesNumber));
+                if (response.IsSuccessStatusCode)
                 {
-                    foreach (var item in result)
+                    var result = response.Content.ReadAsAsync<CoinPrice[]>().Result;
+                    using (AlcoDBEntities db = new AlcoDBEntities())
                     {
-                        decimal.TryParse(item.price_usd, out decimal price);
-                        db.CoinPriceRecords.Add(new CoinPriceRecords() { dtRecorded = DateTime.UtcNow , CoinSymbol = item.symbol, Price = price });
+                        foreach (var item in result)
+                        {
+                            decimal.TryParse(item.price_usd, out decimal price);
+                            db.CoinPriceRecords.Add(new CoinPriceRecords() { dtRecorded = DateTime.UtcNow, CoinSymbol = item.symbol, Price = price });
+                        }
+                        db.SaveChanges();
                     }
-                    db.SaveChanges();
-                }
 
+                }
+            }
+            catch (Exception e)
+            {
+                TraceError.Error(e);
             }
 
         }
