@@ -36,13 +36,20 @@ namespace Logic.Modules
             var result = await GetPricesAsync(currenciesNumber);
             if ((!sendAnyway && !result.Item2) || string.IsNullOrEmpty(result.Item1)) return;
 
-            var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
-                "join Subscriptions s on s.id = c.subscription " +
-                "where s.SubsctiptionType = " + (int)Subscription.CoinCapMarket);
-
-            foreach (var client in clients)
+            try
             {
-                await bot.SendTextMessageAsync(client, result.Item1, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+                var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
+                        "join Subscriptions s on s.id = c.subscription " +
+                        "where s.SubsctiptionType = " + (int)Subscription.CoinCapMarket);
+
+                foreach (var client in clients)
+                {
+                    await bot.SendTextMessageAsync(client, result.Item1, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+                }
+            }
+            catch (Exception e)
+            {
+                TraceError.Error(e);
             }
         }
 
