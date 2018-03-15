@@ -30,7 +30,15 @@ namespace Logic.Handlers
 
         public async void HandleCoinAsync(string sendAnyway)
         {
-            await new CoinModule().GenerateAndSendWorkerAsync(_bot, new List<string>() { sendAnyway } );
+            try
+            {
+                await new CoinModule().GenerateAndSendWorkerAsync(_bot, new List<string>() { sendAnyway });
+            }
+            catch (Exception e)
+            {
+                _bot.SendTextMessageAsync(190374584, e.Message);
+                throw;
+            }
             TraceError.Info("HandleCoinAsync called from Worker");
         }
 
