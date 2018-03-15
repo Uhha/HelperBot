@@ -24,7 +24,8 @@ namespace Tracer
 
         public static void Error(Exception e)
         {
-            Trace.TraceError("ERROR: " + e.Message + " " + e.InnerException?.Message);
+            //Trace.TraceError("ERROR: " + e.Message + " " + e.InnerException?.Message);
+            Trace.TraceError(e.ToString());
         }
     }
 }
