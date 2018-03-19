@@ -157,7 +157,7 @@ namespace Logic.Modules
             string urlParameters = Config.OxfordLang + "/" + word;
 
             HttpClient client = HttpClientProvider.GetClient();
-            client.BaseAddress = new Uri(Config.OxfordUrl);
+            var baseAddress = new Uri(Config.OxfordUrl);
             
 
             // Add an Accept header for JSON format.
@@ -169,7 +169,7 @@ namespace Logic.Modules
             // List data response.
             try
             {
-                HttpResponseMessage response = client.GetAsync(urlParameters).Result;  // Blocking call!
+                HttpResponseMessage response = client.GetAsync(baseAddress + urlParameters).Result;  // Blocking call!
                 if (response.IsSuccessStatusCode)
                 {
                     // Parse the response body. Blocking!
