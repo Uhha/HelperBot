@@ -7,6 +7,7 @@ using Logic.Handlers;
 using Microsoft.Ajax.Utilities;
 using System.Data.Entity.Core.Objects;
 using Tracer;
+using System;
 
 namespace Web.Controllers
 {
@@ -26,7 +27,7 @@ namespace Web.Controllers
             }
             catch (System.Exception e)
             {
-                TraceError.Error("Upper level Exception", e.Message + e.InnerException?.Message);
+                TraceError.Error(e, "Upper level Exception");
                 return Ok();
             }
         }
@@ -36,7 +37,15 @@ namespace Web.Controllers
         public OkResult ComicUpdate()
         {
             TraceError.Info("api/comicUpdate called");
-            Task.Run(() => new WorkerHandler().HandleComicAsync());
+            try
+            {
+                Task.Run(() => new WorkerHandler().HandleComicAsync());
+            }
+            catch (Exception e)
+            {
+                TraceError.Error(e, "Upper level Exception");
+                return Ok();
+            }
             return Ok();
         }
 
@@ -45,26 +54,17 @@ namespace Web.Controllers
         public OkResult CoinUpdate([FromUri]string sendAnyway = "false")
         {
             TraceError.Info("api/CoinUpdate called");
-            Task.Run(() => new WorkerHandler().HandleCoinAsync(sendAnyway));
+            try
+            {
+                Task.Run(() => new WorkerHandler().HandleCoinAsync(sendAnyway));
+            }
+            catch (Exception e)
+            {
+                TraceError.Error(e, "Upper level Exception");
+                return Ok();
+            }
             return Ok();
         }
-
-        [HttpGet]
-        [Route(@"api/recordCoinPrice")]
-        public OkResult RecordCoinPrice()
-        {
-            TraceError.Info("api/recordCoinPrice called");
-            Task.Run(() => new WorkerHandler().RecordCoinPrice());
-            return Ok();
-        }
-
-        [HttpGet]
-        [Route(@"api/removeOldRecords")]
-        public OkResult RemoveOldRecords()
-        {
-            TraceError.Info("api/removeOldRecords called");
-            Task.Run(() => new WorkerHandler().RemoveOldRecords());
-            return Ok();
-        }
+      
     }
 }

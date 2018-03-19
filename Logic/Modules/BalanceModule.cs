@@ -10,6 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
+using Web.Providers;
 
 namespace Logic.Modules
 {
@@ -27,7 +28,7 @@ namespace Logic.Modules
             {
                 var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
 
-                HttpClient client = new HttpClient();
+                HttpClient client = HttpClientProvider.GetClient();
                 var response = await client.GetAsync(string.Format("https://api.coinmarketcap.com/v1/ticker/"));
 
                 if (response.IsSuccessStatusCode)
@@ -158,7 +159,7 @@ namespace Logic.Modules
             {
                 var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
 
-                HttpClient client = new HttpClient();
+                HttpClient client = HttpClientProvider.GetClient();
                 var response = await client.GetAsync(string.Format("https://api.coinmarketcap.com/v1/ticker/"));
 
                 if (response.IsSuccessStatusCode)

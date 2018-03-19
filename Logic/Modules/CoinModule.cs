@@ -10,6 +10,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Tracer;
+using Web.Providers;
 
 namespace Logic.Modules
 {
@@ -55,7 +56,7 @@ namespace Logic.Modules
 
         private async static Task<(string, bool)> GetPricesAsync(int currenciesNumber)
         {
-            HttpClient client = new HttpClient();
+            HttpClient client = HttpClientProvider.GetClient();
             if (currenciesNumber > 20) currenciesNumber = 20;
             if (currenciesNumber < 0) return ("Incorrect number", true);
             if (currenciesNumber == 0) currenciesNumber = 5;

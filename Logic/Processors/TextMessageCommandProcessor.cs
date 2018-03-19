@@ -22,7 +22,6 @@ namespace Logic.Processors
             {"/vocab", Command.Vocabulary },
             {"/define", Command.DefineWord },
             {"/wol", Command.WakeOnLan },
-            {"/trend", Command.Trend },
             {"/balance", Command.Balance },
             {"/balanceadd", Command.BalanceAdd },
             {"/balanceremove", Command.BalanceRemove },
@@ -62,9 +61,6 @@ namespace Logic.Processors
                     break;
                 case Command.WakeOnLan:
                     await new WakeOnLanModule().GenerateAndSendAsync(bot, update);
-                    break;
-                case Command.Trend:
-                    await new TrendModule().GenerateAndSendAsync(bot, update);
                     break;
                 case Command.Balance:
                     await new BalanceModule().GenerateAndSendAsync(bot, update);

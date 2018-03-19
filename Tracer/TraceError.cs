@@ -17,15 +17,15 @@ namespace Tracer
             Trace.TraceError(message);
         }
 
-        public static void Error(string message, string exceotion)
+        public static void Error(string message, string exception)
         {
-            Trace.TraceError(message + " " + exceotion);
+            Trace.TraceError(message + " " + exception);
         }
 
-        public static void Error(Exception e)
+        public static void Error(Exception e, string message = "")
         {
             //Trace.TraceError("ERROR: " + e.Message + " " + e.InnerException?.Message);
-            Trace.TraceError(e.ToString());
+            Trace.TraceError("ERROR: " + message + " " + e.ToString());
         }
     }
 }

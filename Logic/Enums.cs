@@ -29,7 +29,6 @@ namespace Logic
         Vocabulary,
         DefineWord,
         WakeOnLan,
-        Trend,
         Balance,
         BalanceAdd,
         BalanceRemove,

@@ -10,6 +10,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
+using Tracer;
 
 namespace Logic.Modules
 {
@@ -96,9 +97,9 @@ namespace Logic.Modules
                         //await _bot.SendTextMessageAsync(myChatId, "Already there" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    //await _bot.SendTextMessageAsync(myChatId, ex.Message + Environment.NewLine + ex.InnerException);
+                    TraceError.Error(e);
                 }
             }
 
@@ -118,9 +119,9 @@ namespace Logic.Modules
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                TraceError.Error(e);
             }
         }
 

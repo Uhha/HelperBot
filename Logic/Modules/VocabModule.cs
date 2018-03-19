@@ -13,6 +13,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineKeyboardButtons;
 using Tracer;
+using Web.Providers;
 
 namespace Logic.Modules
 {
@@ -149,10 +150,9 @@ namespace Logic.Modules
         {
             string urlParameters = Config.OxfordLang + "/" + word;
 
-            HttpClient client = new HttpClient()
-            {
-                BaseAddress = new Uri(Config.OxfordUrl)
-            };
+            HttpClient client = HttpClientProvider.GetClient();
+            client.BaseAddress = new Uri(Config.OxfordUrl);
+            
 
             // Add an Accept header for JSON format.
             client.DefaultRequestHeaders.Accept.Add(

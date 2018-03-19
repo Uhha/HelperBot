@@ -13,9 +13,11 @@ using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Axes;
 using Tracer;
+using Web.Providers;
 
 namespace Logic.Modules
 {
+    [Obsolete("No more /trends", true)]
     class TrendModule : IModule
     {
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
@@ -164,7 +166,7 @@ namespace Logic.Modules
 
         public async void RecordCoinPrice()
         {
-            HttpClient client = new HttpClient();
+            HttpClient client = HttpClientProvider.GetClient();
             int currenciesNumber = 5;
             try
             {

@@ -14,7 +14,7 @@ namespace Logic.Handlers
 {
     public class WorkerHandler
     {
-        
+
         private readonly TelegramBotClient _bot;
 
         public WorkerHandler()
@@ -36,21 +36,10 @@ namespace Logic.Handlers
             }
             catch (Exception e)
             {
-                _bot.SendTextMessageAsync(190374584, e.Message);
-                throw;
+                TraceError.Error(e);
             }
             TraceError.Info("HandleCoinAsync called from Worker");
         }
-
-        public async void RecordCoinPrice()
-        {
-            new TrendModule().RecordCoinPrice();
-            TraceError.Info("HandleCoinAsync called from Worker");
-        }
-
-        public async void RemoveOldRecords()
-        {
-            new TrendModule().GenerateAndSendWorkerAsync(_bot);
-        }
+        
     }
 }
