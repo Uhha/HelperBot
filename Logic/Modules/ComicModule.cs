@@ -128,6 +128,8 @@ namespace Logic.Modules
         private static (bool doSend, string alt, string title, string scr) GetOglafPicture(int client)
         {
             WebClient webclient = new WebClient();
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             string html = webclient.DownloadString("http://www.oglaf.com");
 
 
