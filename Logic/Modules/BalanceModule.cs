@@ -179,7 +179,7 @@ namespace Logic.Modules
                 foreach (var item in balances)
                 {
                     _prices.TryGetValue(item.Symbol, out double price);
-                    message.Append($"{item.Symbol}:   {Helper.DecimalToString(item.Shares)}    ${Math.Round(price,2)}     ${Math.Round((double)item.Shares*price, 2).ToString().Bold()}{Environment.NewLine}");
+                    message.Append($"{item.Symbol}: {Helper.DecimalToString(item.Shares)} | ${Math.Round(price,2)} | ${Math.Round((double)item.Shares*price, 2).ToString().Bold()}{Environment.NewLine}");
                 }
             }
             await bot.SendTextMessageAsync(update.Message.From.Id, message.ToString(), parseMode: ParseMode.Html);

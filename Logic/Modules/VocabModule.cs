@@ -158,8 +158,8 @@ namespace Logic.Modules
 
             HttpClient client = HttpClientProvider.GetClient();
             var baseAddress = new Uri(Config.OxfordUrl);
-            
 
+            client.DefaultRequestHeaders.Clear();
             // Add an Accept header for JSON format.
             client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
@@ -169,7 +169,7 @@ namespace Logic.Modules
             // List data response.
             try
             {
-                HttpResponseMessage response = client.GetAsync(baseAddress + urlParameters).Result;  // Blocking call!
+                HttpResponseMessage response = client.GetAsync(baseAddress + urlParameters).Result;  
                 if (response.IsSuccessStatusCode)
                 {
                     // Parse the response body. Blocking!
