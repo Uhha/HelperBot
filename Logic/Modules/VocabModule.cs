@@ -65,10 +65,9 @@ namespace Logic.Modules
                     replyMarkup: inlineKeyboardMarkup, parseMode: ParseMode.Html);
                 PrepareNextWord();
             }
-            catch (Exception )
+            catch (Exception e)
             {
-                //await bot.SendTextMessageAsync(update.Message.Chat.Id, e.Message);
-                //throw;
+                TraceError.Error(e);
             }
         }
 
@@ -251,7 +250,7 @@ namespace Logic.Modules
             }
             catch (Exception e)
             {
-                TraceError.Error(e.Message + e.InnerException?.Message);
+                TraceError.Error(e);
                 return "";
             }
 

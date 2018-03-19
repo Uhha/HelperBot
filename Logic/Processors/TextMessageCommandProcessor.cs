@@ -42,16 +42,7 @@ namespace Logic.Processors
                     await new FinanceModule().GenerateAndSendAsync(bot, update);
                     break;
                 case Command.Coins:
-                    try
-                    {
-                        await new CoinModule().GenerateAndSendAsync(bot, update);
-                    }
-                    catch (Exception e)
-                    {
-                        TraceError.Error(e);
-                        await bot.SendTextMessageAsync(update.Message.Chat.Id, e.Message);
-                        //throw;
-                    }
+                    await new CoinModule().GenerateAndSendAsync(bot, update);
                     break;
                 case Command.Vocabulary:
                     await new VocabModule().GenerateAndSendAsync(bot, update);

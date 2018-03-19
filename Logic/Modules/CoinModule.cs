@@ -89,7 +89,7 @@ namespace Logic.Modules
             }
             catch (Exception e)
             {
-                TraceError.Error(e.Message + e.InnerException?.Message);
+                TraceError.Error(e);
                 return ("", false);
             }
         }

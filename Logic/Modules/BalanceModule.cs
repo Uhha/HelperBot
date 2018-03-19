@@ -10,6 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
+using Tracer;
 using Web.Providers;
 
 namespace Logic.Modules
@@ -109,8 +110,9 @@ namespace Logic.Modules
             {
                 await bot.SendTextMessageAsync(update.Message.From.Id, message);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                TraceError.Error(e);
             }
         }
 
@@ -146,8 +148,9 @@ namespace Logic.Modules
             {
                 await bot.SendTextMessageAsync(update.Message.From.Id, message);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                TraceError.Error(e);
             }
         }
 

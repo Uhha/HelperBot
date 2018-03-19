@@ -156,7 +156,7 @@ namespace Logic.Modules
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             // Use SecurityProtocolType.Ssl3 if needed for compatibility reasons
-            string html;
+            string html = "";
             try
             {
                  html = webclient.DownloadString("https://xkcd.com/");
@@ -164,8 +164,7 @@ namespace Logic.Modules
             }
             catch (Exception e )
             {
-                String someshit = e.Message;
-                throw;
+                TraceError.Error(e);
             }
 
             HtmlDocument doc = new HtmlDocument();

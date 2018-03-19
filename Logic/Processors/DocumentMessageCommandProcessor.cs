@@ -6,6 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using DatabaseInteractions;
 using System.Data.Entity;
+using Tracer;
 
 namespace Logic.Processors
 {
@@ -36,8 +37,7 @@ namespace Logic.Processors
                 }
                 catch (Exception e)
                 {
-                    var asd = e.Message;
-                    throw;
+                    TraceError.Error(e);
                 }
 
                 //get words from SQLite file
@@ -126,10 +126,9 @@ namespace Logic.Processors
                         con.Close();
                     }
                 }
-                catch (Exception e2)
+                catch (Exception e)
                 {
-                    var asdad = e2.Message;
-                    throw;
+                    TraceError.Error(e);
                 }
                 bot.SendTextMessageAsync(update.Message.Chat.Id, $"Extracted {words.Count.ToString()} words from the vocab.db");
 
