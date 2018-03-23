@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -12,6 +13,7 @@ using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
 using Tracer;
 
+[assembly: InternalsVisibleTo("BaseTests")]
 namespace Logic.Modules
 {
     internal class ComicModule : IModule
@@ -92,10 +94,6 @@ namespace Logic.Modules
                         await bot.SendTextMessageAsync(client, result.title);
                         await bot.SendPhotoAsync(client, new FileToSend(result.scr));
                     }
-                    else
-                    {
-                        //await _bot.SendTextMessageAsync(myChatId, "Already there" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
-                    }
                 }
                 catch (Exception e)
                 {
@@ -130,19 +128,33 @@ namespace Logic.Modules
             WebClient webclient = new WebClient();
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            string html = webclient.DownloadString("http://www.oglaf.com");
+            string html = "";
+            try
+            {
+                webclient.DownloadString("http://www.oglaf.com");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
+            HtmlAttributeCollection attrs = null;
+            try
+            {
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(html);
 
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(html);
-
-            List<HtmlNode> imageNodes = null;
-            imageNodes = (from HtmlNode node in doc.DocumentNode.SelectNodes("//img")
-                          where node.Name == "img"
-                          && node.Attributes["id"]?.Value == "strip"
-                          select node).ToList();
-
-            var attrs = imageNodes[0]?.Attributes;
+                List<HtmlNode> imageNodes = null;
+                imageNodes = (from HtmlNode node in doc.DocumentNode.SelectNodes("//img")
+                              where node.Name == "img"
+                              && node.Attributes["id"]?.Value == "strip"
+                              select node).ToList();
+                attrs = imageNodes[0]?.Attributes;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
             return (
                 NotSent(client, attrs["alt"]?.Value, Subscription.Oglaf),

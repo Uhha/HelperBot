@@ -23,10 +23,18 @@ namespace DatabaseInteractions
 
         public static IList<T> GetList<T>(string sql)
         {
-            using (AlcoDBEntities db = new AlcoDBEntities())
+            try
             {
-                DbRawSqlQuery<T> rows = db.Database.SqlQuery<T>(sql);
-                return rows.ToArray();
+                using (AlcoDBEntities db = new AlcoDBEntities())
+                {
+                    DbRawSqlQuery<T> rows = db.Database.SqlQuery<T>(sql);
+                    return rows.ToArray();
+                }
+            }
+            catch (Exception e)
+            {
+                var exx = e;
+                throw;
             }
         }
 
