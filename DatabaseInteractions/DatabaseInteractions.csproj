@@ -125,5 +125,11 @@
       <LastGenOutput>AlcoDBModel.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tracer\Tracer.csproj">
+      <Project>{C24B3A9C-4CE1-4A33-8954-1C6EC6945FB8}</Project>
+      <Name>Tracer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

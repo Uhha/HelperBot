@@ -24,21 +24,14 @@ namespace Logic.Handlers
 
         public async void HandleComicAsync()
         {
-            await new ComicModule().GenerateAndSendWorkerAsync(_bot);
             TraceError.Info("HandleComicAsync called from Worker");
+            await new ComicModule().GenerateAndSendWorkerAsync(_bot);
         }
 
         public async void HandleCoinAsync(string sendAnyway)
         {
-            try
-            {
-                await new CoinModule().GenerateAndSendWorkerAsync(_bot, new List<string>() { sendAnyway });
-            }
-            catch (Exception e)
-            {
-                TraceError.Error(e);
-            }
             TraceError.Info("HandleCoinAsync called from Worker");
+            await new CoinModule().GenerateAndSendWorkerAsync(_bot, new List<string>() { sendAnyway });
         }
         
     }

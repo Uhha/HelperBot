@@ -79,13 +79,13 @@ namespace Logic.Modules
 
         public async Task GenerateAndSendWorkerAsync(TelegramBotClient bot, IList<string> parameters = null)
         {
-            var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
-                "join Subscriptions s on s.id = c.subscription " +
-                "where s.SubsctiptionType = " + (int)Subscription.Oglaf);
-
-            foreach (var client in clients)
+            try
             {
-                try
+                var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
+                        "join Subscriptions s on s.id = c.subscription " +
+                        "where s.SubsctiptionType = " + (int)Subscription.Oglaf);
+
+                foreach (var client in clients)
                 {
                     var result = GetOglafPicture(client);
                     if (result.doSend)
@@ -95,17 +95,18 @@ namespace Logic.Modules
                         await bot.SendPhotoAsync(client, new FileToSend(result.scr));
                     }
                 }
-                catch (Exception e)
-                {
-                    TraceError.Error(e);
-                }
+            }
+            catch (Exception e)
+            {
+                TraceError.Error(e);
             }
 
-            clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
-                "join Subscriptions s on s.id = c.subscription " +
-                "where s.SubsctiptionType = " + (int)Subscription.XKCD);
             try
             {
+                var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
+                "join Subscriptions s on s.id = c.subscription " +
+                "where s.SubsctiptionType = " + (int)Subscription.XKCD);
+            
                 foreach (var client in clients)
                 {
                     var result = GetXKCDPicture(client);
@@ -131,7 +132,7 @@ namespace Logic.Modules
             string html = "";
             try
             {
-                webclient.DownloadString("http://www.oglaf.com");
+                webclient.DownloadString("www.google.com"); //http://www.oglaf.com
             }
             catch (Exception)
             {

@@ -4,6 +4,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tracer;
 
 namespace DatabaseInteractions
 {
@@ -33,9 +34,9 @@ namespace DatabaseInteractions
             }
             catch (Exception e)
             {
-                var exx = e;
-                throw;
+                TraceError.Error(e);
             }
+            return new List<T>();
         }
 
         public static IList<T> GetTable<T>(string sql)
