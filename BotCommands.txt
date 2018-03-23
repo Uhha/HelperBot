@@ -1,6 +1,9 @@
 coins - enter a number to see crypto prices (coins 5)
-trend - enter to see crypto trend (trend {SYMBOL} {TIMEFRAME} | trend all {TIMEFRAME})
+c - short for coins
 balance - see you crypto balance
+b - short for balance
+balancedetails - detailed balance
+bd - short for balancedetails
 balanceadd - add/update a coin on your balance (balanceadd BTC 0.55)
 balanceremove - remove a coin from your balance
 subs - subscribe/unsubscribe to a comic

@@ -19,13 +19,16 @@ namespace Logic.Processors
             {"/subs", Command.ComicSubscribe },
             {"/finance", Command.FincanceSubscribe },
             {"/coins", Command.Coins },
+            {"/c", Command.Coins },
             {"/vocab", Command.Vocabulary },
             {"/define", Command.DefineWord },
             {"/wol", Command.WakeOnLan },
             {"/balance", Command.Balance },
+            {"/b", Command.Balance },
             {"/balanceadd", Command.BalanceAdd },
             {"/balanceremove", Command.BalanceRemove },
-            {"/balancedetails", Command.BalanceDetails }
+            {"/balancedetails", Command.BalanceDetails },
+            {"/bd", Command.BalanceDetails },
         };
 
         internal static async Task ProcessAsync(TelegramBotClient bot, Update update)
