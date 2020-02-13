@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -25,7 +26,8 @@ namespace Logic.Modules
                 InlineKeyboard = new[]
                     {
                     new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "/subs=Oglaf"),
-                             InlineKeyboardButton.WithCallbackData ("xkcd", "/subs=Xkcd")}
+                             InlineKeyboardButton.WithCallbackData ("xkcd", "/subs=Xkcd"),
+                             InlineKeyboardButton.WithCallbackData ("ErrorLogs", "/subs=ErrL")}
                 }
             };
             await bot.SendTextMessageAsync(update.Message.Chat.Id, "Subscribe/Unsubscribe:", replyMarkup: inlineKeyboardMarkup);
@@ -37,6 +39,7 @@ namespace Logic.Modules
             if (update.CallbackQuery.Data.Equals("/subs=Oglaf")) subscriptionType = Subscription.Oglaf;
             if (update.CallbackQuery.Data.Equals("/subs=Xkcd")) subscriptionType = Subscription.XKCD;
             if (update.CallbackQuery.Data.Equals("/subs=CoinCM")) subscriptionType = Subscription.CoinCapMarket;
+            if (update.CallbackQuery.Data.Equals("/subs=ErrL")) subscriptionType = Subscription.ErrorMessageLog;
 
             var userId = update.CallbackQuery.From.Id;
             using (AlcoDBEntities db = new AlcoDBEntities())
@@ -79,6 +82,7 @@ namespace Logic.Modules
 
         public async Task GenerateAndSendWorkerAsync(TelegramBotClient bot, IList<string> parameters = null)
         {
+            int currentClient = 0;
             try
             {
                 var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
@@ -87,6 +91,7 @@ namespace Logic.Modules
 
                 foreach (var client in clients)
                 {
+                    currentClient = client;
                     var result = GetOglafPicture(client);
                     if (result.doSend)
                     {
@@ -95,20 +100,14 @@ namespace Logic.Modules
                         await bot.SendPhotoAsync(client, new FileToSend(result.scr));
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                TraceError.Error(e);
-            }
 
-            try
-            {
-                var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
+                clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
                 "join Subscriptions s on s.id = c.subscription " +
                 "where s.SubsctiptionType = " + (int)Subscription.XKCD);
-            
+
                 foreach (var client in clients)
                 {
+                    currentClient = client;
                     var result = GetXKCDPicture(client);
                     if (result.doSend)
                     {
@@ -117,6 +116,11 @@ namespace Logic.Modules
                         await bot.SendPhotoAsync(client, new FileToSend(result.scr));
                     }
                 }
+            }
+            catch (ApiRequestException e)
+            {
+                string msg = $"Client: {currentClient}";
+                TraceError.Error(e, msg);
             }
             catch (Exception e)
             {
@@ -132,7 +136,7 @@ namespace Logic.Modules
             string html = "";
             try
             {
-                webclient.DownloadString("www.google.com"); //http://www.oglaf.com
+                html = webclient.DownloadString("http://www.oglaf.com"); 
             }
             catch (Exception)
             {

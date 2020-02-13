@@ -33,6 +33,12 @@ namespace Logic.Handlers
             TraceError.Info("HandleCoinAsync called from Worker");
             await new CoinModule().GenerateAndSendWorkerAsync(_bot, new List<string>() { sendAnyway });
         }
-        
+
+        public async void SendErrorMessageToBot(string errormsg)
+        {
+            TraceError.Info("HandleErrorMsg called from Worker");
+            await new ErrorMsgModule().SendErrorMessage(_bot, errormsg);
+        }
+
     }
 }

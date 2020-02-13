@@ -11,8 +11,8 @@ namespace Logic
         NoSubscription,
         Oglaf,
         XKCD,
-        CoinCapMarket
-        
+        CoinCapMarket,
+        ErrorMessageLog
     }
 
     public enum VocabCallbackType

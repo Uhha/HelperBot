@@ -65,6 +65,22 @@ namespace Web.Controllers
             }
             return Ok();
         }
-      
+
+        [HttpPost]
+        [Route(@"api/sendErrorMessageToBot")]
+        public OkResult SendErrorMessageToBot([FromUri]string errormsg)
+        {
+            TraceError.Info("api/SendErrorMessageToBot");
+            try
+            {
+                Task.Run(() => new WorkerHandler().SendErrorMessageToBot(errormsg));
+            }
+            catch (Exception e)
+            {
+                TraceError.Error(e, "Upper level Exception");
+                return Ok();
+            }
+            return Ok();
+        }
     }
 }

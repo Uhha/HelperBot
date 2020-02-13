@@ -146,6 +146,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="HttpClientProvider.cs" />
     <Compile Include="Modules\BalanceModule.cs" />
+    <Compile Include="Modules\ErrorMsgModule.cs" />
     <Compile Include="Modules\TrendModule.cs" />
     <Compile Include="Modules\CoinModule.cs" />
     <Compile Include="Handlers\WorkerHandler.cs" />
