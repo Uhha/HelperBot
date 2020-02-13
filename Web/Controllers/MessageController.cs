@@ -66,7 +66,9 @@ namespace Web.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [System.Web.Http.AcceptVerbs("GET", "POST")]
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.HttpPost]
         [Route(@"api/sendErrorMessageToBot")]
         public OkResult SendErrorMessageToBot([FromUri]string errormsg)
         {
