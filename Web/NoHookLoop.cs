@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using Telegram.Bot;
@@ -15,6 +16,8 @@ namespace Web
     {
         public static void Start()
         {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Run().Wait();
         }
 
@@ -22,7 +25,7 @@ namespace Web
         {
             var TelegramBotClient = new TelegramBotClient(Config.TestBotApiKey);
 
-            var me = await TelegramBotClient.GetMeAsync();
+            //var me = await TelegramBotClient.GetMeAsync();
 
             //Console.WriteLine("Hello my name is {0}", me.Username);
 

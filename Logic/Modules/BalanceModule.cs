@@ -1,10 +1,15 @@
 ﻿using DatabaseInteractions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -17,11 +22,10 @@ namespace Logic.Modules
 {
     class BalanceModule : IModule
     {
-        private Dictionary<String, double> _prices;
 
+        private static string API_KEY = "***REMOVED***";
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
-            _prices = new Dictionary<string, double>();
             double totalAmount = 0;
             double BTCtotalAmount = 0;
             double ALTtotalAmount = 0;
@@ -29,30 +33,55 @@ namespace Logic.Modules
             {
                 var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
 
-                HttpClient client = HttpClientProvider.GetClient();
-                var response = await client.GetAsync(string.Format("https://api.coinmarketcap.com/v1/ticker/"));
-
-                if (response.IsSuccessStatusCode)
+                StringBuilder sb = new StringBuilder();
+                foreach (var b in balances)
                 {
-                    var result = response.Content.ReadAsAsync<CoinPrice[]>().Result;
-                    foreach (var item in result)
-                    {
-                        double.TryParse(item.price_usd, out double price);
-                        _prices.Add(item.symbol, price);
-                    }
+                    sb.Append(b.Symbol + ',');
                 }
+                sb.Remove(sb.Length - 1, 1);
 
-                
+                var prices = GetPrices(sb.ToString());
+
                 foreach (var item in balances)
                 {
-                    _prices.TryGetValue(item.Symbol, out double price);
+                    prices.TryGetValue(item.Symbol, out double price);
                     totalAmount += ((double)item.Shares * price);
                     if (item.Symbol == "BTC") BTCtotalAmount += ((double)item.Shares * price);
                     if (item.Symbol != "BTC") ALTtotalAmount += ((double)item.Shares * price);
                 }
             }
-            string msg = $"BTC: ${Math.Round(BTCtotalAmount, 2)}{Environment.NewLine}ALT: ${Math.Round(ALTtotalAmount, 2)}{Environment.NewLine}TOTAL: ${Math.Round(totalAmount,2)}";
+            string msg = $"BTC: ${Math.Round(BTCtotalAmount, 2)}{Environment.NewLine}ALT: ${Math.Round(ALTtotalAmount, 2)}{Environment.NewLine}TOTAL: ${Math.Round(totalAmount, 2)}";
             await bot.SendTextMessageAsync(update.Message.From.Id, msg, parseMode: ParseMode.Html);
+        }
+
+        private Dictionary<string, double> GetPrices(string symbols)
+        {
+            var URL = new UriBuilder("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest");
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            queryString["symbol"] = symbols;
+
+            URL.Query = queryString.ToString();
+
+            var client = new WebClient();
+            client.Headers.Add("X-CMC_PRO_API_KEY", API_KEY);
+            client.Headers.Add("Accepts", "application/json");
+            var response = client.DownloadString(URL.ToString());
+            response = response.Replace("USD", "CurrentPriceInfo");
+
+            //dynamic result = JsonConvert.DeserializeObject(response);
+
+            JObject obj = JObject.Parse(response);
+            JEnumerable<JToken> data = obj["data"].Children();
+
+            Dictionary<string, double> prices = new Dictionary<string, double>();
+            foreach (var t in data)
+            {
+                var tokensvalue = t.Children();
+                var tokenData = tokensvalue.First().ToString();
+                var entry = JsonConvert.DeserializeObject<ItemData>(tokenData);
+                prices.Add(entry.symbol, entry.quote?.CurrentPriceInfo?.price ?? 0);
+            }
+            return prices;
         }
 
 
@@ -104,7 +133,7 @@ namespace Logic.Modules
                     message = symbol + " Record Added!";
                 }
                 db.SaveChanges();
-            }  
+            }
 
             try
             {
@@ -156,34 +185,54 @@ namespace Logic.Modules
 
         internal async Task BalanceDetailsAsync(TelegramBotClient bot, Update update)
         {
-            _prices = new Dictionary<string, double>();
             StringBuilder message = new StringBuilder();
             using (AlcoDBEntities db = new AlcoDBEntities())
             {
                 var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
-
-                HttpClient client = HttpClientProvider.GetClient();
-                var response = await client.GetAsync(string.Format("https://api.coinmarketcap.com/v1/ticker/"));
-
-                if (response.IsSuccessStatusCode)
+                StringBuilder sb = new StringBuilder();
+                foreach (var b in balances)
                 {
-                    var result = response.Content.ReadAsAsync<CoinPrice[]>().Result;
-                    foreach (var item in result)
-                    {
-                        double.TryParse(item.price_usd, out double price);
-                        _prices.Add(item.symbol, price);
-                    }
+                    sb.Append(b.Symbol + ',');
                 }
+                sb.Remove(sb.Length - 1, 1);
 
+                var prices = GetPrices(sb.ToString());
 
                 foreach (var item in balances)
                 {
-                    _prices.TryGetValue(item.Symbol, out double price);
-                    message.Append($"{item.Symbol}: {Helper.DecimalToString(item.Shares)} | ${Math.Round(price,2)} | ${Math.Round((double)item.Shares*price, 2).ToString().Bold()}{Environment.NewLine}");
+                    prices.TryGetValue(item.Symbol, out double price);
+                    message.Append($"{item.Symbol}: {Helper.DecimalToString(item.Shares)} | ${Math.Round(price, 2)} | ${Math.Round((double)item.Shares * price, 2).ToString().Bold()}{Environment.NewLine}");
                 }
             }
             await bot.SendTextMessageAsync(update.Message.From.Id, message.ToString(), parseMode: ParseMode.Html);
         }
-     
+
     }
+
+
+
+
+    //public class Rototobject
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string symbol { get; set; }
+    //    public string slug { get; set; }
+    //    public int num_market_pairs { get; set; }
+    //    public DateTime date_added { get; set; }
+    //    public string[] tags { get; set; }
+    //    public int max_supply { get; set; }
+    //    public int circulating_supply { get; set; }
+    //    public int total_supply { get; set; }
+    //    public int is_active { get; set; }
+    //    public object platform { get; set; }
+    //    public int cmc_rank { get; set; }
+    //    public int is_fiat { get; set; }
+    //    public DateTime last_updated { get; set; }
+    //    public Quote quote { get; set; }
+    //}
+
+    
+
+
 }

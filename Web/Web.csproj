@@ -16,7 +16,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Web</RootNamespace>
     <AssemblyName>Web</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -357,7 +357,7 @@
       <Name>DatabaseInteractions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logic\Logic.csproj">
-      <Project>{9834FFD7-A634-4DEF-A8C2-0FD169824AF3}</Project>
+      <Project>{9834ffd7-a634-4def-a8c2-0fd169824af3}</Project>
       <Name>Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tracer\Tracer.csproj">
