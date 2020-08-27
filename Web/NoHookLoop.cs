@@ -23,11 +23,7 @@ namespace Web
 
         static async Task Run()
         {
-            var TelegramBotClient = new TelegramBotClient(Config.TestBotApiKey);
-
-            //var me = await TelegramBotClient.GetMeAsync();
-
-            //Console.WriteLine("Hello my name is {0}", me.Username);
+            var TelegramBotClient = new TelegramBotClient(Config.BotApiKey);
 
             var offset = 0;
             
@@ -37,25 +33,7 @@ namespace Web
 
                 foreach (var update in updates)
                 {
-                    //if (update.Message.Text != null)
-                    //	await TelegramBotClient.SendTextMessageAsync(update.Message.Chat.Id, update.Message.Text);
-
-                    //if (update.Message.Photo != null)
-                    //{
-                    //	var file = await TelegramBotClient.GetFileAsync(update.Message.Photo.LastOrDefault()?.FileId);
-
-                    //	var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-
-                    //	using (var profileImageStream = File.Open(filename, FileMode.Create))
-                    //	{
-                    //		await file.FileStream.CopyToAsync(profileImageStream);
-                    //	}
-
-
-                    //}
-
                     await Task.Run(() => new MessageHandler().Handle(update));
-
                     offset = update.Id + 1;
                 }
 

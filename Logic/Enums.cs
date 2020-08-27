@@ -15,19 +15,11 @@ namespace Logic
         ErrorMessageLog
     }
 
-    public enum VocabCallbackType
-    {
-        Word,
-        Definition
-    }
-
     public enum Command
     {
         ComicSubscribe,
         FincanceSubscribe,
         Coins,
-        Vocabulary,
-        DefineWord,
         WakeOnLan,
         Balance,
         BalanceAdd,
@@ -39,8 +31,6 @@ namespace Logic
     public enum CallbackCommand
     {
         ComicSubscribe,
-        VocabNewWord,
-        VocabDefinition,
         Unknown
     }
 

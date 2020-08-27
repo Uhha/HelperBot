@@ -20,8 +20,6 @@ namespace Logic.Processors
             {"/finance", Command.FincanceSubscribe },
             {"/coins", Command.Coins },
             {"/c", Command.Coins },
-            {"/vocab", Command.Vocabulary },
-            {"/define", Command.DefineWord },
             {"/wol", Command.WakeOnLan },
             {"/balance", Command.Balance },
             {"/b", Command.Balance },
@@ -46,12 +44,6 @@ namespace Logic.Processors
                     break;
                 case Command.Coins:
                     await new CoinModule().GenerateAndSendAsync(bot, update);
-                    break;
-                case Command.Vocabulary:
-                    await new VocabModule().GenerateAndSendAsync(bot, update);
-                    break;
-                case Command.DefineWord:
-                    await new VocabModule().GenerateAndSendDefineAsync(bot, update);
                     break;
                 case Command.WakeOnLan:
                     await new WakeOnLanModule().GenerateAndSendAsync(bot, update);

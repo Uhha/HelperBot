@@ -14,7 +14,7 @@ namespace Logic
             if (_bot != null) return _bot;
             if (Config.Environment == "Debug")
             {
-                _bot = new TelegramBotClient(Config.TestBotApiKey);
+                _bot = new TelegramBotClient(Config.BotApiKey);
                 _bot.SendTextMessageAsync(182328439, "Local Bot started!");
             }
             else

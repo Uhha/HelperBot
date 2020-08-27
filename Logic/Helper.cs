@@ -29,5 +29,7 @@ namespace Logic
             if (dec == null) return "";
             return DecimalToString((decimal)dec);
         }
+
+        
     }
 }

@@ -20,14 +20,6 @@ namespace DBCallsNetTest
             var value3 = DB.GetValue<string>("select Name from enums where id = 1000");
             Assert.AreEqual(null, value3);
 
-
-            //T val = default(T); // TODO: Initialize to an appropriate value  
-            //MyLinkedList<T> target = new MyLinkedList<T>(val); // TODO: Initialize to an appropriate value  
-            //int expected = 0; // TODO: Initialize to an appropriate value  
-            //int actual;
-            //actual = target.SizeOfLinkedList();
-            //Assert.AreEqual(expected, actual);
-            //Assert.Inconclusive("Verify the correctness of this test method.");
         }
 
         [TestMethod]

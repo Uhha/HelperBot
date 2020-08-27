@@ -57,7 +57,7 @@ namespace Logic.Modules
             }
         }
 
-        private static string API_KEY = "***REMOVED***";
+        private static string API_KEY = Config.CoinMarketCapAPIKey;
 
         private async static Task<(string, bool)> GetPricesAsync(int currenciesNumber)
         {

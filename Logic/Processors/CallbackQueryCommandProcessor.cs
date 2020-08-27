@@ -16,8 +16,6 @@ namespace Logic.Processors
         private static Dictionary<string, CallbackCommand> _commands = new Dictionary<string, CallbackCommand>
         {
             {"/subs", CallbackCommand.ComicSubscribe },
-            {"/vocabNewWord", CallbackCommand.VocabNewWord },
-            {"/vocabDefinition", CallbackCommand.VocabDefinition },
         };
 
         internal static async Task ProcessAsync(TelegramBotClient bot, Update update)
@@ -29,12 +27,6 @@ namespace Logic.Processors
             {
                 case CallbackCommand.ComicSubscribe:
                     await new ComicModule().GenerateAndSendCallbackAsync(bot, update);
-                    break;
-                case CallbackCommand.VocabNewWord:
-                    await new VocabModule().GenerateAndSendCallbackAsync(bot, update);
-                    break;
-                case CallbackCommand.VocabDefinition:
-                    await new VocabModule().GenerateAndSendDefineCallbackAsync(bot, update);
                     break;
                 case CallbackCommand.Unknown:
                     break;

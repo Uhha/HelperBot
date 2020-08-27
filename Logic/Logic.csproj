@@ -153,15 +153,14 @@
     <Compile Include="Modules\FinanceModule.cs" />
     <Compile Include="Modules\IModule.cs" />
     <Compile Include="Processors\CallbackQueryCommandProcessor.cs" />
-    <Compile Include="Processors\DocumentMessageCommandProcessor.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Processors\TextMessageCommandProcessor.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Handlers\MessageHandler.cs" />
     <Compile Include="Modules\ComicModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Modules\VocabModule.cs" />
     <Compile Include="Modules\WakeOnLanModule.cs" />
+    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -176,14 +175,6 @@
       <Project>{c24b3a9c-4ce1-4a33-8954-1c6ec6945fb8}</Project>
       <Name>Tracer</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="sqlite3.def">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sqlite3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

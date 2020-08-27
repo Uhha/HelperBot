@@ -87,7 +87,6 @@ namespace Logic.Handlers
                 case Telegram.Bot.Types.Enums.MessageType.VoiceMessage:
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.DocumentMessage:
-                    DocumentMessageCommandProcessor.Process(_bot, update);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.StickerMessage:
                     break;

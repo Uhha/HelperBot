@@ -12,9 +12,9 @@ namespace Logic
             get { return Appsettings["BotApiKey"]; }
         }
 
-        public static string TestBotApiKey
+        public static string CoinMarketCapAPIKey
         {
-            get { return Appsettings["TestBotApiKey"]; }
+            get { return Appsettings["CoinMarketCapAPIKey"]; }
         }
 
         public static string WebHookUrl
@@ -26,25 +26,6 @@ namespace Logic
         {
             get { return Appsettings["Environment"]; }
         }
-
-        public static string OxfordUrl
-        {
-            get { return Appsettings["OxfordUrl"]; }
-        }
-
-        public static string OxfordAppId
-        {
-            get { return Appsettings["OxfordAppId"]; }
-        }
-
-        public static string OxfordAppKey
-        {
-            get { return Appsettings["OxfordAppKey"]; }
-        }
-
-        public static string OxfordLang
-        {
-            get { return Appsettings["OxfordLang"]; }
-        }
+        
     }
 }

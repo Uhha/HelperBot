@@ -64,7 +64,6 @@ namespace Logic.Modules
                 }
                 else
                 {
-                    //await bot.SendTextMessageAsync(userId, "Already subscribed");
                     var clients = db.Clients.Where(x => x.ChatID == userId &&
                         db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType == (int)subscriptionType));
                     foreach (var item in clients)
