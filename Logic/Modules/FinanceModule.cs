@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Logic.Modules
@@ -15,12 +14,12 @@ namespace Logic.Modules
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
             var inlineKeyboardMarkup = new InlineKeyboardMarkup
-            {
-                InlineKeyboard = new[]
+            (
+                new[]
                     {
                         new [] {  InlineKeyboardButton.WithCallbackData ("CoinCapMarket", "sub=CoinCM") }
                     }
-            };
+            );
             await bot.SendTextMessageAsync(update.Message.Chat.Id, "Choose what to subscribe to:", replyMarkup: inlineKeyboardMarkup);
         }
 

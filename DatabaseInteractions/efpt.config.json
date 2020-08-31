@@ -1,0 +1,39 @@
+﻿{
+   "ContextClassName": "BotDBContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": null,
+   "ProjectRootNamespace": "DatabaseInteractions",
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[Balances]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[Clients]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[Enums]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[Subscriptions]"
+      }
+   ],
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseNodaTime": false,
+   "UseSpatial": false,
+   "UseStoredProcedures": false
+}

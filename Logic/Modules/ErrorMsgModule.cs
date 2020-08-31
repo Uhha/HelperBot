@@ -20,13 +20,18 @@ namespace Logic.Modules
         {
             try
             {
-                var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
-                        "join Subscriptions s on s.id = c.subscription " +
-                        "where s.SubsctiptionType = " + (int)Subscription.ErrorMessageLog);
-
-                foreach (var client in clients)
+                using (BotDBContext db = new BotDBContext())
                 {
-                    await bot.SendTextMessageAsync(client, errormsg, ParseMode.Default);
+                    var clients = (from c in db.Clients
+                                   join sub in db.Subscriptions on c.Subscription equals sub.Id
+                                   where sub.SubsctiptionType == (int)Subscription.ErrorMessageLog
+                                   select c.ChatId
+                                   ).Distinct();
+
+                    foreach (var client in clients)
+                    {
+                        await bot.SendTextMessageAsync(client, errormsg, ParseMode.Default);
+                    }
                 }
             }
             catch { }

@@ -1,17 +1,14 @@
 ﻿using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Results;
 using Logic;
 using Telegram.Bot.Types;
 using Logic.Handlers;
-using Microsoft.Ajax.Utilities;
-using System.Data.Entity.Core.Objects;
 using Tracer;
 using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers
 {
-    public class MessageController : ApiController
+    public class MessageController : Controller
     {
         [Route(@"api/command")]
         public OkResult Post([FromBody]Update update)
@@ -51,7 +48,7 @@ namespace Web.Controllers
 
         [HttpGet]
         [Route(@"api/coinUpdate")]
-        public OkResult CoinUpdate([FromUri]string sendAnyway = "false")
+        public OkResult CoinUpdate([FromRoute] string sendAnyway = "false")
         {
             TraceError.Info("api/CoinUpdate called");
             try
@@ -66,11 +63,11 @@ namespace Web.Controllers
             return Ok();
         }
 
-        [System.Web.Http.AcceptVerbs("GET", "POST")]
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.HttpPost]
+        [AcceptVerbs("GET", "POST")]
+        [HttpGet]
+        [HttpPost]
         [Route(@"api/sendErrorMessageToBot")]
-        public OkResult SendErrorMessageToBot([FromUri]string errormsg)
+        public OkResult SendErrorMessageToBot([FromRoute] string errormsg)
         {
             TraceError.Info("api/SendErrorMessageToBot");
             try

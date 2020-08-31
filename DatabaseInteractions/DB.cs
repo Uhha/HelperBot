@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,46 +12,30 @@ namespace DatabaseInteractions
 {
     public static class DB
     {
-        public static T GetValue<T>(string sql)
+        public static List<T> RawSqlQuery<T>(string query, Func<DbDataReader, T> map)
         {
-            using (AlcoDBEntities db = new AlcoDBEntities())
+            using (var context = new BotDBContext())
             {
-                DbRawSqlQuery<T> rows = db.Database.SqlQuery<T>(sql);
-                if (rows.Count() > 1) throw new ArgumentOutOfRangeException("More than 1 value returned");
-                T value = rows.FirstOrDefault();
-                return value;
-                //return (T)Convert.ChangeType(value, typeof(T));
-            }
-        }
-
-        public static IList<T> GetList<T>(string sql)
-        {
-            try
-            {
-                using (AlcoDBEntities db = new AlcoDBEntities())
+                using (var command = context.Database.GetDbConnection().CreateCommand())
                 {
-                    DbRawSqlQuery<T> rows = db.Database.SqlQuery<T>(sql);
-                    return rows.ToArray();
+                    command.CommandText = query;
+                    command.CommandType = CommandType.Text;
+
+                    context.Database.OpenConnection();
+
+                    using (var result = command.ExecuteReader())
+                    {
+                        var entities = new List<T>();
+
+                        while (result.Read())
+                        {
+                            entities.Add(map(result));
+                        }
+
+                        return entities;
+                    }
                 }
             }
-            catch (Exception e)
-            {
-                TraceError.Error(e);
-            }
-            return new List<T>();
         }
-
-        public static IList<T> GetTable<T>(string sql)
-        {
-           
-            using (AlcoDBEntities db = new AlcoDBEntities())
-            {
-                DbRawSqlQuery<T> rows = db.Database.SqlQuery<T>(sql);
-                return rows.ToArray();
-            }
-
-        }
-
-
     }
 }

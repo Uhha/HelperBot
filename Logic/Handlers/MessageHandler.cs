@@ -34,29 +34,11 @@ namespace Logic.Handlers
             }
             switch (update.Type)
             {
-                case Telegram.Bot.Types.Enums.UpdateType.UnknownUpdate:
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.MessageUpdate:
+                case Telegram.Bot.Types.Enums.UpdateType.Message:
                     await MessageUpdate(update);
                     break;
-                case Telegram.Bot.Types.Enums.UpdateType.InlineQueryUpdate:
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.ChosenInlineResultUpdate:
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.CallbackQueryUpdate:
+                case Telegram.Bot.Types.Enums.UpdateType.CallbackQuery:
                     await CallbackQuertUpdate(update);
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.EditedMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.ChannelPost:
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.EditedChannelPost:
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.ShippingQueryUpdate:
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.PreCheckoutQueryUpdate:
-                    break;
-                case Telegram.Bot.Types.Enums.UpdateType.All:
                     break;
                 default:
                     break;
@@ -73,38 +55,8 @@ namespace Logic.Handlers
         {
             switch (update.Message.Type)
             {
-                case Telegram.Bot.Types.Enums.MessageType.UnknownMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.TextMessage:
+                case Telegram.Bot.Types.Enums.MessageType.Text:
                     await TextMessageUpdate(update);
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.PhotoMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.AudioMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.VideoMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.VoiceMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.DocumentMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.StickerMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.LocationMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.ContactMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.ServiceMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.VenueMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.GameMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.VideoNoteMessage:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.Invoice:
-                    break;
-                case Telegram.Bot.Types.Enums.MessageType.SuccessfulPayment:
                     break;
                 default:
                     break;

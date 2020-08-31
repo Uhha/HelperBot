@@ -13,7 +13,6 @@ using System.Web;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineKeyboardButtons;
 using Telegram.Bot.Types.ReplyMarkups;
 using Tracer;
 using Web.Providers;
@@ -29,7 +28,7 @@ namespace Logic.Modules
             double totalAmount = 0;
             double BTCtotalAmount = 0;
             double ALTtotalAmount = 0;
-            using (AlcoDBEntities db = new AlcoDBEntities())
+            using (BotDBContext db = new BotDBContext())
             {
                 var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
 
@@ -113,7 +112,7 @@ namespace Logic.Modules
             }
 
             string message;
-            using (var db = new AlcoDBEntities())
+            using (var db = new BotDBContext())
             {
                 var result = db.Balances.SingleOrDefault(o => o.Client == client && o.Symbol == symbol);
                 if (result != null)
@@ -123,7 +122,7 @@ namespace Logic.Modules
                 }
                 else
                 {
-                    var balance = new Balances()
+                    var balance = new Balance()
                     {
                         Client = client,
                         Symbol = symbol,
@@ -158,7 +157,7 @@ namespace Logic.Modules
             var symbol = params1[1].ToUpper();
 
             string message;
-            using (var db = new AlcoDBEntities())
+            using (var db = new BotDBContext())
             {
                 var result = db.Balances.SingleOrDefault(o => o.Client == client && o.Symbol == symbol);
                 if (result != null)
@@ -186,7 +185,7 @@ namespace Logic.Modules
         internal async Task BalanceDetailsAsync(TelegramBotClient bot, Update update)
         {
             StringBuilder message = new StringBuilder();
-            using (AlcoDBEntities db = new AlcoDBEntities())
+            using (BotDBContext db = new BotDBContext())
             {
                 var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
                 StringBuilder sb = new StringBuilder();

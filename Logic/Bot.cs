@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using DatabaseInteractions;
+using Telegram.Bot;
 using Tracer;
 
 namespace Logic
@@ -12,7 +13,7 @@ namespace Logic
         public static TelegramBotClient Get()
         {
             if (_bot != null) return _bot;
-            if (Config.Environment == "Debug")
+            if (Config.Environment == "Development")
             {
                 _bot = new TelegramBotClient(Config.BotApiKey);
                 _bot.SendTextMessageAsync(182328439, "Local Bot started!");

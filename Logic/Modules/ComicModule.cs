@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.InlineKeyboardButtons;
+using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 using Tracer;
+
 
 [assembly: InternalsVisibleTo("BaseTests")]
 namespace Logic.Modules
@@ -22,14 +23,15 @@ namespace Logic.Modules
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
             var inlineKeyboardMarkup = new InlineKeyboardMarkup
-            {
-                InlineKeyboard = new[]
+            (
+                new[]
                     {
                     new [] {  InlineKeyboardButton.WithCallbackData ("Oglaf", "/subs=Oglaf"),
                              InlineKeyboardButton.WithCallbackData ("xkcd", "/subs=Xkcd"),
                              InlineKeyboardButton.WithCallbackData ("ErrorLogs", "/subs=ErrL")}
-                }
-            };
+                    }
+            );
+
             await bot.SendTextMessageAsync(update.Message.Chat.Id, "Subscribe/Unsubscribe:", replyMarkup: inlineKeyboardMarkup);
         }
 
@@ -42,21 +44,23 @@ namespace Logic.Modules
             if (update.CallbackQuery.Data.Equals("/subs=ErrL")) subscriptionType = Subscription.ErrorMessageLog;
 
             var userId = update.CallbackQuery.From.Id;
-            using (AlcoDBEntities db = new AlcoDBEntities())
+            using (BotDBContext db = new BotDBContext())
             {
-                var exists = DB.GetValue<int>(@"select top 1 c.id from Clients c 
-                                        join Subscriptions s on s.id = c.subscription
-                                        where c.chatid = " + userId +
-                                    " and s.SubsctiptionType = " + ((int)subscriptionType).ToString());
-
+                var exists = (from c in db.Clients
+                               join sub in db.Subscriptions on c.Subscription equals sub.Id
+                               where c.ChatId == userId
+                                 && sub.SubsctiptionType == (int)subscriptionType
+                               select c.Id
+                                 ).Count();
+               
 
 
                 if (exists == 0)
                 {
-                    var subscription = new Subscriptions { SubsctiptionType = (int)subscriptionType };
+                    var subscription = new DatabaseInteractions.Subscription { SubsctiptionType = (int)subscriptionType };
                     db.Subscriptions.Add(subscription);
                     db.SaveChanges();
-                    var client = new Clients { ChatID = userId, Subscription = subscription.Id };
+                    var client = new DatabaseInteractions.Client { ChatId = userId, Subscription = subscription.Id };
                     db.Clients.Add(client);
                     db.SaveChanges();
 
@@ -64,7 +68,7 @@ namespace Logic.Modules
                 }
                 else
                 {
-                    var clients = db.Clients.Where(x => x.ChatID == userId &&
+                    var clients = db.Clients.Where(x => x.ChatId == userId &&
                         db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType == (int)subscriptionType));
                     foreach (var item in clients)
                     {
@@ -84,35 +88,42 @@ namespace Logic.Modules
             int currentClient = 0;
             try
             {
-                var clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
-                        "join Subscriptions s on s.id = c.subscription " +
-                        "where s.SubsctiptionType = " + (int)Subscription.Oglaf);
-
-                foreach (var client in clients)
+                using (BotDBContext db = new BotDBContext())
                 {
-                    currentClient = client;
-                    var result = GetOglafPicture(client);
-                    if (result.doSend)
+                    var clients = (from c in db.Clients
+                                   join sub in db.Subscriptions on c.Subscription equals sub.Id
+                                   where sub.SubsctiptionType == (int)Subscription.Oglaf
+                                   select c.ChatId
+                                   ).Distinct();
+
+                    foreach (var client in clients)
                     {
-                        await bot.SendTextMessageAsync(client, result.alt.ToUpper());
-                        await bot.SendTextMessageAsync(client, result.title);
-                        await bot.SendPhotoAsync(client, new FileToSend(result.scr));
+                        currentClient = client;
+                        var result = GetOglafPicture(client);
+                        if (result.doSend)
+                        {
+                            await bot.SendTextMessageAsync(client, result.alt.ToUpper());
+                            await bot.SendTextMessageAsync(client, result.title);
+                            await bot.SendPhotoAsync(client, new InputOnlineFile(result.scr));
+                        }
                     }
-                }
 
-                clients = DB.GetList<int>("select distinct c.chatId from Clients c " +
-                "join Subscriptions s on s.id = c.subscription " +
-                "where s.SubsctiptionType = " + (int)Subscription.XKCD);
+                    clients = (from c in db.Clients
+                               join sub in db.Subscriptions on c.Subscription equals sub.Id
+                               where sub.SubsctiptionType == (int)Subscription.XKCD
+                               select c.ChatId
+                                   ).Distinct();
 
-                foreach (var client in clients)
-                {
-                    currentClient = client;
-                    var result = GetXKCDPicture(client);
-                    if (result.doSend)
+                    foreach (var client in clients)
                     {
-                        await bot.SendTextMessageAsync(client, result.alt.ToUpper());
-                        await bot.SendTextMessageAsync(client, result.title);
-                        await bot.SendPhotoAsync(client, new FileToSend(result.scr));
+                        currentClient = client;
+                        var result = GetXKCDPicture(client);
+                        if (result.doSend)
+                        {
+                            await bot.SendTextMessageAsync(client, result.alt.ToUpper());
+                            await bot.SendTextMessageAsync(client, result.title);
+                            await bot.SendPhotoAsync(client, new InputOnlineFile(result.scr));
+                        }
                     }
                 }
             }
@@ -207,11 +218,11 @@ namespace Logic.Modules
 
         private static bool NotSent(int client, string alt, Subscription subscription)
         {
-            using (AlcoDBEntities db = new AlcoDBEntities())
+            using (BotDBContext db = new BotDBContext())
             {
                 var lastPostedKey = (from cli in db.Clients
                            join sub in db.Subscriptions on cli.Subscription equals sub.Id
-                           where cli.ChatID == client && sub.SubsctiptionType == (int)subscription
+                           where cli.ChatId == client && sub.SubsctiptionType == (int)subscription
                            orderby sub.Id descending
                            select new
                            {
