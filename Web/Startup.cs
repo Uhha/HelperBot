@@ -14,7 +14,7 @@ namespace Web
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            Config._config = configuration;
+            Config.SetConfig(configuration);
         }
 
         public IConfiguration Configuration { get; }

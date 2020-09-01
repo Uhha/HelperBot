@@ -173,8 +173,8 @@ namespace Logic.Modules
 
             return (
                 NotSent(client, attrs["alt"]?.Value, Subscription.Oglaf),
-                attrs["alt"]?.Value,
-                attrs["title"]?.Value,
+                attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
+                attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
                 attrs["src"]?.Value
                 );
         }
