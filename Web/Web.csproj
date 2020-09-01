@@ -6,10 +6,6 @@
     <StartupObject></StartupObject>
   </PropertyGroup>
 
-  <PropertyGroup>
-        <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Telegram.Bot" Version="15.7.1" />
   </ItemGroup>
