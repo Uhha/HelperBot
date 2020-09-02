@@ -2,7 +2,22 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@using DatabaseInteractions;
+
+    <div class="text-center">
+        <h1 class="display-4">Direct from manager</h1>
+        <p>BOTKEY: @System.Configuration.ConfigurationManager.AppSettings["BotApiKey"]</p>
+        <p>WebHookUrl: @System.Configuration.ConfigurationManager.AppSettings["WebHookUrl"]</p>
+        <p>CoinMarketCapAPIKey: @System.Configuration.ConfigurationManager.AppSettings["CoinMarketCapAPIKey"]</p>
+        <p>Environment: @System.Configuration.ConfigurationManager.AppSettings["Environment"]</p>
+
+        <h1 class="display-4">From Config</h1>
+        <p>BOTKEY: @Config.BotApiKey</p>
+        <p>WebHookUrl: @Config.WebHookUrl</p>
+        <p>CoinMarketCapAPIKey: @Config.CoinMarketCapAPIKey</p>
+        <p>Environment: @Config.Environment</p>
+
+
+
+
+    </div>

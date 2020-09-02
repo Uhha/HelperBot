@@ -37,6 +37,10 @@ namespace DatabaseInteractions
 
         public static void SetConfig(IConfiguration icon) => _config = icon;
 
-        
+        public static string TEST
+        {
+            get { return "testval"; }
+        }
+
     }
 }

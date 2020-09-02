@@ -6,6 +6,7 @@ using Tracer;
 using System;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace Web.Controllers
 {
     public class MessageController : Controller
@@ -76,7 +77,7 @@ namespace Web.Controllers
             }
             catch (Exception e)
             {
-                TraceError.Error(e, "Upper level Exception");
+                TraceError.Error(e, "Upper level Exception"); 
                 return Ok();
             }
             return Ok();
