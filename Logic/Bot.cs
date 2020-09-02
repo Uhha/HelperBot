@@ -22,7 +22,7 @@ namespace Logic
             {
                 _bot = new TelegramBotClient(Config.BotApiKey);
                 _bot.SetWebhookAsync(Config.WebHookUrl);
-                _bot.SendTextMessageAsync(182328439, "Remote Bot started!");
+                _bot.SendTextMessageAsync(182328439, "Remote Bot started!!!");
                 TraceError.Info("Bot started");
             }
             return _bot;
