@@ -6,9 +6,9 @@
     <StartupObject></StartupObject>
   </PropertyGroup>
 
-  <!--<PropertyGroup>
+  <PropertyGroup>
     <EnvironmentName>Production</EnvironmentName>
-  </PropertyGroup>-->
+  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Telegram.Bot" Version="15.7.1" />
