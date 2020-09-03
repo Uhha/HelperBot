@@ -12,27 +12,27 @@ namespace DatabaseInteractions
         
         public static string BotApiKey
         {
-            get { return _config["BotApiKey"] ?? _webConfig["BotApiKey"]; }
+            get { return string.IsNullOrEmpty(_config["BotApiKey"]) ? _webConfig["BotApiKey"] : _config["BotApiKey"]; }
         }
 
         public static string CoinMarketCapAPIKey
         {
-            get { return _config["CoinMarketCapAPIKey"] ?? _webConfig["CoinMarketCapAPIKey"]; }
+            get { return string.IsNullOrEmpty(_config["CoinMarketCapAPIKey"]) ? _webConfig["CoinMarketCapAPIKey"] : _config["CoinMarketCapAPIKey"]; }
         }
 
         public static string WebHookUrl
         {
-            get { return _config["WebHookUrl"] ?? _webConfig["WebHookUrl"]; }
+            get { return string.IsNullOrEmpty(_config["WebHookUrl"]) ? _webConfig["WebHookUrl"] : _config["WebHookUrl"]; }
         }
 
         public static string Environment
         {
-            get { return _config["Environment"] ?? _webConfig["Environment"]; }
+            get { return string.IsNullOrEmpty(_config["Environment"]) ? _webConfig["Environment"] : _config["Environment"]; }
         }
 
         public static string DBConnectionString
         {
-            get { return _config["DBConnectionString"] ?? _webConfig["DBConnectionString"]; }
+            get { return string.IsNullOrEmpty(_config["DBConnectionString"]) ? _webConfig["DBConnectionString"] : _config["DBConnectionString"]; }
         }
 
         public static void SetConfig(IConfiguration icon) => _config = icon;

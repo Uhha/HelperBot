@@ -6,15 +6,16 @@
 
     <div class="text-center">
         <h1 class="display-4">Direct from manager</h1>
-        <p>BOTKEY: @System.Configuration.ConfigurationManager.AppSettings["BotApiKey"].Substring(0, 20)</p>
+        
+        <p>BOTKEY: @((string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["BotApiKey"])) ? "" : System.Configuration.ConfigurationManager.AppSettings["BotApiKey"].Substring(0, 20))</p>
         <p>WebHookUrl: @System.Configuration.ConfigurationManager.AppSettings["WebHookUrl"]</p>
-        <p>CoinMarketCapAPIKey: @System.Configuration.ConfigurationManager.AppSettings["CoinMarketCapAPIKey"].Substring(0, 20)</p>
+        <p>CoinMarketCapAPIKey:  @((string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["CoinMarketCapAPIKey"])) ? "" : System.Configuration.ConfigurationManager.AppSettings["CoinMarketCapAPIKey"].Substring(0, 20)) </p>
         <p>Environment: @System.Configuration.ConfigurationManager.AppSettings["Environment"]</p>
 
         <h1 class="display-4">From Config</h1>
-        <p>BOTKEY: @Config.BotApiKey</p>
+        <p>BOTKEY: @((string.IsNullOrEmpty(Config.BotApiKey)) ? "" : Config.BotApiKey.Substring(0, 20))</p>
         <p>WebHookUrl: @Config.WebHookUrl</p>
-        <p>CoinMarketCapAPIKey: @Config.CoinMarketCapAPIKey</p>
+        <p>CoinMarketCapAPIKey: @((string.IsNullOrEmpty(Config.CoinMarketCapAPIKey)) ? "" : Config.CoinMarketCapAPIKey.Substring(0, 20))</p>
         <p>Environment: @Config.Environment</p>
 
 
