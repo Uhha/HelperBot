@@ -14,7 +14,22 @@ namespace Web.Controllers
         [Route(@"api/command")]
         public OkResult Post([FromBody]Update update)
         {
-            Trace.TraceError("Called Trace Error from api/command");
+            TraceError.Info("Called Trace Error from api/command");
+
+            if (update == null)
+            {
+                TraceError.Info($"Update is null");
+            }
+            if (update?.Message == null)
+            {
+                TraceError.Info($"Message is null");
+            }
+            if (update?.Message?.Text == null)
+            {
+                TraceError.Info($"Text is null");
+            }
+            TraceError.Info("Update text - " + update?.Message?.Text);
+
             try
             {
                 if (update?.Message?.Text != null && update.Message.Text.StartsWith("/"))
