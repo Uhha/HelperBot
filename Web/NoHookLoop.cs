@@ -10,6 +10,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using Telegram.Bot;
+using Tracer;
 
 namespace Web
 {
@@ -27,13 +28,15 @@ namespace Web
             var TelegramBotClient = new TelegramBotClient(Config.BotApiKey);
 
             var offset = 0;
-            
+
+            TraceError.Info("Inside NoHookLoop");
             while (true)
             {
                 var updates = await TelegramBotClient.GetUpdatesAsync(offset);
 
                 foreach (var update in updates)
                 {
+                    TraceError.Info("Update from NoHookLoop");
                     await Task.Run(() => new MessageHandler().Handle(update));
                     offset = update.Id + 1;
                 }

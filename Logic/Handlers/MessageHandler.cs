@@ -31,7 +31,7 @@ namespace Logic.Handlers
             TraceError.Info($"inside message handler with {update?.Message?.Text}");
             if (update == null)
             {
-                TraceError.Error("Unpdate is null");
+                TraceError.Error("Update is null");
                 return;
             }
             switch (update.Type)

@@ -20,7 +20,7 @@ namespace Tracer
         public static void Error(string message)
         {
             Trace.TraceError(message);
-            _sb.Append(message);
+            _sb.Append($"{DateTime.Now.ToString()} : {message}{Environment.NewLine}");
         }
 
         public static void Error(string message, string exception)
