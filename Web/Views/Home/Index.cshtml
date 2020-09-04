@@ -3,6 +3,8 @@
 }
 
 @using DatabaseInteractions;
+@using Tracer;
+@using System.IO;
 
     <div class="text-center">
         <h1 class="display-4">Direct from manager</h1>
@@ -19,6 +21,6 @@
         <p>Environment: @Config.Environment</p>
 
 
-
+        <p>LOG: @TraceError.GetLog() </p>
 
     </div>

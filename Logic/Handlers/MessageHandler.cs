@@ -3,6 +3,7 @@ using Logic.Modules;
 using Logic.Processors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -27,6 +28,7 @@ namespace Logic.Handlers
         /// 
         public async void Handle(Update update)
         {
+            TraceError.Info($"inside message handler with {update?.Message?.Text}");
             if (update == null)
             {
                 TraceError.Error("Unpdate is null");
