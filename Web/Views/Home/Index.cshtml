@@ -20,7 +20,10 @@
         <p>CoinMarketCapAPIKey: @((string.IsNullOrEmpty(Config.CoinMarketCapAPIKey)) ? "" : Config.CoinMarketCapAPIKey.Substring(0, 20))</p>
         <p>Environment: @Config.Environment</p>
 
-
-        <p>LOG: @TraceError.GetLog() </p>
+        <p>LOG:</p>
+        @foreach (var item in TraceError.GetLog())
+        {
+            <p>item</p>
+        }
 
     </div>
