@@ -21,9 +21,6 @@
         <p>Environment: @Config.Environment</p>
 
         <p>LOG:</p>
-        @foreach (var item in TraceError.GetLog())
-        {
-            <p>@item</p>
-        }
+        @foreach (var item in TraceError.GetLog()) {<p>@item</p>}
 
     </div>
