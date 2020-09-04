@@ -18,7 +18,7 @@ namespace Logic
                 _bot = new TelegramBotClient(Config.BotApiKey);
                 _bot.SendTextMessageAsync(182328439, "Local Bot started!");
             }
-            else
+            else if (Config.Environment == "Production" || Config.Environment == "Release")
             {
                 _bot = new TelegramBotClient(Config.BotApiKey);
                 _bot.SetWebhookAsync(Config.WebHookUrl);

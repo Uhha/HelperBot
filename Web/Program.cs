@@ -29,7 +29,7 @@ namespace Web
                     config
                           //.Add(new WebConfigSource() { Path = "web.config", Optional = false, ReloadOnChange = true, })
                           .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                         // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                           ;
 
 
