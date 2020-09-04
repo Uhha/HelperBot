@@ -11,6 +11,7 @@ namespace Web.Controllers
 {
     public class MessageController : Controller
     {
+        [HttpPost]
         [Route(@"api/command")]
         public OkResult Post([FromBody]Update update)
         {
