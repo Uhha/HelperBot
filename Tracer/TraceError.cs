@@ -38,7 +38,7 @@ namespace Tracer
 
         public static string GetLog()
         {
-            return _sb.ToString();
+            return (_sb != null) ? _sb.ToString() : "";
         }
     }
 }
