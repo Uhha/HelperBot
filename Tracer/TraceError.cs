@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Tracer
 {
@@ -10,6 +11,7 @@ namespace Tracer
             Trace.TraceError(message);
             var tracesource = new TraceSource("Appharbortracesource", defaultLevel: SourceLevels.All);
             tracesource.TraceEvent(TraceEventType.Critical, 0, message);
+            File.AppendAllText("log.txt", message);
         }
 
         public static void Error(string message)
