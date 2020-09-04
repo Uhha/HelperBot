@@ -13,7 +13,7 @@ namespace Web.Controllers
     {
         [HttpPost]
         [Route(@"api/command")]
-        public OkResult Post([FromBody]Update update)
+        public OkResult Post(Update update)
         {
             TraceError.Info("Called Trace Error from api/command");
 
