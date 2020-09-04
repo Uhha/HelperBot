@@ -5,7 +5,7 @@ using Logic.Handlers;
 using Tracer;
 using System;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Diagnostics;
 
 namespace Web.Controllers
 {
@@ -14,6 +14,7 @@ namespace Web.Controllers
         [Route(@"api/command")]
         public OkResult Post([FromBody]Update update)
         {
+            Trace.TraceError("Called Trace Error from api/command");
             try
             {
                 if (update?.Message?.Text != null && update.Message.Text.StartsWith("/"))
