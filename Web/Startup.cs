@@ -24,8 +24,8 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-                
+            services.AddControllers();
+            //services.AddSingleton<IBotService, BotService>();
             //TODO: DB setup
             //var connection = Configuration.GetConnectionString("DefaultConnection");
             //services.AddDbContext<BotDBContext>(options => options.UseSqlServer(connection));
