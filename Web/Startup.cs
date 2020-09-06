@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Web.Services;
 
 namespace Web
 {
@@ -25,11 +26,13 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            //services.AddSingleton<IBotService, BotService>();
+            services.AddSingleton<IBotService, BotService>();
+
+
             //TODO: DB setup
             //var connection = Configuration.GetConnectionString("DefaultConnection");
             //services.AddDbContext<BotDBContext>(options => options.UseSqlServer(connection));
-            //services.AddMvc();
+            services.AddMvc();
 
         }
 
@@ -51,7 +54,7 @@ namespace Web
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-                Bot.Get();
+                //Bot.Get();
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();

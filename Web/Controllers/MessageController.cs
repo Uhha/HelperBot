@@ -6,14 +6,24 @@ using Tracer;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Web.Services;
 
 namespace Web.Controllers
 {
+    [Route("api/[controller]")]
     public class MessageController : Controller
     {
+        private IBotService _botService;
+        public MessageController(IBotService botservice)
+        {
+            _botService = botservice;
+        }
+
+
+
         [HttpPost]
         [Route(@"api/command")]
-        public OkResult Post(Update update)
+        public async Task<IActionResult> Post([FromBody]Update update)
         {
             TraceError.Info("Called Trace Error from api/command");
 
@@ -37,7 +47,7 @@ namespace Web.Controllers
                 {
                     TraceError.Info("api/command called with: " + update?.Message?.Text);
                 }
-                Task.Run(() => new MessageHandler().Handle(update));
+                await new MessageHandler().Handle(_botService.Bot, update);
                 return Ok();
             }
             catch (System.Exception e)
