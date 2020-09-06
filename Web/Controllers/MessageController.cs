@@ -10,7 +10,7 @@ using Web.Services;
 
 namespace Web.Controllers
 {
-    [Route("api/[controller]")]
+    
     public class MessageController : Controller
     {
         private IBotService _botService;
