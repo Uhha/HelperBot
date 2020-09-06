@@ -1,5 +1,6 @@
 ﻿using DatabaseInteractions;
 using Telegram.Bot;
+using Tracer;
 
 namespace Web.Services
 {
@@ -7,6 +8,7 @@ namespace Web.Services
     {
         public BotService()
         {
+            TraceError.Info("Bot Service Init");
             Bot = new TelegramBotClient(Config.BotApiKey);
         }
 
