@@ -18,7 +18,7 @@ namespace Logic.Processors
             {"/subs", CallbackCommand.ComicSubscribe },
         };
 
-        internal static async Task ProcessAsync(TelegramBotClient bot, Update update)
+        internal static async Task ProcessAsync(Update update)
         {
             var callbackPrefix = Helper.ExtractCommand(update, true);
             var command = (_commands.ContainsKey(callbackPrefix)) ? _commands[callbackPrefix] : CallbackCommand.Unknown;
@@ -26,7 +26,7 @@ namespace Logic.Processors
             switch (command)
             {
                 case CallbackCommand.ComicSubscribe:
-                    await new ComicModule().GenerateAndSendCallbackAsync(bot, update);
+                    await new ComicModule().GenerateAndSendCallbackAsync(Bot.Get(), update);
                     break;
                 case CallbackCommand.Unknown:
                     break;

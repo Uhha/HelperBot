@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Web
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -20,40 +20,40 @@ namespace Web
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    config.Sources.Clear();
+                //.ConfigureAppConfiguration((hostingContext, config) =>
+                //{
+                //    config.Sources.Clear();
 
-                    var env = hostingContext.HostingEnvironment;
+                //    var env = hostingContext.HostingEnvironment;
 
-                    config
-                          //.Add(new WebConfigSource() { Path = "web.config", Optional = false, ReloadOnChange = true, })
-                          .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                          ;
-
-
-                    //var builder = new ConfigurationBuilder()
-                    //    .SetBasePath(env.ContentRootPath)
-                    //    .Add(new WebConfigSource() { Path = "web.config", Optional = false, ReloadOnChange = true, })
-                    //    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    //    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                    //    .AddEnvironmentVariables();
-                    //                Configuration = builder.Build();
+                //    config
+                //          //.Add(new WebConfigSource() { Path = "web.config", Optional = false, ReloadOnChange = true, })
+                //          .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                //          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                //          ;
 
 
+                //    //var builder = new ConfigurationBuilder()
+                //    //    .SetBasePath(env.ContentRootPath)
+                //    //    .Add(new WebConfigSource() { Path = "web.config", Optional = false, ReloadOnChange = true, })
+                //    //    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                //    //    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                //    //    .AddEnvironmentVariables();
+                //    //                Configuration = builder.Build();
 
-                    //config.AddJsonFile("MyConfig.json", optional: true, reloadOnChange: true)
-                    //      .AddJsonFile($"MyConfig.{env.EnvironmentName}.json",
-                    //                     optional: true, reloadOnChange: true);
 
-                    config.AddEnvironmentVariables();
 
-                    if (args != null)
-                    {
-                        config.AddCommandLine(args);
-                    }
-                })
+                //    //config.AddJsonFile("MyConfig.json", optional: true, reloadOnChange: true)
+                //    //      .AddJsonFile($"MyConfig.{env.EnvironmentName}.json",
+                //    //                     optional: true, reloadOnChange: true);
+
+                //    config.AddEnvironmentVariables();
+
+                //    if (args != null)
+                //    {
+                //        config.AddCommandLine(args);
+                //    }
+                //})
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

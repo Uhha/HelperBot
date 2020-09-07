@@ -19,7 +19,7 @@ namespace Logic.Handlers
         /// Update handling
         /// </summary>
         /// 
-        public async Task Handle(TelegramBotClient bot, Update update)
+        public async Task Handle(Update update)
         {
             TraceError.Info($"inside message handler with {update?.Message?.Text}");
             if (update == null)
@@ -30,10 +30,10 @@ namespace Logic.Handlers
             switch (update.Type)
             {
                 case Telegram.Bot.Types.Enums.UpdateType.Message:
-                    await MessageUpdate(bot, update);
+                    await MessageUpdate(update);
                     break;
                 case Telegram.Bot.Types.Enums.UpdateType.CallbackQuery:
-                    await CallbackQuertUpdate(bot, update);
+                    await CallbackQuertUpdate(update);
                     break;
                 default:
                     break;
@@ -41,17 +41,17 @@ namespace Logic.Handlers
             return;
         }
 
-        private async Task CallbackQuertUpdate(TelegramBotClient bot, Update update)
+        private async Task CallbackQuertUpdate(Update update)
         {
-            await CallbackQueryCommandProcessor.ProcessAsync(bot, update);
+            await CallbackQueryCommandProcessor.ProcessAsync(update);
         }
 
-        private async Task MessageUpdate(TelegramBotClient bot, Update update)
+        private async Task MessageUpdate(Update update)
         {
             switch (update.Message.Type)
             {
                 case Telegram.Bot.Types.Enums.MessageType.Text:
-                    await TextMessageUpdate(bot, update);
+                    await TextMessageUpdate(update);
                     break;
                 default:
                     break;
@@ -60,14 +60,14 @@ namespace Logic.Handlers
             
         }
 
-        private async Task TextMessageUpdate(TelegramBotClient bot, Update update)
+        private async Task TextMessageUpdate(Update update)
         {
             if (string.IsNullOrEmpty(update.Message?.Text)) return;
 
             if (update.Message.Text.StartsWith("/"))
             {
-                await bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
-                await TextMessageCommandProcessor.ProcessAsync(bot, update);
+                await Bot.Get().SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
+                await TextMessageCommandProcessor.ProcessAsync(Bot.Get(), update);
             }
 
 

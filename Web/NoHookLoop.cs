@@ -37,7 +37,7 @@ namespace Web
                 foreach (var update in updates)
                 {
                     TraceError.Info("Update from NoHookLoop");
-                    await Task.Run(() => new MessageHandler().Handle(TelegramBotClient, update));
+                    await Task.Run(() => new MessageHandler().Handle(update));
                     offset = update.Id + 1;
                 }
 

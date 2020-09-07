@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Web.Services;
 
 namespace Web
 {
@@ -25,10 +24,14 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddSingleton<IBotService, BotService>();
+            //services.AddScoped<IUpdateService, UpdateService>();
+            //services.AddSingleton<IBotService, BotService>();
+            
 
 
+
+            services.AddControllers()
+                .AddNewtonsoftJson();
             //TODO: DB setup
             //var connection = Configuration.GetConnectionString("DefaultConnection");
             //services.AddDbContext<BotDBContext>(options => options.UseSqlServer(connection));
@@ -43,19 +46,21 @@ namespace Web
             {
                 app.UseDeveloperExceptionPage();
 
-                new Thread(() =>
-                {
-                    Thread.CurrentThread.IsBackground = true;
-                    NoHookLoop.Start();
-                }).Start();
+                //new Thread(() =>
+                //{
+                //    Thread.CurrentThread.IsBackground = true;
+                //    NoHookLoop.Start();
+                //}).Start();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-                //Bot.Get();
             }
+            
+            Bot.Get();
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -65,13 +70,13 @@ namespace Web
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                //endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Message}/{action=Index}/{id?}");
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "{controller=Message}/{action=Index}/{id?}");
             });
         }
     }
