@@ -32,7 +32,7 @@ namespace DatabaseInteractions
 
         public static string DBConnectionString
         {
-            get { return string.IsNullOrEmpty(_config["DBConnectionString"]) ? _webConfig["DBConnectionString"] : _config["DBConnectionString"]; }
+            get { return string.IsNullOrEmpty(_config["DBConnectionString"]) ? _webConfig["SQLSERVER_CONNECTION_STRING"] : _config["DBConnectionString"]; }
         }
 
         public static void SetConfig(IConfiguration icon) => _config = icon;
