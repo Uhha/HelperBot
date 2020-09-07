@@ -33,7 +33,7 @@ namespace DatabaseInteractions
 
         public static string DBConnectionString
         {
-            get { return string.IsNullOrEmpty(_config["DBConnectionString"]) ? _connectionStrings["AlcoDB"].ConnectionString : _config["DBConnectionString"]; }
+            get { return string.IsNullOrEmpty(_config["DBConnectionString"]) ? _connectionStrings[0].ConnectionString : _config["DBConnectionString"]; }
         }
 
         public static void SetConfig(IConfiguration icon) => _config = icon;
