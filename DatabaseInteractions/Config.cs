@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Linq;
 
 namespace DatabaseInteractions
 {
@@ -33,7 +36,21 @@ namespace DatabaseInteractions
 
         public static string DBConnectionString
         {
-            get { return string.IsNullOrEmpty(_config["DBConnectionString"]) ? _connectionStrings["AlcoDB"].ConnectionString : _config["DBConnectionString"]; }
+            get {
+                var uriString = ConfigurationManager.AppSettings["SQLSERVER_URI"];
+                var uri = new Uri(uriString);
+                var connectionString = new SqlConnectionStringBuilder
+                {
+                    DataSource = uri.Host,
+                    InitialCatalog = uri.AbsolutePath.Trim('/'),
+                    UserID = uri.UserInfo.Split(':').First(),
+                    Password = uri.UserInfo.Split(':').Last(),
+                }.ConnectionString;
+
+
+                return string.IsNullOrEmpty(_config["DBConnectionString"]) ? connectionString : _config["DBConnectionString"]; 
+            
+            }
         }
 
         public static void SetConfig(IConfiguration icon) => _config = icon;
