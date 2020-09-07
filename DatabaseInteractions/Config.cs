@@ -9,7 +9,8 @@ namespace DatabaseInteractions
 
         private static IConfiguration _config;
         private static NameValueCollection _webConfig = ConfigurationManager.AppSettings;
-        
+        private static ConnectionStringSettingsCollection _connectionStrings = ConfigurationManager.ConnectionStrings;
+
         public static string BotApiKey
         {
             get { return string.IsNullOrEmpty(_config["BotApiKey"]) ? _webConfig["BotApiKey"] : _config["BotApiKey"]; }
@@ -32,7 +33,7 @@ namespace DatabaseInteractions
 
         public static string DBConnectionString
         {
-            get { return string.IsNullOrEmpty(_config["DBConnectionString"]) ? _webConfig["SQLSERVER_CONNECTION_STRING"] : _config["DBConnectionString"]; }
+            get { return string.IsNullOrEmpty(_config["DBConnectionString"]) ? _connectionStrings["AlcoDB"].ConnectionString : _config["DBConnectionString"]; }
         }
 
         public static void SetConfig(IConfiguration icon) => _config = icon;
