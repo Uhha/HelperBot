@@ -32,9 +32,8 @@ namespace Web
 
             services.AddControllers()
                 .AddNewtonsoftJson();
-            //TODO: DB setup
             //var connection = Configuration.GetConnectionString("DefaultConnection");
-            //services.AddDbContext<BotDBContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<BotDBContext>(options => options.UseSqlServer(Config.ConnectionString));
             services.AddMvc();
 
         }

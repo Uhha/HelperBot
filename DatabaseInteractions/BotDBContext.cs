@@ -20,7 +20,7 @@ namespace DatabaseInteractions
         public static DbContextOptions<BotDBContext> InsertOptions()
         {
             DbContextOptionsBuilder<BotDBContext> ob = new DbContextOptionsBuilder<BotDBContext>();
-            ob.UseSqlServer(Config.DBConnectionString, providerOptions => providerOptions.CommandTimeout(60))
+            ob.UseSqlServer(Config.ConnectionString, providerOptions => providerOptions.CommandTimeout(60))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             return ob.Options;
         }
