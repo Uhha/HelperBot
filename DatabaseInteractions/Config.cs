@@ -63,7 +63,14 @@ namespace DatabaseInteractions
             {
                 if (_connectionStrings.Count > 0)
                 {
-                    return _connectionStrings[0].ConnectionString;
+                    try
+                    {
+                        return _connectionStrings["AlcoDB"].ConnectionString;
+                    }
+                    catch (Exception)
+                    {
+                        return "no alco exception";
+                    }
                 }
                 return "";
             }
