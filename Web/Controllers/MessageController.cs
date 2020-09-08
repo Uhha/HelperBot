@@ -43,6 +43,7 @@ namespace Web.Controllers
             catch (System.Exception e)
             {
                 TraceError.Error(e, "Upper level Exception");
+                return Ok();
             }
         }
 
