@@ -49,6 +49,26 @@ namespace DatabaseInteractions
             get { return _webConfig["SQLSERVER_CONNECTION_STRING_ALIAS"]; }
         }
 
+        public static string ConnectionStringCount
+        {
+            get 
+            {
+                return _connectionStrings.Count.ToString();
+            }
+        }
+
+        public static string ConnectionString
+        {
+            get
+            {
+                if (_connectionStrings.Count > 0)
+                {
+                    return _connectionStrings[0].ConnectionString;
+                }
+                return "";
+            }
+        }
+
         public static string DBConnectionString
         {
             get {
