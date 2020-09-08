@@ -34,9 +34,26 @@ namespace DatabaseInteractions
             get { return string.IsNullOrEmpty(_config["Environment"]) ? _webConfig["Environment"] : _config["Environment"]; }
         }
 
+        public static string SQLSERVER_URI
+        {
+            get { return _webConfig["SQLSERVER_URI"]; }
+        }
+
+        public static string SQLSERVER_CONNECTION_STRING
+        {
+            get { return _webConfig["SQLSERVER_CONNECTION_STRING"]; }
+        }
+
+        public static string SQLSERVER_CONNECTION_STRING_ALIAS
+        {
+            get { return _webConfig["SQLSERVER_CONNECTION_STRING_ALIAS"]; }
+        }
+
         public static string DBConnectionString
         {
             get {
+                return "";
+
                 var uriString = ConfigurationManager.AppSettings["SQLSERVER_URI"];
                 var uri = new Uri(uriString);
                 var connectionString = new SqlConnectionStringBuilder
@@ -46,7 +63,6 @@ namespace DatabaseInteractions
                     UserID = uri.UserInfo.Split(':').First(),
                     Password = uri.UserInfo.Split(':').Last(),
                 }.ConnectionString;
-
 
                 return string.IsNullOrEmpty(_config["DBConnectionString"]) ? connectionString : _config["DBConnectionString"]; 
             

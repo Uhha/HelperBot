@@ -7,14 +7,17 @@
 @using System.IO;
 
     <div class="text-center">
-        
+
         <h1 class="display-4">From Config</h1>
         <p>BOTKEY: @((string.IsNullOrEmpty(Config.BotApiKey)) ? "" : Config.BotApiKey.Substring(0, 20))</p>
         <p>WebHookUrl: @Config.WebHookUrl</p>
         <p>CoinMarketCapAPIKey: @((string.IsNullOrEmpty(Config.CoinMarketCapAPIKey)) ? "" : Config.CoinMarketCapAPIKey.Substring(0, 20))</p>
         <p>Environment: @Config.Environment</p>
         <p>DBConnectionString: @Config.DBConnectionString</p>
-        
+        <p>SQLSERVER_CONNECTION_STRING: @Config.SQLSERVER_CONNECTION_STRING</p>
+        <p>SQLSERVER_CONNECTION_STRING_ALIAS: @Config.SQLSERVER_CONNECTION_STRING_ALIAS</p>
+        <p>SQLSERVER_URI: @Config.SQLSERVER_URI</p>
+
 
         <p>LOG:</p>
         @foreach (var item in TraceError.GetLog())
