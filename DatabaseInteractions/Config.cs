@@ -13,6 +13,8 @@ namespace DatabaseInteractions
         private static IConfiguration _config;
         private static NameValueCollection _webConfig = ConfigurationManager.AppSettings;
         private static ConnectionStringSettingsCollection _connectionStrings = ConfigurationManager.ConnectionStrings;
+        
+
 
         public static string BotApiKey
         {
@@ -33,6 +35,12 @@ namespace DatabaseInteractions
         {
             get { return string.IsNullOrEmpty(_config["Environment"]) ? _webConfig["Environment"] : _config["Environment"]; }
         }
+
+        public static string DBString
+        {
+            get { return string.IsNullOrEmpty(_config.GetConnectionString("BotDB")) ? "" : _config.GetConnectionString("BotDB"); }
+        }
+        
 
         public static string SQLSERVER_URI
         {

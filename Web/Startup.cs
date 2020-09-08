@@ -1,3 +1,4 @@
+using System.Configuration;
 using System.Threading;
 using DatabaseInteractions;
 using Logic;
@@ -26,14 +27,14 @@ namespace Web
         {
             //services.AddScoped<IUpdateService, UpdateService>();
             //services.AddSingleton<IBotService, BotService>();
-            
 
+            
 
 
             services.AddControllers()
                 .AddNewtonsoftJson();
             //var connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<BotDBContext>(options => options.UseSqlServer(Config.XDB));
+            //services.AddDbContext<BotDBContext>(options => options.UseSqlServer(Config.XDB));
             services.AddMvc();
 
         }
@@ -54,13 +55,13 @@ namespace Web
             else
             {
                 app.UseDeveloperExceptionPage();
-
                 //app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             
             Bot.Get();
+            var asd = ConfigurationManager.GetSection("connectionStrings"); 
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
