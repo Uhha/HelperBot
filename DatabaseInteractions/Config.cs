@@ -76,6 +76,44 @@ namespace DatabaseInteractions
             }
         }
 
+        public static string XDB
+        {
+            get
+            {
+                if (_connectionStrings.Count > 1)
+                {
+                    try
+                    {
+                        return _connectionStrings[1].ConnectionString;
+                    }
+                    catch (Exception)
+                    {
+                        return "no XDB exception";
+                    }
+                }
+                return "no XDB exception";
+            }
+        }
+
+        public static string XDB2
+        {
+            get
+            {
+                if (_connectionStrings.Count > 1)
+                {
+                    try
+                    {
+                        return _connectionStrings["XDB"].ConnectionString;
+                    }
+                    catch (Exception)
+                    {
+                        return "no XDB2 exception";
+                    }
+                }
+                return "no XDB2 exception";
+            }
+        }
+
         public static string ConnectionString2
         {
             get
