@@ -16,7 +16,7 @@
     <EmbeddedResource Remove="_PublishedWebsites\**" />
     <None Remove="_PublishedWebsites\**" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.7" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
