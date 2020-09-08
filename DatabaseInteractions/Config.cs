@@ -65,6 +65,25 @@ namespace DatabaseInteractions
                 {
                     try
                     {
+                        return _connectionStrings[0].ConnectionString;
+                    }
+                    catch (Exception)
+                    {
+                        return "no alco exception";
+                    }
+                }
+                return "";
+            }
+        }
+
+        public static string ConnectionString2
+        {
+            get
+            {
+                if (_connectionStrings.Count > 0)
+                {
+                    try
+                    {
                         return _connectionStrings["AlcoDB"].ConnectionString;
                     }
                     catch (Exception)
