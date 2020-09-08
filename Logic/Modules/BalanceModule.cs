@@ -25,6 +25,7 @@ namespace Logic.Modules
         private static string API_KEY = Config.CoinMarketCapAPIKey;
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {
+            TraceError.Info($"In Balance module");
             double totalAmount = 0;
             double BTCtotalAmount = 0;
             double ALTtotalAmount = 0;
@@ -32,6 +33,7 @@ namespace Logic.Modules
             {
                 using (BotDBContext db = new BotDBContext())
                 {
+                    TraceError.Info($"DB initiated");
                     var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
 
                     StringBuilder sb = new StringBuilder();
@@ -54,8 +56,8 @@ namespace Logic.Modules
             }
             catch (Exception e)
             {
-                TraceError.Error(e);
-                throw;
+                TraceError.Info("EXception thrown ");
+                TraceError.Info("DB ERROR: " + e.Message);
             }
             string msg = $"BTC: ${Math.Round(BTCtotalAmount, 2)}{Environment.NewLine}ALT: ${Math.Round(ALTtotalAmount, 2)}{Environment.NewLine}TOTAL: ${Math.Round(totalAmount, 2)}";
             await bot.SendTextMessageAsync(update.Message.From.Id, msg, parseMode: ParseMode.Html);
