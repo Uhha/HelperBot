@@ -38,7 +38,7 @@ namespace DatabaseInteractions
 
         public static string DBString
         {
-            get { return string.IsNullOrEmpty(_config.GetConnectionString("BotDB")) ? "" : _config.GetConnectionString("BotDB"); }
+            get { return string.IsNullOrEmpty(_config.GetConnectionString("BotDB")) ? _webConfig["DBConnection"] : _config.GetConnectionString("BotDB"); }
         }
         
 
