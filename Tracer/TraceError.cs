@@ -32,7 +32,7 @@ namespace Tracer
         public static void Error(Exception e, string message = "")
         {
             //Trace.TraceError("ERROR: " + e.Message + " " + e.InnerException?.Message);
-            Trace.TraceError("ERROR: " + "Custom message - " + message + Environment.NewLine + e.ToString());
+            Trace.TraceError("ERROR: " + "Custom message - " + message + Environment.NewLine + e.Message + " " + e.InnerException?.Message);
             _sb.Append($"{DateTime.Now.ToString()} : {message}<br>");
         }
 

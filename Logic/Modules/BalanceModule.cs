@@ -28,26 +28,34 @@ namespace Logic.Modules
             double totalAmount = 0;
             double BTCtotalAmount = 0;
             double ALTtotalAmount = 0;
-            using (BotDBContext db = new BotDBContext())
+            try
             {
-                var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
-
-                StringBuilder sb = new StringBuilder();
-                foreach (var b in balances)
+                using (BotDBContext db = new BotDBContext())
                 {
-                    sb.Append(b.Symbol + ',');
-                }
-                sb.Remove(sb.Length - 1, 1);
+                    var balances = db.Balances.Where(o => o.Client == (int)update.Message.From.Id);
 
-                var prices = GetPrices(sb.ToString());
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var b in balances)
+                    {
+                        sb.Append(b.Symbol + ',');
+                    }
+                    sb.Remove(sb.Length - 1, 1);
 
-                foreach (var item in balances)
-                {
-                    prices.TryGetValue(item.Symbol, out double price);
-                    totalAmount += ((double)item.Shares * price);
-                    if (item.Symbol == "BTC") BTCtotalAmount += ((double)item.Shares * price);
-                    if (item.Symbol != "BTC") ALTtotalAmount += ((double)item.Shares * price);
+                    var prices = GetPrices(sb.ToString());
+
+                    foreach (var item in balances)
+                    {
+                        prices.TryGetValue(item.Symbol, out double price);
+                        totalAmount += ((double)item.Shares * price);
+                        if (item.Symbol == "BTC") BTCtotalAmount += ((double)item.Shares * price);
+                        if (item.Symbol != "BTC") ALTtotalAmount += ((double)item.Shares * price);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                TraceError.Error(e);
+                throw;
             }
             string msg = $"BTC: ${Math.Round(BTCtotalAmount, 2)}{Environment.NewLine}ALT: ${Math.Round(ALTtotalAmount, 2)}{Environment.NewLine}TOTAL: ${Math.Round(totalAmount, 2)}";
             await bot.SendTextMessageAsync(update.Message.From.Id, msg, parseMode: ParseMode.Html);
