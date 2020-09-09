@@ -38,7 +38,7 @@ namespace DatabaseInteractions
 
         public static string DConStr
         {
-            get { return _config.GetConnectionString("BotDB"); }
+            get { return _config.GetConnectionString("AlcoDB"); }
         }
 
         public static string DConStr2
