@@ -61,7 +61,6 @@ namespace Web
             }
             
             Bot.Get();
-            var asd = ConfigurationManager.GetSection("connectionStrings"); 
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
