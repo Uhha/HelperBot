@@ -38,7 +38,7 @@ namespace DatabaseInteractions
 
         public static string DConStr
         {
-            get { return _config.GetConnectionString("AlcoDB"); }
+            get { return $"Value: {_config.GetSection("ConnectionStrings").Value} ChildrenCount: {_config.GetSection("ConnectionStrings")?.GetChildren()?.Count().ToString()}"; }
         }
 
         public static string DConStr2
