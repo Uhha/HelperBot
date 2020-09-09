@@ -61,7 +61,7 @@ namespace Web
             }
             
             Bot.Get();
-            
+             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
