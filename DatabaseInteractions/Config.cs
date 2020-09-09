@@ -38,9 +38,14 @@ namespace DatabaseInteractions
 
         public static string DConStr
         {
-            get { return string.IsNullOrEmpty(_config.GetConnectionString("BotDB")) ? _webConfig["DConStr"] : _config.GetConnectionString("BotDB"); }
+            get { return _config.GetConnectionString("BotDB"); }
         }
-        
+
+        public static string DConStr2
+        {
+            get { return _webConfig["DConStr"]; }
+        }
+
         public static void SetConfig(IConfiguration icon) => _config = icon;
 
         public static string TEST
