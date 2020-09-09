@@ -44,40 +44,51 @@ namespace Logic.Modules
             if (update.CallbackQuery.Data.Equals("/subs=ErrL")) subscriptionType = Subscription.ErrorMessageLog;
 
             var userId = update.CallbackQuery.From.Id;
+
+            TraceError.Info("In callback");
+
             using (BotDBContext db = new BotDBContext())
             {
-                var exists = (from c in db.Clients
-                               join sub in db.Subscriptions on c.Subscription equals sub.Id
-                               where c.ChatId == userId
-                                 && sub.SubsctiptionType == (int)subscriptionType
-                               select c.Id
-                                 ).Count();
-               
-
-
-                if (exists == 0)
+                try
                 {
-                    var subscription = new DatabaseInteractions.Subscription { SubsctiptionType = (int)subscriptionType };
-                    db.Subscriptions.Add(subscription);
-                    db.SaveChanges();
-                    var client = new DatabaseInteractions.Client { ChatId = userId, Subscription = subscription.Id };
-                    db.Clients.Add(client);
-                    db.SaveChanges();
+                    TraceError.Info("DB Init");
+                    var exists = (from c in db.Clients
+                                  join sub in db.Subscriptions on c.Subscription equals sub.Id
+                                  where c.ChatId == userId
+                                    && sub.SubsctiptionType == (int)subscriptionType
+                                  select c.Id
+                                     ).Count();
 
-                    await bot.SendTextMessageAsync(userId, $"You've subscribed to { subscriptionType.ToString() }!");
-                }
-                else
-                {
-                    var clients = db.Clients.Where(x => x.ChatId == userId &&
-                        db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType == (int)subscriptionType));
-                    foreach (var item in clients)
+
+
+                    if (exists == 0)
                     {
-                        db.Clients.Remove(item);
-                        var sub = db.Subscriptions.Where(x => x.Id == item.Subscription).FirstOrDefault();
-                        db.Subscriptions.Remove(sub);
+                        var subscription = new DatabaseInteractions.Subscription { SubsctiptionType = (int)subscriptionType };
+                        db.Subscriptions.Add(subscription);
+                        db.SaveChanges();
+                        var client = new DatabaseInteractions.Client { ChatId = userId, Subscription = subscription.Id };
+                        db.Clients.Add(client);
+                        db.SaveChanges();
+
+                        await bot.SendTextMessageAsync(userId, $"You've subscribed to { subscriptionType.ToString() }!");
                     }
-                    db.SaveChanges();
-                    await bot.SendTextMessageAsync(userId, $"Unsubscribed from { subscriptionType.ToString() }!");
+                    else
+                    {
+                        var clients = db.Clients.Where(x => x.ChatId == userId &&
+                            db.Subscriptions.Any(y => y.Id == x.Subscription && y.SubsctiptionType == (int)subscriptionType));
+                        foreach (var item in clients)
+                        {
+                            db.Clients.Remove(item);
+                            var sub = db.Subscriptions.Where(x => x.Id == item.Subscription).FirstOrDefault();
+                            db.Subscriptions.Remove(sub);
+                        }
+                        db.SaveChanges();
+                        await bot.SendTextMessageAsync(userId, $"Unsubscribed from { subscriptionType.ToString() }!");
+                    }
+                }
+                catch (Exception e)
+                {
+                    TraceError.Info(e.Message);
                 }
 
             }
