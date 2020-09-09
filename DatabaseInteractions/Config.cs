@@ -38,7 +38,7 @@ namespace DatabaseInteractions
 
         public static string DConStr
         {
-            get { return $"Value: {_config.GetSection("ConnectionStrings").Value} ChildrenCount: {_config.GetSection("ConnectionStrings")?.GetChildren()?.Count().ToString()}"; }
+            get { return _config["SQLSERVER_CONNECTION_STRING"]; }
         }
 
         public static string DConStr2
