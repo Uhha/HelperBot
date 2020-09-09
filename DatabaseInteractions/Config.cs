@@ -43,7 +43,7 @@ namespace DatabaseInteractions
 
         public static string DConStr2
         {
-            get { return _webConfig["DConStr"]; }
+            get { return _config["DConStr"]; }
         }
 
         public static void SetConfig(IConfiguration icon) => _config = icon;
