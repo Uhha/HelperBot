@@ -36,9 +36,9 @@ namespace DatabaseInteractions
             get { return string.IsNullOrEmpty(_config["Environment"]) ? _webConfig["Environment"] : _config["Environment"]; }
         }
 
-        public static string DBString
+        public static string DConStr
         {
-            get { return string.IsNullOrEmpty(_config.GetConnectionString("BotDB")) ? _webConfig["DBConnection"] : _config.GetConnectionString("BotDB"); }
+            get { return string.IsNullOrEmpty(_config.GetConnectionString("BotDB")) ? _webConfig["DConStr"] : _config.GetConnectionString("BotDB"); }
         }
         
         public static void SetConfig(IConfiguration icon) => _config = icon;
