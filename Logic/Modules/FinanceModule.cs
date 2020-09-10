@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Logic.Modules
 {
-    class FinanceModule : IModule
+    class FinanceModule 
     {
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {

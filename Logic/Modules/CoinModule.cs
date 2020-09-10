@@ -17,7 +17,7 @@ using Web.Providers;
 
 namespace Logic.Modules
 {
-    class CoinModule : IModule
+    class CoinModule 
     {
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {

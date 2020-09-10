@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 
 namespace Logic.Modules
 {
-    public class WakeOnLanModule : IModule
+    public class WakeOnLanModule 
     {
         public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
         {

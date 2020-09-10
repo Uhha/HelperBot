@@ -19,7 +19,7 @@ using Web.Providers;
 
 namespace Logic.Modules
 {
-    class BalanceModule : IModule
+    public class BalanceModule 
     {
 
         private static string API_KEY = Config.CoinMarketCapAPIKey;
