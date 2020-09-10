@@ -110,12 +110,25 @@ namespace Logic.Modules
                     foreach (var client in clients)
                     {
                         currentClient = client;
-                        var result = GetOglafPicture(client);
+                        var result = GetOglafPicture(db, client);
                         if (result.doSend)
                         {
-                            await bot.SendTextMessageAsync(client, result.alt.ToUpper());
-                            await bot.SendTextMessageAsync(client, result.title);
-                            await bot.SendPhotoAsync(client, new InputOnlineFile(result.scr));
+                            try
+                            {
+                                await bot.SendTextMessageAsync(client, result.alt.ToUpper());
+                                await bot.SendTextMessageAsync(client, result.title);
+                                await bot.SendPhotoAsync(client, new InputOnlineFile(result.scr));
+                            }
+                            catch (ChatNotFoundException e)
+                            {
+                                TraceError.Info(e.Message);
+                                var clientsRecords = db.Clients.Where(c => c.ChatId == currentClient).ToList();
+                                TraceError.Info("Client Recs to remove: " + string.Join(",", clientsRecords.Select(c => c.ChatId)));
+                                var subscriptionsToRemove = db.Subscriptions.Where(x => clientsRecords.Select(o => o.Subscription).Contains(x.Id));
+                                TraceError.Info("Subscription Recs to remove: " + string.Join(",", subscriptionsToRemove.Select(s => s.SubsctiptionType.ToString())));
+                                db.Subscriptions.RemoveRange(subscriptionsToRemove);
+                                db.Clients.RemoveRange(clientsRecords);
+                            }
                         }
                     }
 
@@ -128,14 +141,28 @@ namespace Logic.Modules
                     foreach (var client in clients)
                     {
                         currentClient = client;
-                        var result = GetXKCDPicture(client);
+                        var result = GetXKCDPicture(db, client);
                         if (result.doSend)
                         {
-                            await bot.SendTextMessageAsync(client, result.alt.ToUpper());
-                            await bot.SendTextMessageAsync(client, result.title);
-                            await bot.SendPhotoAsync(client, new InputOnlineFile(result.scr));
+                            try
+                            {
+                                await bot.SendTextMessageAsync(client, result.alt.ToUpper());
+                                await bot.SendTextMessageAsync(client, result.title);
+                                await bot.SendPhotoAsync(client, new InputOnlineFile(result.scr));
+                            }
+                            catch (ChatNotFoundException e)
+                            {
+                                TraceError.Info(e.Message);
+                                var clientsRecords = db.Clients.Where(c => c.ChatId == currentClient).ToList();
+                                TraceError.Info("Client Recs to remove: " + string.Join(",", clientsRecords.Select(c => c.ChatId)));
+                                var subscriptionsToRemove = db.Subscriptions.Where(x => clientsRecords.Select(o => o.Subscription).Contains(x.Id));
+                                TraceError.Info("Subscription Recs to remove: " + string.Join(",", subscriptionsToRemove.Select(s => s.SubsctiptionType.ToString())));
+                                db.Subscriptions.RemoveRange(subscriptionsToRemove);
+                                db.Clients.RemoveRange(clientsRecords);
+                            }
                         }
                     }
+                    db.SaveChanges();
                 }
             }
             catch (ApiRequestException e)
@@ -149,7 +176,7 @@ namespace Logic.Modules
             }
         }
 
-        private static (bool doSend, string alt, string title, string scr) GetOglafPicture(int client)
+        private static (bool doSend, string alt, string title, string scr) GetOglafPicture(BotDBContext db, int client)
         {
             WebClient webclient = new WebClient();
             ServicePointManager.Expect100Continue = true;
@@ -183,14 +210,14 @@ namespace Logic.Modules
             }
 
             return (
-                NotSent(client, attrs["alt"]?.Value, Subscription.Oglaf),
+                NotSent(db, client, attrs["alt"]?.Value, Subscription.Oglaf),
                 attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
                 attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
                 attrs["src"]?.Value
                 );
         }
 
-        private static (bool doSend, string alt, string title, string scr) GetXKCDPicture(int client)
+        private static (bool doSend, string alt, string title, string scr) GetXKCDPicture(BotDBContext db, int client)
         {
             WebClient webclient = new WebClient();
             ServicePointManager.Expect100Continue = true;
@@ -220,33 +247,29 @@ namespace Logic.Modules
             var attrs = imageNodes[0]?.Attributes;
 
             return (
-                NotSent(client, attrs["alt"]?.Value, Subscription.XKCD),
+                NotSent(db, client, attrs["alt"]?.Value, Subscription.XKCD),
                 attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
                 attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
                 attrs["src"]?.Value.Substring(2)
                 );
         }
 
-        private static bool NotSent(int client, string alt, Subscription subscription)
+        private static bool NotSent(BotDBContext db, int client, string alt, Subscription subscription)
         {
-            using (BotDBContext db = new BotDBContext())
-            {
-                var lastPostedKey = (from cli in db.Clients
-                           join sub in db.Subscriptions on cli.Subscription equals sub.Id
-                           where cli.ChatId == client && sub.SubsctiptionType == (int)subscription
-                           orderby sub.Id descending
-                           select new
-                           {
-                               LTK = sub.LastPostedKey,
-                               SUBID = sub.Id
-                           }
-                           ).First();
+            var lastPostedKey = (from cli in db.Clients
+                        join sub in db.Subscriptions on cli.Subscription equals sub.Id
+                        where cli.ChatId == client && sub.SubsctiptionType == (int)subscription
+                        orderby sub.Id descending
+                        select new
+                        {
+                            LTK = sub.LastPostedKey,
+                            SUBID = sub.Id
+                        }
+                        ).First();
 
-                if (alt.GetHashCode().ToString().Equals(lastPostedKey.LTK)) return false;
-                db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey = alt.GetHashCode().ToString();
-                db.SaveChanges();
-                TraceError.Info($"LPK: {lastPostedKey}, ALT hash: {alt.GetHashCode().ToString()} Lastposted from DB: {db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey}");
-            }
+            if (alt.GetHashCode().ToString().Equals(lastPostedKey.LTK)) return false;
+            db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey = alt.GetHashCode().ToString();
+            TraceError.Info($"LPK: {lastPostedKey}, ALT hash: {alt.GetHashCode().ToString()} Lastposted from DB: {db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey}");
             return true;
         }
 
