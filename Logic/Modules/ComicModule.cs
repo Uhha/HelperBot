@@ -245,6 +245,7 @@ namespace Logic.Modules
                 if (alt.GetHashCode().ToString().Equals(lastPostedKey.LTK)) return false;
                 db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey = alt.GetHashCode().ToString();
                 db.SaveChanges();
+                TraceError.Info($"LPK: {lastPostedKey}, ALT hash: {alt.GetHashCode().ToString()} Lastposted from DB: {db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey}");
             }
             return true;
         }
