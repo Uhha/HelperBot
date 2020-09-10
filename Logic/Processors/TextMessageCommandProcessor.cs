@@ -37,7 +37,7 @@ namespace Logic.Processors
             switch (command)
             {
                 case Command.ComicSubscribe:
-                    await new ComicModule().GenerateAndSendAsync(bot, update);
+                    await new ComicModule().ShowSubscriptionsButtons(update);
                     break;
                 case Command.FincanceSubscribe:
                     await new FinanceModule().GenerateAndSendAsync(bot, update);

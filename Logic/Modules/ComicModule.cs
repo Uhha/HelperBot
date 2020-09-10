@@ -18,9 +18,16 @@ using Tracer;
 [assembly: InternalsVisibleTo("BaseTests")]
 namespace Logic.Modules
 {
-    internal class ComicModule : IModule
+    internal class ComicModule
     {
-        public async Task GenerateAndSendAsync(TelegramBotClient bot, Update update)
+        private TelegramBotClient _bot;
+
+        public ComicModule()
+        {
+            _bot = Bot.Get();
+        }
+
+        public async Task ShowSubscriptionsButtons(Update update)
         {
             var inlineKeyboardMarkup = new InlineKeyboardMarkup
             (
@@ -32,10 +39,10 @@ namespace Logic.Modules
                     }
             );
 
-            await bot.SendTextMessageAsync(update.Message.Chat.Id, "Subscribe/Unsubscribe:", replyMarkup: inlineKeyboardMarkup);
+            await _bot.SendTextMessageAsync(update.Message.Chat.Id, "Subscribe/Unsubscribe:", replyMarkup: inlineKeyboardMarkup);
         }
 
-        public async Task GenerateAndSendCallbackAsync(TelegramBotClient bot, Update update)
+        public async Task UpdateSubscriptions(Update update)
         {
             Subscription subscriptionType = Subscription.NoSubscription;
             if (update.CallbackQuery.Data.Equals("/subs=Oglaf")) subscriptionType = Subscription.Oglaf;
@@ -70,7 +77,7 @@ namespace Logic.Modules
                         db.Clients.Add(client);
                         db.SaveChanges();
 
-                        await bot.SendTextMessageAsync(userId, $"You've subscribed to { subscriptionType.ToString() }!");
+                        await _bot.SendTextMessageAsync(userId, $"You've subscribed to { subscriptionType.ToString() }!");
                     }
                     else
                     {
@@ -83,7 +90,7 @@ namespace Logic.Modules
                             db.Subscriptions.Remove(sub);
                         }
                         db.SaveChanges();
-                        await bot.SendTextMessageAsync(userId, $"Unsubscribed from { subscriptionType.ToString() }!");
+                        await _bot.SendTextMessageAsync(userId, $"Unsubscribed from { subscriptionType.ToString() }!");
                     }
                 }
                 catch (Exception e)
@@ -94,89 +101,67 @@ namespace Logic.Modules
             }
         }
 
-        public async Task GenerateAndSendWorkerAsync(TelegramBotClient bot, IList<string> parameters = null)
+        public async Task SendComicsAsync()
         {
-            int currentClient = 0;
-            try
+            await SendComicsAsync(Subscription.Oglaf);
+            await SendComicsAsync(Subscription.XKCD);
+        }
+
+        private async Task SendComicsAsync(Subscription subscriptionType)
+        {
+            using (var db = new BotDBContext())
             {
-                using (BotDBContext db = new BotDBContext())
-                {
-                    var clients = (from c in db.Clients
-                                   join sub in db.Subscriptions on c.Subscription equals sub.Id
-                                   where sub.SubsctiptionType == (int)Subscription.Oglaf
-                                   select c.ChatId
-                                   ).Distinct();
-
-                    foreach (var client in clients)
-                    {
-                        currentClient = client;
-                        var result = GetOglafPicture(db, client);
-                        if (result.doSend)
-                        {
-                            try
-                            {
-                                await bot.SendTextMessageAsync(client, result.alt.ToUpper());
-                                await bot.SendTextMessageAsync(client, result.title);
-                                await bot.SendPhotoAsync(client, new InputOnlineFile(result.scr));
-                            }
-                            catch (ChatNotFoundException e)
-                            {
-                                TraceError.Info(e.Message);
-                                var clientsRecords = db.Clients.Where(c => c.ChatId == currentClient).ToList();
-                                TraceError.Info("Client Recs to remove: " + string.Join(",", clientsRecords.Select(c => c.ChatId)));
-                                var subscriptionsToRemove = db.Subscriptions.Where(x => clientsRecords.Select(o => o.Subscription).Contains(x.Id));
-                                TraceError.Info("Subscription Recs to remove: " + string.Join(",", subscriptionsToRemove.Select(s => s.SubsctiptionType.ToString())));
-                                db.Subscriptions.RemoveRange(subscriptionsToRemove);
-                                db.Clients.RemoveRange(clientsRecords);
-                            }
-                        }
-                    }
-
-                    clients = (from c in db.Clients
+                var clients = (from c in db.Clients
                                join sub in db.Subscriptions on c.Subscription equals sub.Id
-                               where sub.SubsctiptionType == (int)Subscription.XKCD
+                               where sub.SubsctiptionType == (int)subscriptionType
                                select c.ChatId
-                                   ).Distinct();
+                                       ).Distinct();
 
-                    foreach (var client in clients)
+                MessageToSend message = (subscriptionType == Subscription.Oglaf) ? GetOglafPicture() : GetXKCDPicture();
+                
+                foreach (var client in clients)
+                {
+                    var lastPostedKey = (from cli in db.Clients
+                                         join sub in db.Subscriptions on cli.Subscription equals sub.Id
+                                         where cli.ChatId == client && sub.SubsctiptionType == (int)subscriptionType
+                                         orderby sub.Id descending
+                                         select new
+                                         {
+                                             LTK = sub.LastPostedKey,
+                                             SUBID = sub.Id
+                                         }
+                        ).First();
+
+                    if (message.Title.GetHashCode().ToString().Equals(lastPostedKey.LTK)) continue;
+
+                    DatabaseInteractions.Subscription subToUpdate = db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First();
+                    string newHash = message.Title.GetHashCode().ToString();
+                    subToUpdate.LastPostedKey = newHash;
+                    db.Update(subToUpdate);
+                    //db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey = message.Title.GetHashCode().ToString();
+
+                    try
                     {
-                        currentClient = client;
-                        var result = GetXKCDPicture(db, client);
-                        if (result.doSend)
-                        {
-                            try
-                            {
-                                await bot.SendTextMessageAsync(client, result.alt.ToUpper());
-                                await bot.SendTextMessageAsync(client, result.title);
-                                await bot.SendPhotoAsync(client, new InputOnlineFile(result.scr));
-                            }
-                            catch (ChatNotFoundException e)
-                            {
-                                TraceError.Info(e.Message);
-                                var clientsRecords = db.Clients.Where(c => c.ChatId == currentClient).ToList();
-                                TraceError.Info("Client Recs to remove: " + string.Join(",", clientsRecords.Select(c => c.ChatId)));
-                                var subscriptionsToRemove = db.Subscriptions.Where(x => clientsRecords.Select(o => o.Subscription).Contains(x.Id));
-                                TraceError.Info("Subscription Recs to remove: " + string.Join(",", subscriptionsToRemove.Select(s => s.SubsctiptionType.ToString())));
-                                db.Subscriptions.RemoveRange(subscriptionsToRemove);
-                                db.Clients.RemoveRange(clientsRecords);
-                            }
-                        }
+                        await _bot.SendTextMessageAsync(client, message.Title.ToUpper());
+                        await _bot.SendTextMessageAsync(client, message.SubTitle);
+                        await _bot.SendPhotoAsync(client, new InputOnlineFile(message.Image));
                     }
-                    db.SaveChanges();
+                    catch (ChatNotFoundException e)
+                    {
+                        TraceError.Info(e.Message);
+                        var clientsRecords = db.Clients.Where(c => c.ChatId == client).ToList();
+                        TraceError.Info("Client Recs to remove: " + string.Join(",", clientsRecords.Select(c => c.ChatId)));
+                        var subscriptionsToRemove = db.Subscriptions.Where(x => clientsRecords.Select(o => o.Subscription).Contains(x.Id));
+                        TraceError.Info("Subscription Recs to remove: " + string.Join(",", subscriptionsToRemove.Select(s => s.SubsctiptionType.ToString())));
+                        db.Subscriptions.RemoveRange(subscriptionsToRemove);
+                        db.Clients.RemoveRange(clientsRecords);
+                    }
                 }
-            }
-            catch (ApiRequestException e)
-            {
-                string msg = $"Client: {currentClient}";
-                TraceError.Error(e, msg);
-            }
-            catch (Exception e)
-            {
-                TraceError.Error(e);
+                await db.SaveChangesAsync();
             }
         }
 
-        private static (bool doSend, string alt, string title, string scr) GetOglafPicture(BotDBContext db, int client)
+        private MessageToSend GetOglafPicture()
         {
             WebClient webclient = new WebClient();
             ServicePointManager.Expect100Continue = true;
@@ -209,15 +194,14 @@ namespace Logic.Modules
                 throw;
             }
 
-            return (
-                NotSent(db, client, attrs["alt"]?.Value, Subscription.Oglaf),
-                attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
-                attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
-                attrs["src"]?.Value
-                );
+            return new MessageToSend { 
+                Title = attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
+                SubTitle = attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
+                Image = attrs["src"]?.Value
+            };
         }
 
-        private static (bool doSend, string alt, string title, string scr) GetXKCDPicture(BotDBContext db, int client)
+        private MessageToSend GetXKCDPicture()
         {
             WebClient webclient = new WebClient();
             ServicePointManager.Expect100Continue = true;
@@ -246,33 +230,20 @@ namespace Logic.Modules
 
             var attrs = imageNodes[0]?.Attributes;
 
-            return (
-                NotSent(db, client, attrs["alt"]?.Value, Subscription.XKCD),
-                attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
-                attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
-                attrs["src"]?.Value.Substring(2)
-                );
+            return new MessageToSend
+            {
+                Title = attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
+                SubTitle = attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
+                Image = attrs["src"]?.Value.Substring(2)
+            };
         }
 
-        private static bool NotSent(BotDBContext db, int client, string alt, Subscription subscription)
+        private class MessageToSend
         {
-            var lastPostedKey = (from cli in db.Clients
-                        join sub in db.Subscriptions on cli.Subscription equals sub.Id
-                        where cli.ChatId == client && sub.SubsctiptionType == (int)subscription
-                        orderby sub.Id descending
-                        select new
-                        {
-                            LTK = sub.LastPostedKey,
-                            SUBID = sub.Id
-                        }
-                        ).First();
-
-            if (alt.GetHashCode().ToString().Equals(lastPostedKey.LTK)) return false;
-            db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey = alt.GetHashCode().ToString();
-            TraceError.Info($"LPK: {lastPostedKey}, ALT hash: {alt.GetHashCode().ToString()} Lastposted from DB: {db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey}");
-            return true;
+            public string Title;
+            public string SubTitle;
+            public string Image;
         }
-
        
     }
 }

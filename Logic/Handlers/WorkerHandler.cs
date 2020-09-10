@@ -25,7 +25,7 @@ namespace Logic.Handlers
         public async void HandleComicAsync()
         {
             TraceError.Info("HandleComicAsync called from Worker");
-            await new ComicModule().GenerateAndSendWorkerAsync(_bot);
+            await new ComicModule().SendComicsAsync();
         }
 
         public async void HandleCoinAsync(string sendAnyway)

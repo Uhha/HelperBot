@@ -26,7 +26,7 @@ namespace Logic.Processors
             switch (command)
             {
                 case CallbackCommand.ComicSubscribe:
-                    await new ComicModule().GenerateAndSendCallbackAsync(Bot.Get(), update);
+                    await new ComicModule().UpdateSubscriptions(update);
                     break;
                 case CallbackCommand.Unknown:
                     break;

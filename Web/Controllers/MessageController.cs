@@ -6,6 +6,7 @@ using Tracer;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using DatabaseInteractions;
 
 namespace Web.Controllers
 {
@@ -99,5 +100,28 @@ namespace Web.Controllers
             }
             return Ok();
         }
+
+        [HttpGet]
+        [Route(@"api/cuTest")]
+        public OkResult CUTest()
+        {
+            try
+            {
+                using (var db = new BotDBContext())
+                {
+                    db.Subscriptions.Add(new DatabaseInteractions.Subscription() { LastPostedKey = "", SubsctiptionType = 7 });
+                    db.SaveChanges();
+                }
+
+            }
+            catch (Exception e)
+            {
+                TraceError.Error(e, "Upper level Exception");
+                return Ok();
+            }
+            return Ok();
+        }
+
+
     }
 }
