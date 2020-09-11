@@ -4,61 +4,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
-  <!--<ItemGroup>
-    <Compile Include="AlcoDBModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AlcoDBModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="AlcoDBModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="AlcoDBModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AlcoDBModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Balances.cs">
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="BookInfo.cs">
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Clients.cs">
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="CoinPriceRecords.cs">
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DB.cs" />
-    <Compile Include="Enums.cs">
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Lookups.cs">
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Subscriptions.cs">
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Words.cs">
-      <DependentUpon>AlcoDBModel.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>-->
-  <ItemGroup>
-    <EntityDeploy Include="AlcoDBModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>AlcoDBModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="App.Config" />
-  </ItemGroup>
+ 
+  
   <ItemGroup>
     <ProjectReference Include="..\Tracer\Tracer.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+ 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.7">
