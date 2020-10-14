@@ -132,10 +132,10 @@ namespace Logic.Modules
                                          }
                         ).First();
 
-                    if (message.Title.GetHashCode().ToString().Equals(lastPostedKey.LTK)) continue;
+                    if (message.Title.Equals(lastPostedKey.LTK)) continue;
 
                     DatabaseInteractions.Subscription subToUpdate = db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First();
-                    string newHash = message.Title.GetHashCode().ToString();
+                    string newHash = message.Title;
                     subToUpdate.LastPostedKey = newHash;
                     db.Update(subToUpdate);
                     //db.Subscriptions.Where(x => x.Id == lastPostedKey.SUBID).First().LastPostedKey = message.Title.GetHashCode().ToString();

@@ -14,7 +14,7 @@ namespace Web.Controllers
     {
         [HttpPost]
         [Route(@"api/command")]
-        public async Task<IActionResult> Post([FromBody]Update update)
+        public async Task<IActionResult> Post([FromBody] Update update)
         {
             TraceError.Info("Called Trace Error from api/command");
 
@@ -67,7 +67,7 @@ namespace Web.Controllers
 
         [HttpGet]
         [Route(@"api/coinUpdate")]
-        public OkResult CoinUpdate([FromRoute] string sendAnyway = "false")
+        public OkResult CoinUpdate([FromQuery] string sendAnyway = "false")
         {
             TraceError.Info("api/CoinUpdate called");
             try
@@ -86,7 +86,7 @@ namespace Web.Controllers
         [HttpGet]
         [HttpPost]
         [Route(@"api/sendErrorMessageToBot")]
-        public OkResult SendErrorMessageToBot([FromRoute] string errormsg)
+        public OkResult SendErrorMessageToBot([FromQuery] string errormsg)
         {
             TraceError.Info("api/SendErrorMessageToBot");
             try
