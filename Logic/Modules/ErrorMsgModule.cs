@@ -30,7 +30,7 @@ namespace Logic.Modules
 
                     foreach (var client in clients)
                     {
-                        await bot.SendTextMessageAsync(client, errormsg, ParseMode.Default);
+                        await bot.SendTextMessageAsync(client, errormsg);
                     }
                 }
             }

@@ -7,15 +7,27 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using DatabaseInteractions;
+using Telegram.Bot;
+using QBittorrent.Client;
 
 namespace Web.Controllers
 {
-    public class MessageController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class WebhookController : Controller
     {
         [HttpPost]
-        [Route(@"api/command")]
         public async Task<IActionResult> Post([FromBody] Update update)
         {
+
+            if (update?.Message?.Text != null && update.Message.Text.StartsWith("/qb"))
+            {
+                QBittorrentClient qc = new QBittorrentClient(new Uri("http://localhost:8899/"));
+                var search = await qc.StartSearchAsync("Inception");
+                await Bot.Get().SendTextMessageAsync(update.Message?.Chat?.Id, $"qb search {search} started");
+            }
+
+
             TraceError.Info("Called Trace Error from api/command");
 
             if (update == null)

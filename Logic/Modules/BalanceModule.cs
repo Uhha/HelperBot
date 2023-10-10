@@ -134,7 +134,8 @@ namespace Logic.Modules
                 {
                     var balance = new Balance()
                     {
-                        Client = client,
+                        //TODO: Client should be long; remove cast
+                        Client = (int)client,
                         Symbol = symbol,
                         Shares = (decimal)value
                     };

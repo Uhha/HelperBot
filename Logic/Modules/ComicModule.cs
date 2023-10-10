@@ -8,9 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 using Tracer;
 
@@ -73,7 +71,9 @@ namespace Logic.Modules
                         var subscription = new DatabaseInteractions.Subscription { SubsctiptionType = (int)subscriptionType };
                         db.Subscriptions.Add(subscription);
                         db.SaveChanges();
-                        var client = new DatabaseInteractions.Client { ChatId = userId, Subscription = subscription.Id };
+
+                        //TODO: ChatId should be stored as long
+                        var client = new DatabaseInteractions.Client { ChatId = (int)(userId), Subscription = subscription.Id };
                         db.Clients.Add(client);
                         db.SaveChanges();
 
@@ -144,9 +144,9 @@ namespace Logic.Modules
                     {
                         await _bot.SendTextMessageAsync(client, message.Title.ToUpper());
                         await _bot.SendTextMessageAsync(client, message.SubTitle);
-                        await _bot.SendPhotoAsync(client, new InputOnlineFile(message.Image));
+                        await _bot.SendPhotoAsync(client, new InputFileUrl(message.Image));
                     }
-                    catch (ChatNotFoundException e)
+                    catch (Exception e)
                     {
                         TraceError.Info(e.Message);
                         var clientsRecords = db.Clients.Where(c => c.ChatId == client).ToList();
