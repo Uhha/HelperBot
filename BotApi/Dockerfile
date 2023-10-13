@@ -14,7 +14,8 @@ COPY . .
 RUN dotnet build "BotApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "BotApi.csproj" -c Release -r linux-arm -o /app/publish /p:UseAppHost=false 
+RUN dotnet publish "BotApi.csproj" -c Release -r linux-arm -o /app/publish
+#/p:UseAppHost=false 
 
 FROM base AS final
 WORKDIR /app
