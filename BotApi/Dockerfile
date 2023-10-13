@@ -5,7 +5,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0.12-bookworm-slim-arm64v8 AS build
 WORKDIR /src
 COPY ["BotApi.csproj", "BotApi/"]
 RUN dotnet restore "BotApi/BotApi.csproj"
