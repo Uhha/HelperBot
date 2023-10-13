@@ -11,7 +11,7 @@ COPY ["BotApi.csproj", "BotApi/"]
 RUN dotnet restore "BotApi/BotApi.csproj"
 WORKDIR "/src/BotApi"
 COPY . .
-RUN dotnet build "BotApi.csproj" -c Release -o /app/build
+RUN dotnet build "BotApi.csproj" -c Release -r linux-arm -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "BotApi.csproj" -c Release -r linux-arm -o /app/publish
