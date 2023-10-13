@@ -9,8 +9,8 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["BotApi.csproj", "BotApi/"]
 RUN dotnet restore "BotApi/BotApi.csproj"
-COPY . .
 WORKDIR "/src/BotApi"
+COPY . .
 RUN dotnet build "BotApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
