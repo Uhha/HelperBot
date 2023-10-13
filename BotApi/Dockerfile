@@ -5,16 +5,16 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0.12-bookworm-slim-arm64v8 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["BotApi.csproj", "BotApi/"]
 RUN dotnet restore "BotApi/BotApi.csproj"
 WORKDIR "/src/BotApi"
 COPY . .
-RUN dotnet build "BotApi.csproj" -c Release -r linux-arm -o /app/build
+RUN dotnet build "BotApi.csproj" -c Release -r linux-arm64 -o /app/build --self-contained=false
 
 FROM build AS publish
-RUN dotnet publish "BotApi.csproj" -c Release -r linux-arm -o /app/publish
+RUN dotnet publish "BotApi.csproj" -c Release -r linux-arm64 -o /app/publish --self-contained=false
 #/p:UseAppHost=false 
 
 FROM base AS final
