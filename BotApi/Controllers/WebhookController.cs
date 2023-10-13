@@ -1,6 +1,7 @@
+using BotApi.Commands;
 using BotApi.Interfaces;
-using BotApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using QBittorrent.Client;
 using Telegram.Bot.Types;
 
 namespace BotApi.Controllers
@@ -11,19 +12,22 @@ namespace BotApi.Controllers
     {
         private readonly ILogger<WebhookController> _logger;
         private readonly IWebhookService _webhookService;
-        private readonly IBot _bot;
+        private readonly ITelegramBotService _bot;
         private readonly ICommandProcessingService _commandProcessingService;
+        private readonly CommandInvoker _commandInvoker;
 
         public WebhookController(ILogger<WebhookController> logger, 
             IWebhookService webhookService, 
-            IBot bot,
-            ICommandProcessingService commandProcessingService
-            )
+            ITelegramBotService bot,
+            ICommandProcessingService commandProcessingService,
+            CommandInvoker commandInvoker
+        )
         {
             _logger = logger;
             _webhookService = webhookService;
             _bot = bot;
             _commandProcessingService = commandProcessingService;
+            _commandInvoker = commandInvoker;
         }
 
         [HttpPost]
@@ -31,7 +35,7 @@ namespace BotApi.Controllers
         {
             await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
             var commandTypeTuple = _webhookService.GetCommandType(update);
-            await _commandProcessingService.ProcessCommandAsync(commandTypeTuple.command, commandTypeTuple.isCallback, update, _bot);
+            await _commandInvoker.ExecuteCommandAsync("/coins", update);
             return Ok(update);
         }
     }

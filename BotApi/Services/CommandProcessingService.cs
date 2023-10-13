@@ -1,13 +1,11 @@
 ﻿using BotApi.Interfaces;
-using BotApi.Modules;
 using Telegram.Bot.Types;
-using static BotApi.Services.WebhookService;
 
 namespace BotApi.Services
 {
     public class CommandProcessingService : ICommandProcessingService
     {
-        public async Task ProcessCommandAsync(CommandType commandType, bool isCallBack, Update update, IBot bot)
+        public async Task ProcessCommandAsync(CommandType commandType, bool isCallBack, Update update, ITelegramBotService bot)
         {
             switch (commandType)
             {
@@ -16,7 +14,6 @@ namespace BotApi.Services
                 case CommandType.FincanceSubscribe:
                     break;
                 case CommandType.Coins:
-                    await CoinModule.SendTopPricesAsync(bot, update);
                     break;
                 case CommandType.WakeOnLan:
                     break;

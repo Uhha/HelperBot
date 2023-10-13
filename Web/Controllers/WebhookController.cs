@@ -16,6 +16,13 @@ namespace Web.Controllers
     [Route("api/[controller]")]
     public class WebhookController : Controller
     {
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok();
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Update update)
         {

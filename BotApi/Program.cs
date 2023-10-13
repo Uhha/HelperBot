@@ -1,116 +1,162 @@
 
-using Autofac.Extensions.DependencyInjection;
-using Autofac;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using BotApi.Services;
 using BotApi.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Extensions.Hosting;
+using Telegram.Bot;
+using BotApi.Commands;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BotApi
 {
     public class Program
     {
-       // public static void Main(string[] args)
-       // {
-       //     CreateHostBuilder(args).Build().Run();
-       // }
-
-       // public static IHostBuilder CreateHostBuilder(string[] args) =>
-       //Host.CreateDefaultBuilder(args)
-       //    .ConfigureAppConfiguration((hostingContext, config) =>
-       //    {
-       //        config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
-       //              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-       //              .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true)
-       //              .AddEnvironmentVariables()
-       //              ;
-
-               
-       //    })
-       //    .ConfigureServices((hostContext, services) =>
-       //    {
-       //        // Add configuration settings to the services
-       //        services.Configure<AppSettings>(hostContext.Configuration.GetSection("TelegramBot"));
-       //        services.AddSingleton(sp => sp.GetRequiredService<IOptions<AppSettings>>().Value);
-
-       //        // Add other services
-       //        services.AddHttpClient();
-       //        services.AddControllers();
-       //        services.AddEndpointsApiExplorer();
-       //        services.AddSwaggerGen();
-
-       //        if (hostContext.HostingEnvironment.IsDevelopment())
-       //        {
-       //            hostContext.Configuration.UseSwagger();
-       //            app.UseSwaggerUI();
-       //        }
-       //    });
-
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            // Add services to the container.
 
-            builder.Services.AddControllers();
+            // Create a ConfigurationBuilder
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(builder.Environment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+
+            // Build the configuration
+            var configuration = configurationBuilder.Build();
+
+            // Configure services
+            builder.Services.Configure<APIConfig>(configuration.GetSection("APIConfig"));
+
+            // Logging
+            builder.Logging.AddConsole();
+
+            // Configure common services
+            builder.Services.AddControllers().AddNewtonsoftJson();
+            builder.Services.AddMvc();
+            builder.Services.AddRouting();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-           // AutoFacRegistration.Register(builder.Services);
+            //services.AddHttpContextAccessor();
+
+            builder.Services.AddSingleton<ITelegramBotService>(provider =>
+            {
+                var botToken = configuration["APIConfig:BotApiKey"]; 
+                var botService = new TelegramBotService(botToken);
+                return botService;
+            });
+
+            builder.Services.AddSingleton<IQBitService>(provider =>
+            {
+                //var configuration = provider.GetRequiredService<IConfiguration>();
+                var qBUrl = configuration["APIConfig:QBUrl"];
+                return new QBitService(qBUrl);
+            });
+
+            builder.Services.AddSingleton<IWebhookService, WebhookService>();
+            builder.Services.AddSingleton<ICommandProcessingService, CommandProcessingService>();
+
+            builder.Services.AddSingleton<ICommand, GetCoinsCommand>();
+            builder.Services.AddSingleton<ICommandFactory, CommandFactory>();
+
+
+            builder.Services.AddSingleton<GetCoinsCommand>();
+
+
+            var commandDictionary = new Dictionary<string, ICommand>
+            {
+                { "/coins", null }, // The factory will provide the implementation
+            };
+
+            builder.Services.AddSingleton(commandDictionary);
+
+            // Register the CommandInvoker
+            builder.Services.AddSingleton<CommandInvoker>();
+
+
+            //builder.Services.AddSingleton(serviceProvider =>
+            //{
+            //    var commandDictionary = new Dictionary<string, ICommand>
+            //    {
+            //        { "/coins", serviceProvider.GetRequiredService<GetCoinsCommand>() },
+            //    };
+            //    return new CommandInvoker(commandDictionary);
+            //});
 
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                // Development-specific middleware and configuration
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            else
+            {
+                // Production-specific middleware and configuration
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
 
+            // Common middleware
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
+            app.UseRouting();
             app.UseAuthorization();
 
-
+            // Define your routes and controllers
             app.MapControllers();
+
+       
+            //SET THE FUCKING WEBHOOK!
+            var webHookUrl = configuration["APIConfig:WebHookUrl"];
+            var botToken = configuration["APIConfig:BotApiKey"];
+            var bot = new TelegramBotClient(botToken);
+            bot.SetWebhookAsync(webHookUrl);
+
+            //This doesn't get initiated
+            //app.Use(async (context, next) =>
+            //{
+            //    var botService = context.RequestServices.GetRequiredService<ITelegramBotService>();
+            //    await botService.SetWebhookAsync(webHookUrl);
+
+            //    await next.Invoke();
+            //});
 
             app.Run();
         }
 
-        public IConfiguration Configuration { get; }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public interface ICommandFactory
         {
-            services.AddSingleton(Configuration);
+            ICommand Create(string name);
+        }
 
+        public class CommandFactory : ICommandFactory
+        {
+            private readonly IServiceProvider _serviceProvider;
 
-            // Register your bot class with Autofac
-            var builder = new ContainerBuilder();
+            public CommandFactory(IServiceProvider serviceProvider)
+            {
+                _serviceProvider = serviceProvider;
+            }
 
-            // Retrieve the bot token from configuration
-            string botToken = Configuration["BotToken"];
-            string webHookUrl = Configuration["WebHookUrl"];
-
-            builder.RegisterType<Bot>()
-                   .As<IBot>()
-                   .WithParameter("botToken", botToken)
-                   .WithParameter("webHookUrl", webHookUrl);
-
-            builder.RegisterType<QBitService>()
-                  .As<IQBitService>()
-                  .WithParameter("url", Configuration["QBUrl"]);
-
-            builder.RegisterType<WebhookService>().As<IWebhookService>();
-            builder.RegisterType<CommandProcessingService>().As<ICommandProcessingService>();
-            
-
-            builder.Populate(services);
-
-            var container = builder.Build();
-
-            return new AutofacServiceProvider(container);
+            public ICommand Create(string name)
+            {
+                switch (name)
+                {
+                    case "/coins":
+                        return _serviceProvider.GetRequiredService<GetCoinsCommand>();
+                    default:
+                        throw new ArgumentException("Unknown command name");
+                }
+            }
         }
 
     }

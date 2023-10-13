@@ -7,6 +7,6 @@ namespace BotApi.Interfaces
 {
     public interface ICommandProcessingService
     {
-        Task ProcessCommandAsync(CommandType commandType, bool isCallBack, Update update, IBot bot);
+        Task ProcessCommandAsync(CommandType commandType, bool isCallBack, Update update, ITelegramBotService bot);
     }
 }

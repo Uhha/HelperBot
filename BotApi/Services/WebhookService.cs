@@ -6,6 +6,10 @@ namespace BotApi.Services
 {
     public class WebhookService : IWebhookService
     {
+        public WebhookService()
+        {
+        }
+
         public (CommandType command, bool isCallback) GetCommandType(Update update)
         {
             switch (update.Type)
@@ -53,19 +57,6 @@ namespace BotApi.Services
             commandText = commandText.Replace(' ', '=');
             commandText = (commandText.Contains('=')) ? commandText.Substring(0, commandText.IndexOf('=')) : commandText;
             return commandText;
-        }
-
-        public enum CommandType
-        {
-            ComicSubscribe,
-            FincanceSubscribe,
-            Coins,
-            WakeOnLan,
-            Balance,
-            BalanceAdd,
-            BalanceRemove,
-            BalanceDetails,
-            Unknown,
         }
 
         private static Dictionary<string, CommandType> _commands = new Dictionary<string, CommandType>
