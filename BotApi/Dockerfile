@@ -7,8 +7,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["BotApi.csproj", "BotApi/"]
-RUN dotnet restore "BotApi.csproj"
+COPY ["BotApi/BotApi.csproj", "BotApi/"]
+RUN dotnet restore "BotApi/BotApi.csproj"
 COPY . .
 WORKDIR "/src/BotApi"
 RUN dotnet build "BotApi.csproj" -c Release -o /app/build
