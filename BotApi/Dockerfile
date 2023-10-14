@@ -3,9 +3,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0.12-bookworm-slim-arm64v8 AS base
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:9005
-ENV ASPNETCORE_HTTPS_PORT=9006
+#ENV ASPNETCORE_HTTPS_PORT=9006
 EXPOSE 9005
-EXPOSE 9006
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
