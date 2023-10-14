@@ -16,7 +16,7 @@ namespace BotApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.WebHost.UseUrls("http://*:9005");
+            builder.WebHost.UseUrls("https://*:9005");
             // Create a ConfigurationBuilder
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(builder.Environment.ContentRootPath)
