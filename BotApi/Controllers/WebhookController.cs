@@ -38,5 +38,12 @@ namespace BotApi.Controllers
             await _commandInvoker.ExecuteCommandAsync("/coins", update);
             return Ok(update);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            await _bot.SendTextMessageAsync(182328439, "GET!!!");
+            return Ok();
+        }
     }
 }
