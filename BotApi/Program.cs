@@ -16,7 +16,7 @@ namespace BotApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.WebHost.UseUrls("http://*:9005");
             // Create a ConfigurationBuilder
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(builder.Environment.ContentRootPath)
@@ -119,6 +119,7 @@ namespace BotApi
             var botToken = configuration["APIConfig:BotApiKey"];
             var bot = new TelegramBotClient(botToken);
             bot.SetWebhookAsync(webHookUrl);
+            bot.SendTextMessageAsync(182328439, $"Webhook set to {webHookUrl}");
 
             //This doesn't get initiated
             //app.Use(async (context, next) =>
