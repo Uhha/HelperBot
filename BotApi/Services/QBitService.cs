@@ -1,4 +1,5 @@
 ﻿using BotApi.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using QBittorrent.Client;
 
@@ -8,11 +9,13 @@ namespace BotApi.Services
     {
         private readonly QBittorrentClient _qBittorrentClient;
         private readonly IOptions<APIConfig> _apiConfig;
+        private readonly ILogger<QBitService> _logger;
 
-        public QBitService(IOptions<APIConfig> apiConfig)
+        public QBitService(ILogger<QBitService> logger, IOptions<APIConfig> apiConfig)
         {
+            _logger = logger;
             _qBittorrentClient = new QBittorrentClient(new Uri(apiConfig.Value.QBUrl));
-            _qBittorrentClient.LoginAsync(apiConfig.Value.QBUserName, apiConfig.Value.QBPassword);
+            _qBittorrentClient.LoginAsync(apiConfig.Value.QBLogin, apiConfig.Value.QBPassword);
             _apiConfig = apiConfig;
         }
 

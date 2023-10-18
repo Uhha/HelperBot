@@ -21,7 +21,7 @@ namespace BotApi
 
         public string? RutrackerCookie { get; set; }
 
-        public string? QBUserName { get; set; }
+        public string? QBLogin { get; set; }
 
         public string? QBPassword { get; set; }
     }
