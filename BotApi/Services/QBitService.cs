@@ -12,7 +12,7 @@ namespace BotApi.Services
         public QBitService(IOptions<APIConfig> apiConfig)
         {
             _qBittorrentClient = new QBittorrentClient(new Uri(apiConfig.Value.QBUrl));
-            _qBittorrentClient.LoginAsync(_apiConfig.Value.QBUserName, _apiConfig.Value.QBPassword);
+            _qBittorrentClient.LoginAsync(apiConfig.Value.QBUserName, apiConfig.Value.QBPassword);
             _apiConfig = apiConfig;
         }
 
