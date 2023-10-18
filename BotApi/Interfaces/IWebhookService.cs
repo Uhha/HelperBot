@@ -1,4 +1,5 @@
 ﻿using Telegram.Bot.Types;
+using static BotApi.Commands.RegisterCommands;
 
 namespace BotApi.Interfaces
 {
@@ -7,16 +8,5 @@ namespace BotApi.Interfaces
         (CommandType command, bool isCallback) GetCommandType(Update update);
     }
 
-    public enum CommandType
-    {
-        ComicSubscribe,
-        FincanceSubscribe,
-        Coins,
-        WakeOnLan,
-        Balance,
-        BalanceAdd,
-        BalanceRemove,
-        BalanceDetails,
-        Unknown,
-    }
+    
 }

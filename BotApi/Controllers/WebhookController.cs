@@ -13,37 +13,40 @@ namespace BotApi.Controllers
         private readonly ILogger<WebhookController> _logger;
         private readonly IWebhookService _webhookService;
         private readonly ITelegramBotService _bot;
-        private readonly ICommandProcessingService _commandProcessingService;
         private readonly CommandInvoker _commandInvoker;
 
         public WebhookController(ILogger<WebhookController> logger, 
             IWebhookService webhookService, 
             ITelegramBotService bot,
-            ICommandProcessingService commandProcessingService,
             CommandInvoker commandInvoker
         )
         {
             _logger = logger;
             _webhookService = webhookService;
             _bot = bot;
-            _commandProcessingService = commandProcessingService;
             _commandInvoker = commandInvoker;
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Update update)
         {
-            await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
-            var commandTypeTuple = _webhookService.GetCommandType(update);
-            await _commandInvoker.ExecuteCommandAsync("/coins", update);
-            return Ok(update);
-        }
+            try
+            {
+                await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
+                var commandTypeTuple = _webhookService.GetCommandType(update);
+                
+                _logger.LogInformation($"Commnad {commandTypeTuple.command} being executed.");
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            await _bot.SendTextMessageAsync(182328439, "GET!!!");
+                await _commandInvoker.ExecuteCommandAsync(commandTypeTuple.command, update);
+                return Ok(update);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error On Command Post", null);
+            }
             return Ok();
         }
+
+       
     }
 }

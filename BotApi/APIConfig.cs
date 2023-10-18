@@ -18,5 +18,7 @@ namespace BotApi
         public string? SQLSERVER_CONNECTION_STRING { get; set; }
 
         public string? QBUrl { get; set; }
+
+        public string? RutrackerCookie { get; set; }
     }
 }

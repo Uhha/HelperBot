@@ -3,34 +3,58 @@ using BotApi.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotApi.Services
 {
     public class TelegramBotService : ITelegramBotService
     {
         private readonly TelegramBotClient _botClient;
-        private readonly CommandInvoker _commandInvoker;
-
 
         public TelegramBotService(string botToken)
         {
             _botClient = new TelegramBotClient(botToken);
-            SendTextMessageAsync(182328439, "Local Bot started!");
         }
         public async Task SendTextMessageAsync(long chatId, string message, ParseMode? parseMode = null)
         {
             await _botClient.SendTextMessageAsync(chatId, message, parseMode: parseMode);
         }
 
-        public async Task SendChatActionAsync(ChatId chatId, ChatAction chatAction)
+        public async Task SendChatActionAsync(long? chatId, ChatAction chatAction)
         {
-            await _botClient.SendChatActionAsync(chatId, chatAction);
-
+            try
+            {
+                await _botClient.SendChatActionAsync(chatId, chatAction);
+            }
+            catch (Exception)
+            {
+                
+            }
         }
 
         public async Task SetWebhookAsync(string webHookUrl)
         {
             await _botClient.SetWebhookAsync(webHookUrl);
+        }
+
+        public async Task ReplyAsync(Update update, string message) 
+        {
+            if (update.Message != null)
+                await _botClient.SendTextMessageAsync(update.Message.From.Id, message);
+            else if (update.CallbackQuery != null)
+                await _botClient.SendTextMessageAsync(update.CallbackQuery.From.Id, message);
+        }
+
+        public async Task SendTextMessageWithButtonsAsync(Update update, string message, IReplyMarkup replyMarkup)
+        {
+            if (update.Message != null)
+            {
+                await _botClient.SendTextMessageAsync(update.Message.From.Id, message, replyMarkup: replyMarkup);
+            }
+            else if (update.CallbackQuery != null)
+            {
+                await _botClient.SendTextMessageAsync(update.CallbackQuery.From.Id, message, replyMarkup: replyMarkup);
+            }
         }
     }
 }

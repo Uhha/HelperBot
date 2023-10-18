@@ -42,7 +42,12 @@ namespace BotApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+            
+            
             //services.AddHttpContextAccessor();
+
 
             builder.Services.AddSingleton<ITelegramBotService>(provider =>
             {
@@ -51,43 +56,15 @@ namespace BotApi
                 return botService;
             });
 
-            builder.Services.AddSingleton<IQBitService>(provider =>
-            {
-                //var configuration = provider.GetRequiredService<IConfiguration>();
-                var qBUrl = configuration["APIConfig:QBUrl"];
-                return new QBitService(qBUrl);
-            });
-
-            builder.Services.AddSingleton<IWebhookService, WebhookService>();
-            builder.Services.AddSingleton<ICommandProcessingService, CommandProcessingService>();
-
-            builder.Services.AddSingleton<ICommand, GetCoinsCommand>();
-            builder.Services.AddSingleton<ICommandFactory, CommandFactory>();
-
-
-            builder.Services.AddSingleton<GetCoinsCommand>();
-
-
-            var commandDictionary = new Dictionary<string, ICommand>
-            {
-                { "/coins", null }, // The factory will provide the implementation
-            };
-
-            builder.Services.AddSingleton(commandDictionary);
-
-            // Register the CommandInvoker
-            builder.Services.AddSingleton<CommandInvoker>();
-
-
-            //builder.Services.AddSingleton(serviceProvider =>
+            builder.Services.AddSingleton<IQBitService, QBitService>();
+            //builder.Services.AddSingleton<IQBitService>(provider =>
             //{
-            //    var commandDictionary = new Dictionary<string, ICommand>
-            //    {
-            //        { "/coins", serviceProvider.GetRequiredService<GetCoinsCommand>() },
-            //    };
-            //    return new CommandInvoker(commandDictionary);
+            //    var qBUrl = configuration["APIConfig:QBUrl"];
+            //    return new QBitService(qBUrl);
             //});
 
+            DIConfiguration.Configure(builder.Services);
+            RegisterCommands.Register(builder.Services);
 
             var app = builder.Build();
 
@@ -120,7 +97,7 @@ namespace BotApi
             var botToken = configuration["APIConfig:BotApiKey"];
             var bot = new TelegramBotClient(botToken);
             bot.SetWebhookAsync(webHookUrl);
-            bot.SendTextMessageAsync(182328439, $"Webhook set to {webHookUrl}");
+            //bot.SendTextMessageAsync(182328439, $"Webhook set to {webHookUrl}");
 
             //This doesn't get initiated
             //app.Use(async (context, next) =>
@@ -133,33 +110,5 @@ namespace BotApi
 
             app.Run();
         }
-
-
-        public interface ICommandFactory
-        {
-            ICommand Create(string name);
-        }
-
-        public class CommandFactory : ICommandFactory
-        {
-            private readonly IServiceProvider _serviceProvider;
-
-            public CommandFactory(IServiceProvider serviceProvider)
-            {
-                _serviceProvider = serviceProvider;
-            }
-
-            public ICommand Create(string name)
-            {
-                switch (name)
-                {
-                    case "/coins":
-                        return _serviceProvider.GetRequiredService<GetCoinsCommand>();
-                    default:
-                        throw new ArgumentException("Unknown command name");
-                }
-            }
-        }
-
     }
 }

@@ -1,27 +1,30 @@
 ﻿using BotApi.Interfaces;
 using Telegram.Bot.Types;
-using static BotApi.Program;
+using static BotApi.Commands.RegisterCommands;
 
 namespace BotApi.Commands
 {
     public class CommandInvoker
     {
-        private readonly Dictionary<string, ICommand> _commands;
+        private readonly Dictionary<CommandType, ICommand> _commands;
         private readonly ICommandFactory _commandFactory;
-        public CommandInvoker(Dictionary<string, ICommand> commands, ICommandFactory commandFactory)
+        private readonly ITelegramBotService _telegramBotService;
+
+        public CommandInvoker(Dictionary<CommandType, ICommand> commands, ICommandFactory commandFactory, ITelegramBotService telegramBotService)
         {
             _commands = commands;
             _commandFactory = commandFactory;
+            _telegramBotService = telegramBotService;
         }
 
-        public async Task ExecuteCommandAsync(string commandString, Update update)
+        public async Task ExecuteCommandAsync(CommandType commandType, Update update)
         {
-            if (_commands.TryGetValue(commandString, out ICommand command))
+            if (_commands.TryGetValue(commandType, out ICommand command))
             {
                 if (command == null)
                 {
                     // Use the factory to create the command
-                    command = _commandFactory.Create(commandString);
+                    command = _commandFactory.Create(commandType);
                 }
 
                 if (command is IAsynchronousCommand asyncCommand)
@@ -35,19 +38,18 @@ namespace BotApi.Commands
             }
             else
             {
-                //TODO:
-                // Handle unknown command
+                await _telegramBotService.ReplyAsync(update, $"Command {commandType} Not Found.");
             }
         }
 
-        public void ExecuteCommand(string commandString, Update update)
+        public void ExecuteCommand(CommandType commandType, Update update)
         {
-            if (_commands.TryGetValue(commandString, out ICommand command))
+            if (_commands.TryGetValue(commandType, out ICommand command))
             {
                 if (command == null)
                 {
                     // Use the factory to create the command
-                    command = _commandFactory.Create(commandString);
+                    command = _commandFactory.Create(commandType);
                 }
 
                 if (command is IAsynchronousCommand asyncCommand)
@@ -61,8 +63,7 @@ namespace BotApi.Commands
             }
             else
             {
-                //TODO:
-                // Handle unknown command
+                _telegramBotService.ReplyAsync(update, $"Command {commandType} Not Found.");
             }
         }
     }

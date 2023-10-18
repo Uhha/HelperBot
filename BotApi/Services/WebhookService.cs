@@ -1,6 +1,7 @@
 ﻿using BotApi.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using static BotApi.Commands.RegisterCommands;
 
 namespace BotApi.Services
 {
@@ -26,7 +27,7 @@ namespace BotApi.Services
         private (CommandType, bool isCallback) CallbackQuertUpdate(Update update)
         {
             var callbackPrefix = ExtractCommand(update, true);
-            var command = (_commands.ContainsKey(callbackPrefix)) ? _commands[callbackPrefix] : CommandType.Unknown;
+            var command = (CommandsText.ContainsKey(callbackPrefix)) ? CommandsText[callbackPrefix] : CommandType.Unknown;
             return (command, true);
         }
 
@@ -47,7 +48,7 @@ namespace BotApi.Services
                 return CommandType.Unknown;
 
             var callbackPrefix = ExtractCommand(update);
-            return (_commands.ContainsKey(callbackPrefix)) ? _commands[callbackPrefix] : CommandType.Unknown;
+            return (CommandsText.ContainsKey(callbackPrefix)) ? CommandsText[callbackPrefix] : CommandType.Unknown;
 
         }
 
@@ -59,19 +60,6 @@ namespace BotApi.Services
             return commandText;
         }
 
-        private static Dictionary<string, CommandType> _commands = new Dictionary<string, CommandType>
-        {
-            {"/subs", CommandType.ComicSubscribe },
-            {"/finance", CommandType.FincanceSubscribe },
-            {"/coins", CommandType.Coins },
-            {"/c", CommandType.Coins },
-            {"/wol", CommandType.WakeOnLan },
-            {"/balance", CommandType.Balance },
-            {"/b", CommandType.Balance },
-            {"/balanceadd", CommandType.BalanceAdd },
-            {"/balanceremove", CommandType.BalanceRemove },
-            {"/balancedetails", CommandType.BalanceDetails },
-            {"/bd", CommandType.BalanceDetails },
-        };
+       
     }
 }
