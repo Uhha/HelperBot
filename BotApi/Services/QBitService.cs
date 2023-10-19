@@ -13,8 +13,9 @@ namespace BotApi.Services
 
         public QBitService(IOptions<APIConfig> apiConfig, ILogger<QBitService> logger)
         {
-            _qBittorrentClient = new QBittorrentClient(new Uri(_apiConfig.Value.QBUrl));
+            _qBittorrentClient = new QBittorrentClient(new Uri(apiConfig.Value.QBUrl));
             _apiConfig = apiConfig;
+            _logger = logger;
         }
 
         public async Task Auth()
