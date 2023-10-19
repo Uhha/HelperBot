@@ -75,8 +75,8 @@ namespace BotApi
 
             var app = builder.Build();
 
-            var torrentStatusCheckService = app.Services.GetRequiredService<ITorrentStatusCheckService>();
-            await torrentStatusCheckService.ExecuteAsync(CancellationToken.None);
+            //var torrentStatusCheckService = app.Services.GetRequiredService<ITorrentStatusCheckService>();
+            //await torrentStatusCheckService.ExecuteAsync(CancellationToken.None);
 
             var qbitService = app.Services.GetRequiredService<IQBitService>();
             await qbitService.Auth();
