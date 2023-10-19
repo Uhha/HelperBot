@@ -11,7 +11,7 @@ namespace BotApi.Services
         private readonly IOptions<APIConfig> _apiConfig;
         private readonly ILogger<QBitService> _logger;
 
-        public QBitService(QBittorrentClient qBittorrentClient, IOptions<APIConfig> apiConfig, ILogger<QBitService> logger)
+        public QBitService(IOptions<APIConfig> apiConfig, ILogger<QBitService> logger)
         {
             _qBittorrentClient = new QBittorrentClient(new Uri(_apiConfig.Value.QBUrl));
             _apiConfig = apiConfig;
