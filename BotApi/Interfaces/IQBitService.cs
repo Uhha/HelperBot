@@ -2,6 +2,7 @@
 using Telegram.Bot.Types;
 using QBittorrent.Client;
 using static BotApi.Services.QBitService;
+using Microsoft.Extensions.Options;
 
 namespace BotApi.Interfaces
 {
@@ -18,5 +19,7 @@ namespace BotApi.Interfaces
         Task DisablePluginAsync(string pluginName);
 
         Task AddTorrentAsync(string torrentFileUrl, string downloadFolder);
+
+        Task Auth();
     }
 }

@@ -11,12 +11,18 @@ namespace BotApi.Services
         private readonly IOptions<APIConfig> _apiConfig;
         private readonly ILogger<QBitService> _logger;
 
-        public QBitService(ILogger<QBitService> logger, IOptions<APIConfig> apiConfig)
+        public QBitService(QBittorrentClient qBittorrentClient, IOptions<APIConfig> apiConfig, ILogger<QBitService> logger)
         {
-            _logger = logger;
-            _qBittorrentClient = new QBittorrentClient(new Uri(apiConfig.Value.QBUrl));
-            _qBittorrentClient.LoginAsync(apiConfig.Value.QBLogin, apiConfig.Value.QBPassword);
+            _qBittorrentClient = new QBittorrentClient(new Uri(_apiConfig.Value.QBUrl));
             _apiConfig = apiConfig;
+        }
+
+        public async Task Auth()
+        {
+            if (!string.IsNullOrEmpty(_apiConfig.Value.QBLogin) && !string.IsNullOrEmpty(_apiConfig.Value.QBPassword))
+            {
+                await _qBittorrentClient.LoginAsync(_apiConfig.Value.QBLogin, _apiConfig.Value.QBPassword);
+            }
         }
 
         public async Task<int> StartSearchAsync(string query)

@@ -15,6 +15,7 @@ namespace BotApi.Services
         {
             _botClient = new TelegramBotClient(botToken);
         }
+
         public async Task SendTextMessageAsync(long chatId, string message, ParseMode? parseMode = null)
         {
             await _botClient.SendTextMessageAsync(chatId, message, parseMode: parseMode);

@@ -13,7 +13,7 @@ namespace BotApi
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.WebHost.UseUrls("http://*:9005");
@@ -44,8 +44,7 @@ namespace BotApi
 
             builder.Logging.AddConsole();
             builder.Logging.AddDebug();
-            
-            
+
             //services.AddHttpContextAccessor();
 
 
@@ -56,7 +55,12 @@ namespace BotApi
                 return botService;
             });
 
+
+            
+
             builder.Services.AddSingleton<IQBitService, QBitService>();
+
+
             //builder.Services.AddSingleton<IQBitService>(provider =>
             //{
             //    var qBUrl = configuration["APIConfig:QBUrl"];
@@ -67,6 +71,13 @@ namespace BotApi
             RegisterCommands.Register(builder.Services);
 
             var app = builder.Build();
+
+            var qbitService = app.Services.GetRequiredService<IQBitService>();
+            await qbitService.Auth();
+
+            var webHookUrl = configuration["APIConfig:WebHookUrl"];
+            var telegramService = app.Services.GetRequiredService<ITelegramBotService>();
+            await telegramService.SetWebhookAsync(webHookUrl);
 
             if (app.Environment.IsDevelopment())
             {
@@ -92,11 +103,6 @@ namespace BotApi
             app.MapControllers();
 
        
-            //SET THE FUCKING WEBHOOK!
-            var webHookUrl = configuration["APIConfig:WebHookUrl"];
-            var botToken = configuration["APIConfig:BotApiKey"];
-            var bot = new TelegramBotClient(botToken);
-            bot.SetWebhookAsync(webHookUrl);
             //bot.SendTextMessageAsync(182328439, $"Webhook set to {webHookUrl}");
 
             //This doesn't get initiated
