@@ -36,12 +36,13 @@ namespace BotApi.Commands
 
         public override async Task ExecuteAsync(Update update)
         {
+            var user = update.CallbackQuery.From.Id;
             var parameters = update.CallbackQuery.Data.Substring(update.CallbackQuery.Data.IndexOf("=") + 1);
             if (parameters.Contains("$p"))
             {
                 var p = parameters.Split("$p");
                 var uri = _qBUrlResolverService.GetUrl(p[0]);
-                await _qBitService.AddTorrentAsync(uri.ToString(), p[1]);
+                await _qBitService.AddTorrentAsync(uri.ToString(), p[1], user);
                 await _telegramBotService.ReplyAsync(update, "Download Started!");
                 return;
             }

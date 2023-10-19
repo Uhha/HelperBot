@@ -83,8 +83,6 @@ namespace BotApi.Commands
                         await SendSearchData(update, results, searchId, skipFirst: skipFirst);
                         return;
                     }
-
-                    await _qBitService.AddTorrentAsync(p[0], p[1]);
                 }
             }
             await _telegramBotService.ReplyAsync(update, "Search is empty. Try Again.");

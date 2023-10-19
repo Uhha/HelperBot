@@ -10,12 +10,14 @@ namespace BotApi.Services
         private readonly QBittorrentClient _qBittorrentClient;
         private readonly IOptions<APIConfig> _apiConfig;
         private readonly ILogger<QBitService> _logger;
+        public Dictionary<string, long> ActiveTorrents { get; }
 
         public QBitService(IOptions<APIConfig> apiConfig, ILogger<QBitService> logger)
         {
             _qBittorrentClient = new QBittorrentClient(new Uri(apiConfig.Value.QBUrl));
             _apiConfig = apiConfig;
             _logger = logger;
+            ActiveTorrents = new Dictionary<string, long>();
         }
 
         public async Task Auth()
@@ -51,7 +53,7 @@ namespace BotApi.Services
             await _qBittorrentClient.DisableSearchPluginAsync(pluginName);
         }
 
-        public async Task AddTorrentAsync(string torrentFileUrl, string downloadFolder)
+        public async Task AddTorrentAsync(string torrentFileUrl, string downloadFolder, long user)
         {
             var tf = new AddTorrentUrlsRequest(new Uri(torrentFileUrl))
             {
@@ -61,12 +63,32 @@ namespace BotApi.Services
             SetCookie(tf, torrentFileUrl);
             
             await _qBittorrentClient.AddTorrentsAsync(tf);
+
+            await Task.Delay(TimeSpan.FromSeconds(15));
+            await AddTorrentOwnership(tf, user);
+        }
+
+        private async Task AddTorrentOwnership(AddTorrentUrlsRequest tf, long user)
+        {
+            var torrents = await GetTorrentListAsync();
+            var top = torrents.OrderBy(o => o.AddedOn).Take(1);
+            ActiveTorrents.Add(top.First().Hash, user);
         }
 
         private void SetCookie(AddTorrentUrlsRequest tf, string torrentFileUrl)
         {
             if (torrentFileUrl.Contains("rutracker"))
                 tf.Cookie = _apiConfig.Value.RutrackerCookie;
+        }
+
+        public async Task<IReadOnlyList<TorrentInfo>> GetTorrentListAsync()
+        {
+            return await _qBittorrentClient.GetTorrentListAsync();
+        }
+
+        public async Task DeleteTorrent(string torrentHash)
+        {
+            await _qBittorrentClient.DeleteAsync(torrentHash, deleteDownloadedData: false);
         }
     }
 }

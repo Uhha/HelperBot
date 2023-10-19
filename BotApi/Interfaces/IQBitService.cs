@@ -8,6 +8,8 @@ namespace BotApi.Interfaces
 {
     public interface IQBitService
     {
+        Dictionary<string, long> ActiveTorrents { get; }
+
         Task<int> StartSearchAsync(string query);
 
         Task<SearchResults> GetSearchResultsAsync(int searchId);
@@ -18,8 +20,12 @@ namespace BotApi.Interfaces
 
         Task DisablePluginAsync(string pluginName);
 
-        Task AddTorrentAsync(string torrentFileUrl, string downloadFolder);
+        Task AddTorrentAsync(string torrentFileUrl, string downloadFolder, long user);
 
         Task Auth();
+
+        Task<IReadOnlyList<TorrentInfo>> GetTorrentListAsync();
+
+        Task DeleteTorrent(string torrentHash);
     }
 }

@@ -45,6 +45,8 @@ namespace BotApi
             builder.Logging.AddConsole();
             builder.Logging.AddDebug();
 
+            builder.Services.AddHostedService<TorrentStatusCheckService>();
+
             //services.AddHttpContextAccessor();
 
 
@@ -59,6 +61,7 @@ namespace BotApi
             
 
             builder.Services.AddSingleton<IQBitService, QBitService>();
+            builder.Services.AddSingleton<ITorrentStatusCheckService, TorrentStatusCheckService>();
 
 
             //builder.Services.AddSingleton<IQBitService>(provider =>
@@ -71,6 +74,9 @@ namespace BotApi
             RegisterCommands.Register(builder.Services);
 
             var app = builder.Build();
+
+            var torrentStatusCheckService = app.Services.GetRequiredService<ITorrentStatusCheckService>();
+            await torrentStatusCheckService.ExecuteAsync(CancellationToken.None);
 
             var qbitService = app.Services.GetRequiredService<IQBitService>();
             await qbitService.Auth();
