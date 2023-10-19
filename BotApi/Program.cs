@@ -61,7 +61,7 @@ namespace BotApi
             
 
             builder.Services.AddSingleton<IQBitService, QBitService>();
-            builder.Services.AddSingleton<ITorrentStatusCheckService, TorrentStatusCheckService>();
+            //builder.Services.AddSingleton<ITorrentStatusCheckService, TorrentStatusCheckService>();
 
 
             //builder.Services.AddSingleton<IQBitService>(provider =>

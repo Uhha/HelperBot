@@ -3,11 +3,12 @@ using QBittorrent.Client;
 
 namespace BotApi.Services
 {
-    public class TorrentStatusCheckService : BackgroundService, ITorrentStatusCheckService
+    public class TorrentStatusCheckService : IHostedService, IDisposable
     {
         private readonly IQBitService _qBitService;
-        private readonly ILogger<TorrentStatusCheckService> _logger;
         private readonly ITelegramBotService _telegramBotService;
+        private readonly ILogger<TorrentStatusCheckService> _logger;
+        private Timer _timer;
 
         public TorrentStatusCheckService(IQBitService qBitService, ITelegramBotService telegramBotService, ILogger<TorrentStatusCheckService> logger)
         {
@@ -16,42 +17,43 @@ namespace BotApi.Services
             _logger = logger;
         }
 
-        async Task ITorrentStatusCheckService.ExecuteAsync(CancellationToken stoppingToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            await ExecuteAsync(stoppingToken);
+            // Set up a timer to call CheckTorrentStatus every 5 minutes
+            _timer = new Timer(async state => await CheckTorrentStatusAsync(), null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
+
+            return Task.CompletedTask;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public Task StopAsync(CancellationToken cancellationToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            _timer?.Change(Timeout.Infinite, 0);
+            return Task.CompletedTask;
+        }
+
+        private async Task CheckTorrentStatusAsync()
+        {
+            try
             {
-                try
+                _logger.LogInformation($"Checking status in TorrentStatusCheckService");
+                var monitoredTorrentHashes = await _qBitService.GetTorrentListAsync();
+                foreach (var torrentInfo in monitoredTorrentHashes)
                 {
-                    var monitoredTorrentHashes = await _qBitService.GetTorrentListAsync();
-                    foreach (var torrentInfo in monitoredTorrentHashes)
+                    if (torrentInfo != null &&
+                        (torrentInfo.State == QBittorrent.Client.TorrentState.Uploading ||
+                         torrentInfo.State == QBittorrent.Client.TorrentState.QueuedUpload ||
+                         torrentInfo.State == QBittorrent.Client.TorrentState.PausedUpload ||
+                         torrentInfo.State == QBittorrent.Client.TorrentState.ForcedUpload))
                     {
-                        if (torrentInfo != null && 
-                            (torrentInfo.State == QBittorrent.Client.TorrentState.Uploading ||
-                            torrentInfo.State == QBittorrent.Client.TorrentState.QueuedUpload ||
-                            torrentInfo.State == QBittorrent.Client.TorrentState.PausedUpload ||
-                            torrentInfo.State == QBittorrent.Client.TorrentState.ForcedUpload
-                            )
-                        )
-                        {
-                            NotifyTorrentFinished(torrentInfo);
-                            await _qBitService.DeleteTorrent(torrentInfo.Hash);
-                        }
+                        NotifyTorrentFinished(torrentInfo);
+                        await _qBitService.DeleteTorrent(torrentInfo.Hash);
+                        _qBitService.ActiveTorrents.Remove(torrentInfo.Hash);
                     }
-                    await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
                 }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error in TorrentStatusCheckService: {ex.Message}");
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in TorrentStatusCheckService: {ex.Message}");
             }
         }
 
@@ -65,7 +67,11 @@ namespace BotApi.Services
             }
         }
 
-        
+        public void Dispose()
+        {
+            _timer?.Dispose();
+        }
+
     }
 
 }
