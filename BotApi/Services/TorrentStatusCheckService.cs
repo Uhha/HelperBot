@@ -50,6 +50,8 @@ namespace BotApi.Services
                          
                          ))
                     {
+                        _logger.LogInformation($"Trying to stop upload and notify!");
+
                         NotifyTorrentFinished(torrentInfo);
                         await _qBitService.DeleteTorrent(torrentInfo.Hash);
                         _qBitService.ActiveTorrents.Remove(torrentInfo.Hash);
