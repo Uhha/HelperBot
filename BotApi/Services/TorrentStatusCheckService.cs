@@ -17,12 +17,12 @@ namespace BotApi.Services
             _logger = logger;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"TorrentStatusCheckService StartAsync ran.");
             // Set up a timer to call CheckTorrentStatus every 5 minutes
             _timer = new Timer(async state => await CheckTorrentStatusAsync(), null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
-
-            return Task.CompletedTask;
+            
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -39,11 +39,13 @@ namespace BotApi.Services
                 var monitoredTorrentHashes = await _qBitService.GetTorrentListAsync();
                 foreach (var torrentInfo in monitoredTorrentHashes)
                 {
+                    _logger.LogInformation($"torrentInfo state = {torrentInfo.State}, hash: {torrentInfo.Hash}");
+
                     if (torrentInfo != null &&
-                        (torrentInfo.State == QBittorrent.Client.TorrentState.Uploading ||
-                         torrentInfo.State == QBittorrent.Client.TorrentState.QueuedUpload ||
-                         torrentInfo.State == QBittorrent.Client.TorrentState.PausedUpload ||
-                         torrentInfo.State == QBittorrent.Client.TorrentState.ForcedUpload))
+                        (torrentInfo.State == TorrentState.Uploading ||
+                         torrentInfo.State == TorrentState.QueuedUpload ||
+                         torrentInfo.State == TorrentState.PausedUpload ||
+                         torrentInfo.State == TorrentState.ForcedUpload))
                     {
                         NotifyTorrentFinished(torrentInfo);
                         await _qBitService.DeleteTorrent(torrentInfo.Hash);
@@ -59,9 +61,16 @@ namespace BotApi.Services
 
         private void NotifyTorrentFinished(TorrentInfo tinfo)
         {
+            if (!_qBitService.ActiveTorrents.ContainsKey(tinfo.Hash))
+            {
+                _logger.LogInformation($"Torrent {tinfo.Name}, hash: {tinfo.Hash}, is not in the collection.");
+            }
+
             if (_qBitService.ActiveTorrents.ContainsKey(tinfo.Hash))
             {
                 var user = _qBitService.ActiveTorrents[tinfo.Hash];
+                _logger.LogInformation($"Torrent {tinfo.Name}, user {user} found in Active Torrents list.");
+
                 _telegramBotService.SendTextMessageAsync(user, $"Torrent {tinfo.Name} has finished downloading.");
                 _logger.LogInformation($"Torrent {tinfo.Name} has finished downloading.");
             }
