@@ -60,6 +60,9 @@ namespace BotApi.Commands
                 case CommandType.QBDownloadTorrentCallback:
                     return _serviceProvider.GetRequiredService<QBDownloadTorrentCallbackCommand>();
 
+                case CommandType.QBProgress:
+                    return _serviceProvider.GetRequiredService<QBProgressCommand>();
+
                 case CommandType.Unknown:
                     return null;
 
@@ -89,6 +92,7 @@ namespace BotApi.Commands
                 { CommandType.QBEnablePlugin, null },
                 { CommandType.QBDisablePlugin, null },
                 { CommandType.QBDownloadTorrentCallback, null },
+                { CommandType.QBProgress, null },
             };
 
             services.AddSingleton(commandDictionary);
@@ -99,6 +103,8 @@ namespace BotApi.Commands
             services.AddSingleton<QBEnablePluginCommand>();
             services.AddSingleton<QBDisablePluginCommand>();
             services.AddSingleton<QBDownloadTorrentCallbackCommand>();
+            services.AddSingleton<QBProgressCommand>();
+
         }
 
         public enum CommandType
@@ -116,6 +122,7 @@ namespace BotApi.Commands
             QBEnablePlugin,
             QBDisablePlugin,
             QBDownloadTorrentCallback,
+            QBProgress,
             Unknown,
         }
 
@@ -137,6 +144,7 @@ namespace BotApi.Commands
             {"/qbenableplugin", CommandType.QBEnablePlugin },
             {"/qbdisableplugin", CommandType.QBDisablePlugin },
             {"/qdc", CommandType.QBDownloadTorrentCallback },
+            {"/qbprogress", CommandType.QBProgress },
 
         };
     }

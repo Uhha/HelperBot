@@ -90,5 +90,6 @@ namespace BotApi.Services
         {
             await _qBittorrentClient.DeleteAsync(torrentHash, deleteDownloadedData: false);
         }
+
     }
 }
