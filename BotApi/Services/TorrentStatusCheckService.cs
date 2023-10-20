@@ -45,7 +45,10 @@ namespace BotApi.Services
                         (torrentInfo.State == TorrentState.Uploading ||
                          torrentInfo.State == TorrentState.QueuedUpload ||
                          torrentInfo.State == TorrentState.PausedUpload ||
-                         torrentInfo.State == TorrentState.ForcedUpload))
+                         torrentInfo.State == TorrentState.ForcedUpload ||
+                         torrentInfo.State == TorrentState.StalledUpload
+                         
+                         ))
                     {
                         NotifyTorrentFinished(torrentInfo);
                         await _qBitService.DeleteTorrent(torrentInfo.Hash);
