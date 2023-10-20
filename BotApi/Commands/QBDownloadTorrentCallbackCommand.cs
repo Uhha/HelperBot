@@ -42,8 +42,9 @@ namespace BotApi.Commands
             {
                 var p = parameters.Split("$p");
                 var uri = _qBUrlResolverService.GetUrl(p[0]);
+                await _telegramBotService.ReplyAsync(update, "Preparing Files for Download!");
                 await _qBitService.AddTorrentAsync(uri.ToString(), p[1], user);
-                await _telegramBotService.ReplyAsync(update, "Download Started!");
+                await _telegramBotService.ReplyAsync(update, "Download Started.");
                 return;
             }
 

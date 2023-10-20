@@ -71,7 +71,7 @@ namespace BotApi.Services
         private async Task AddTorrentOwnership(AddTorrentUrlsRequest tf, long user)
         {
             var torrents = await GetTorrentListAsync();
-            var top = torrents.OrderBy(o => o.AddedOn).Take(1);
+            var top = torrents.OrderByDescending(o => o.AddedOn).Take(1);
             ActiveTorrents.Add(top.First().Hash, user);
         }
 
