@@ -5,23 +5,27 @@ namespace BotApi.Services
 {
 	public class MusifyService : IMusifyService
 	{
+		private const string MUSIC_FOLDER = "app/downloads/music";
+		private const string SINGLE_FILE_FOLDER = "Random";
+		private readonly ILogger<MusifyService> _logger;
 		private readonly HttpClient httpClient;
 
-		public MusifyService()
+		public MusifyService(ILogger<MusifyService> logger)
         {
+			_logger = logger;
 			httpClient = new HttpClient();
 		}
-        public async Task DownloadAlbum(Uri url)
+        public async Task DownloadAlbumAsync(Uri url)
 		{
-			await DownloadMp3Files(url);
+			await DownloadMp3Files(url, MUSIC_FOLDER);
 		}
 
-		public async Task DownloadSong(Uri url)
+		public async Task DownloadSongAsync(Uri url)
 		{
-			throw new NotImplementedException();
+			await DownloadSingleMp3File(url, MUSIC_FOLDER);
 		}
 
-		private async Task DownloadMp3Files(Uri url)
+		private async Task DownloadMp3Files(Uri url, string volumePath)
 		{
 			try
 			{
@@ -30,10 +34,22 @@ namespace BotApi.Services
 				var htmlDocument = new HtmlDocument();
 				htmlDocument.LoadHtml(html);
 
+				var header = htmlDocument.DocumentNode.SelectSingleNode("//header[@class='content__title']/h1");
+				var title = header?.InnerText.Trim().Split(" - ");
+
+				var bandName = title[0].Trim();
+				var albumName = title[1].Trim();
+
 				var mp3Links = htmlDocument.DocumentNode.SelectNodes("//div[contains(@class, 'playlist__item')]//a[@download]");
 
-				if (mp3Links != null && mp3Links.Any())
+				if (mp3Links != null && mp3Links.Any() && !string.IsNullOrEmpty(bandName) && !string.IsNullOrEmpty(albumName))
 				{
+					string bandFolder = CleanFolderName(bandName);
+					string albumFolder = CleanFolderName(albumName);
+					string savePath = Path.Combine(volumePath, bandFolder, albumFolder);
+
+					Directory.CreateDirectory(savePath);
+
 					foreach (var link in mp3Links)
 					{
 						string mp3Url = link.GetAttributeValue("href", string.Empty);
@@ -41,19 +57,45 @@ namespace BotApi.Services
 
 						if (!string.IsNullOrEmpty(mp3Url) && !string.IsNullOrEmpty(mp3FileName))
 						{
-							await DownloadFile(new Uri(url, mp3Url), mp3FileName);
+							string filePath = Path.Combine(savePath, mp3FileName);
+							await DownloadFile(new Uri(url, mp3Url), filePath);
 						}
 					}
 				}
 				else
 				{
-					Console.WriteLine("No MP3 links found on the provided URL.");
+					_logger.LogWarning("No MP3 links found on the provided URL, or band/album names could not be extracted.");
 				}
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"An error occurred: {ex.Message}");
+				_logger.LogError(ex, ex.Message);
 			}
+		}
+
+		private async Task DownloadSingleMp3File(Uri mp3Link, string volumePath)
+		{
+			try
+			{
+				string savePath = Path.Combine(volumePath, SINGLE_FILE_FOLDER);
+
+				Directory.CreateDirectory(savePath);
+
+				string mp3FileName = Path.GetFileName(mp3Link.LocalPath);
+				string filePath = Path.Combine(savePath, mp3FileName);
+
+				await DownloadFile(mp3Link, filePath);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, ex.Message);
+			}
+		}
+
+		private string CleanFolderName(string folderName)
+		{
+			char[] invalidChars = Path.GetInvalidFileNameChars();
+			return string.Join("_", folderName.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
 		}
 
 		private async Task DownloadFile(Uri fileUri, string fileName)
@@ -72,12 +114,12 @@ namespace BotApi.Services
 				}
 				else
 				{
-					Console.WriteLine($"Failed to download file '{fileName}'. Status code: {response.StatusCode}");
+					_logger.LogWarning($"Failed to download file '{fileName}'. Status code: {response.StatusCode}");
 				}
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"An error occurred while downloading file '{fileName}': {ex.Message}");
+				_logger.LogError($"An error occurred while downloading file '{fileName}': {ex.Message}");
 			}
 		}
 	}

@@ -63,7 +63,13 @@ namespace BotApi.Commands
                 case CommandType.QBProgress:
                     return _serviceProvider.GetRequiredService<QBProgressCommand>();
 
-                case CommandType.Unknown:
+				case CommandType.MusifyDownloadAlbum:
+					return _serviceProvider.GetRequiredService<MusifyDownloadAlbumCommand>();
+
+				case CommandType.MusifyDownloadSong:
+					return _serviceProvider.GetRequiredService<MusifyDownloadSongCommand>();
+
+				case CommandType.Unknown:
                     return null;
 
                 default:
@@ -93,7 +99,9 @@ namespace BotApi.Commands
                 { CommandType.QBDisablePlugin, null },
                 { CommandType.QBDownloadTorrentCallback, null },
                 { CommandType.QBProgress, null },
-            };
+                { CommandType.MusifyDownloadAlbum, null },
+                { CommandType.MusifyDownloadSong, null },
+			};
 
             services.AddSingleton(commandDictionary);
 
@@ -104,8 +112,10 @@ namespace BotApi.Commands
             services.AddSingleton<QBDisablePluginCommand>();
             services.AddSingleton<QBDownloadTorrentCallbackCommand>();
             services.AddSingleton<QBProgressCommand>();
+            services.AddSingleton<MusifyDownloadAlbumCommand>();
+            services.AddSingleton<MusifyDownloadSongCommand>();
 
-        }
+		}
 
         public enum CommandType
         {
@@ -123,7 +133,9 @@ namespace BotApi.Commands
             QBDisablePlugin,
             QBDownloadTorrentCallback,
             QBProgress,
-            Unknown,
+            MusifyDownloadAlbum,
+            MusifyDownloadSong,
+			Unknown,
         }
 
         public static Dictionary<string, CommandType> CommandsText = new Dictionary<string, CommandType>
@@ -145,7 +157,9 @@ namespace BotApi.Commands
             {"/qbdisableplugin", CommandType.QBDisablePlugin },
             {"/qdc", CommandType.QBDownloadTorrentCallback },
             {"/qbprogress", CommandType.QBProgress },
+            {"/mdlalbum", CommandType.MusifyDownloadAlbum },
+            {"/mdlsong", CommandType.MusifyDownloadSong },
 
-        };
+		};
     }
 }
