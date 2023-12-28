@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
 using BotApi.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using BotDB;
+using Microsoft.EntityFrameworkCore;
 
 namespace BotApi
 {
@@ -37,6 +39,10 @@ namespace BotApi
             builder.Services.AddControllers().AddNewtonsoftJson();
             builder.Services.AddMvc();
             builder.Services.AddRouting();
+            builder.Services.AddDbContext<BotDbContext>(options =>
+            {
+                options.UseSqlite("Data Source=/Database/BotDatabase.db");
+            });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

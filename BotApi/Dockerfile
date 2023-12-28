@@ -6,6 +6,12 @@ ENV ASPNETCORE_URLS=http://+:9005
 #ENV ASPNETCORE_HTTPS_PORT=9006
 EXPOSE 9005
 
+# Copy your database initialization script to the container
+COPY init-db.sh /app/
+
+# Make the initialization script executable
+RUN chmod +x /app/init-db.sh
+
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["BotApi.csproj", "BotApi/"]
@@ -18,7 +24,17 @@ FROM build AS publish
 RUN dotnet publish "BotApi.csproj" -c Release -r linux-arm64 -o /app/publish --self-contained=false
 #/p:UseAppHost=false 
 
+#FROM base AS final
+#WORKDIR /app
+#COPY --from=publish /app/publish .
+#ENTRYPOINT ["dotnet", "BotApi.dll"]
+
+# Final stage
 FROM base AS final
 WORKDIR /app
+
+# Copy the published application to the container
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BotApi.dll"]
+
+# Define the initialization script as part of the command
+CMD ["bash", "/app/init-db.sh", "dotnet", "BotApi.dll"]
