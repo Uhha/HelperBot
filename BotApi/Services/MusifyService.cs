@@ -5,7 +5,7 @@ namespace BotApi.Services
 {
 	public class MusifyService : IMusifyService
 	{
-		private const string MUSIC_FOLDER = "app/downloads/music";
+		private const string MUSIC_FOLDER = "music";
 		private const string SINGLE_FILE_FOLDER = "Random";
 		private readonly ILogger<MusifyService> _logger;
 		private readonly HttpClient httpClient;
