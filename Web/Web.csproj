@@ -24,10 +24,5 @@
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Logic\Logic.csproj" />
-    <ProjectReference Include="..\Tracer\Tracer.csproj" />
-  </ItemGroup>
-
 </Project>
 

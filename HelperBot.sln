@@ -3,18 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic", "Logic\Logic.csproj", "{9834FFD7-A634-4DEF-A8C2-0FD169824AF3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{1BC94682-8EA3-4361-A24A-5564C121E9ED}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseInteractions", "DatabaseInteractions\DatabaseInteractions.csproj", "{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{37E2D7A2-D636-489D-B1B0-322B96A57E36}"
 	ProjectSection(SolutionItems) = preProject
 		BotCommands.txt = BotCommands.txt
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tracer", "Tracer\Tracer.csproj", "{C24B3A9C-4CE1-4A33-8954-1C6EC6945FB8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{7D038991-F3AB-4038-A7DF-BF93FFA6A4AC}"
 EndProject
@@ -25,9 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{3BB59D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotApi", "BotApi\BotApi.csproj", "{C9858E4F-D606-48AE-B521-FEDFA64F2785}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TESTApis", "TESTApis\TESTApis.csproj", "{A7AC455C-AFD3-4118-937F-26CBDDE4B620}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotApiTests", "BotApiTests\BotApiTests.csproj", "{BDD1A945-0E10-47B8-A917-DBA797DBD3E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotApiTests", "BotApiTests\BotApiTests.csproj", "{BDD1A945-0E10-47B8-A917-DBA797DBD3E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,30 +25,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9834FFD7-A634-4DEF-A8C2-0FD169824AF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9834FFD7-A634-4DEF-A8C2-0FD169824AF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9834FFD7-A634-4DEF-A8C2-0FD169824AF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9834FFD7-A634-4DEF-A8C2-0FD169824AF3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1BC94682-8EA3-4361-A24A-5564C121E9ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1BC94682-8EA3-4361-A24A-5564C121E9ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1BC94682-8EA3-4361-A24A-5564C121E9ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1BC94682-8EA3-4361-A24A-5564C121E9ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD757E2B-BEDF-4E31-8E84-EA9919A4296D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C24B3A9C-4CE1-4A33-8954-1C6EC6945FB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C24B3A9C-4CE1-4A33-8954-1C6EC6945FB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C24B3A9C-4CE1-4A33-8954-1C6EC6945FB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C24B3A9C-4CE1-4A33-8954-1C6EC6945FB8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9858E4F-D606-48AE-B521-FEDFA64F2785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9858E4F-D606-48AE-B521-FEDFA64F2785}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9858E4F-D606-48AE-B521-FEDFA64F2785}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9858E4F-D606-48AE-B521-FEDFA64F2785}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7AC455C-AFD3-4118-937F-26CBDDE4B620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7AC455C-AFD3-4118-937F-26CBDDE4B620}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7AC455C-AFD3-4118-937F-26CBDDE4B620}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7AC455C-AFD3-4118-937F-26CBDDE4B620}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BDD1A945-0E10-47B8-A917-DBA797DBD3E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BDD1A945-0E10-47B8-A917-DBA797DBD3E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDD1A945-0E10-47B8-A917-DBA797DBD3E4}.Release|Any CPU.ActiveCfg = Release|Any CPU

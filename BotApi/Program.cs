@@ -1,13 +1,8 @@
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using BotApi.Services;
 using BotApi.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.Extensions.Hosting;
-using Telegram.Bot;
 using BotApi.Commands;
-using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace BotApi
 {
@@ -32,9 +27,20 @@ namespace BotApi
 
             // Logging
             builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
 
-            // Configure common services
-            builder.Services.AddControllers().AddNewtonsoftJson();
+			Log.Logger = new LoggerConfiguration()
+		   .MinimumLevel.Information()
+		   .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
+		   .CreateLogger();
+
+			builder.Logging.ClearProviders(); // Clear default logging providers
+			builder.Logging.AddSerilog(); // Use Serilog for logging
+
+
+
+			// Configure common services
+			builder.Services.AddControllers().AddNewtonsoftJson();
             builder.Services.AddMvc();
             builder.Services.AddRouting();
 
@@ -42,8 +48,6 @@ namespace BotApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Logging.AddConsole();
-            builder.Logging.AddDebug();
 
             builder.Services.AddHostedService<TorrentStatusCheckService>();
 
@@ -122,5 +126,7 @@ namespace BotApi
 
             app.Run();
         }
-    }
+
+		
+	}
 }
