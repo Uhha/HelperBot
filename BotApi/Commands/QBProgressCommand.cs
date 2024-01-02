@@ -43,24 +43,11 @@ namespace BotApi.Commands
             StringBuilder message = new StringBuilder();
             foreach (var torrent in torrents)
             {
-                message.AppendLine($"{torrent.Name}, State: {torrent.State}, Progress: {torrent.Progress}");
+                message.AppendLine($"{torrent.Name}, State: {torrent.State}, Progress: {(torrent.Progress * 100).ToString("0") + "%"}");
             }
             message.AppendLine();
 
             await _telegramBotService.ReplyAsync(update, message.ToString());
         }
-
-        private string FormatSearchResultsMessage(IEnumerable<SearchPlugin> results)
-        {
-            StringBuilder message = new StringBuilder();
-            foreach (var plugin in results)
-            {
-                message.AppendLine($"{ plugin.Name } | { (plugin.IsEnabled ? "enabled" : "disabled") }");
-            }
-
-            return message.ToString();
-        }
-
-      
     }
 }
