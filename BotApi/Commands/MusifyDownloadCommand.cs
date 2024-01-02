@@ -37,7 +37,7 @@ namespace BotApi.Commands
 
         public override async Task ExecuteAsync(Update update)
         {
-			var url = update?.Message?.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
+			var url = update.Message?.Text?.Substring(update.Message.Text.IndexOf(' ') + 1);
             if (!string.IsNullOrWhiteSpace(url))
             {
 				try
@@ -57,7 +57,6 @@ namespace BotApi.Commands
 
 	public class MusifyDownloadSongCommand : BaseCommandAsync
 	{
-		private ITelegramBotService _telegramBotService;
 		private IMusifyService _musifyService;
 		private ILogger<MusifyDownloadSongCommand> _logger;
 
@@ -65,14 +64,13 @@ namespace BotApi.Commands
 			IMusifyService musifyService,
 			ILogger<MusifyDownloadSongCommand> logger) : base(telegramBotService)
 		{
-			_telegramBotService = telegramBotService;
 			_musifyService = musifyService;
 			_logger = logger;
 		}
 
 		public override async Task ExecuteAsync(Update update)
 		{
-			var url = update?.Message?.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
+			var url = update.Message?.Text?.Substring(update.Message.Text.IndexOf(' ') + 1);
 			if (!string.IsNullOrWhiteSpace(url))
 			{
 				try

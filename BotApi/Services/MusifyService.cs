@@ -110,7 +110,7 @@ namespace BotApi.Services
 					using var file = new System.IO.FileStream(fileName, System.IO.FileMode.Create);
 
 					await fileStream.CopyToAsync(file);
-					Console.WriteLine($"File '{fileName}' downloaded successfully.");
+					_logger.LogInformation($"File '{fileName}' downloaded successfully.");
 				}
 				else
 				{
