@@ -37,14 +37,18 @@ namespace BotApi.Controllers
                 
                 _logger.LogInformation($"Commnad {commandTypeTuple.command} being executed.");
 
-                await _commandInvoker.ExecuteCommandAsync(commandTypeTuple.command, update);
+                Task.Run(async () =>
+                {
+                    await _commandInvoker.ExecuteCommandAsync(commandTypeTuple.command, update);
+                });
+
                 return Ok(update);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"Error On Command Post", null);
+                return StatusCode(500);
             }
-            return Ok();
         }
 
        

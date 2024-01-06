@@ -22,9 +22,16 @@ namespace BotApi.Services
 
         public async Task Auth()
         {
-            if (!string.IsNullOrEmpty(_apiConfig.Value.QBLogin) && !string.IsNullOrEmpty(_apiConfig.Value.QBPassword))
+            try
             {
-                await _qBittorrentClient.LoginAsync(_apiConfig.Value.QBLogin, _apiConfig.Value.QBPassword);
+                if (!string.IsNullOrEmpty(_apiConfig.Value.QBLogin) && !string.IsNullOrEmpty(_apiConfig.Value.QBPassword))
+                {
+                    await _qBittorrentClient.LoginAsync(_apiConfig.Value.QBLogin, _apiConfig.Value.QBPassword);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(nameof(QBitService) + " Authentication failed", e);
             }
         }
 
