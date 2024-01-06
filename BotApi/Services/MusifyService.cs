@@ -8,13 +8,14 @@ namespace BotApi.Services
 		private const string MUSIC_FOLDER = "music";
 		private const string SINGLE_FILE_FOLDER = "Random";
 		private readonly ILogger<MusifyService> _logger;
-		private readonly HttpClient httpClient;
+        private readonly HttpClient httpClient;
 
 		public MusifyService(ILogger<MusifyService> logger)
         {
 			_logger = logger;
 			httpClient = new HttpClient();
-		}
+            httpClient.Timeout = TimeSpan.FromSeconds(300);
+        }
         public async Task DownloadAlbumAsync(Uri url)
 		{
 			await DownloadMp3Files(url, MUSIC_FOLDER);
@@ -58,8 +59,13 @@ namespace BotApi.Services
 						if (!string.IsNullOrEmpty(mp3Url) && !string.IsNullOrEmpty(mp3FileName))
 						{
 							string filePath = Path.Combine(savePath, mp3FileName);
-							await DownloadFile(new Uri(url, mp3Url), filePath);
-						}
+							var success = await DownloadFile(new Uri(url, mp3Url), filePath);
+
+                            if (!success)
+                            {
+                                _logger.LogError($"Could not download {mp3FileName}");
+                            }
+                        }
 					}
 				}
 				else
@@ -84,7 +90,12 @@ namespace BotApi.Services
 				string mp3FileName = Path.GetFileName(mp3Link.LocalPath);
 				string filePath = Path.Combine(savePath, mp3FileName);
 
-				await DownloadFile(mp3Link, filePath);
+				var success = await DownloadFile(mp3Link, filePath);
+
+				if (!success)
+				{
+                    _logger.LogError($"Could not download {mp3FileName}");
+                }
 			}
 			catch (Exception ex)
 			{
@@ -98,29 +109,44 @@ namespace BotApi.Services
 			return string.Join("_", folderName.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
 		}
 
-		private async Task DownloadFile(Uri fileUri, string fileName)
+		private async Task<bool> DownloadFile(Uri fileUri, string fileName)
 		{
-			try
-			{
-				var response = await httpClient.GetAsync(fileUri);
+            int currentAttempt = 1;
+			int maxAttempts = 3;
 
-				if (response.IsSuccessStatusCode)
-				{
-					using var fileStream = await response.Content.ReadAsStreamAsync();
-					using var file = new System.IO.FileStream(fileName, System.IO.FileMode.Create);
-
-					await fileStream.CopyToAsync(file);
-					_logger.LogInformation($"File '{fileName}' downloaded successfully.");
-				}
-				else
-				{
-					_logger.LogWarning($"Failed to download file '{fileName}'. Status code: {response.StatusCode}");
-				}
-			}
-			catch (Exception ex)
+            while (currentAttempt < maxAttempts)
 			{
-				_logger.LogError($"An error occurred while downloading file '{fileName}': {ex.Message}");
+
+				try
+				{
+					var response = await httpClient.GetAsync(fileUri);
+
+					if (response.IsSuccessStatusCode)
+					{
+						using var fileStream = await response.Content.ReadAsStreamAsync();
+						using var file = new System.IO.FileStream(fileName, System.IO.FileMode.Create);
+
+						await fileStream.CopyToAsync(file);
+						_logger.LogInformation($"File '{fileName}' downloaded successfully.");
+                        return true;
+                    }
+					else
+					{
+						_logger.LogWarning($"Failed to download file '{fileName}'. Status code: {response.StatusCode}");
+					}
+				}
+                catch (TaskCanceledException)
+                {
+                    _logger.LogWarning($"Download attempt {currentAttempt} timed out. Retrying...");
+                }
+                catch (Exception ex)
+				{
+					_logger.LogError($"An error occurred while downloading file '{fileName}': {ex.Message}");
+					break;
+                }
+				currentAttempt++;
 			}
+			return false;
 		}
 	}
 }
