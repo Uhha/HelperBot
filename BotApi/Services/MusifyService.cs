@@ -16,17 +16,17 @@ namespace BotApi.Services
 			httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(300);
         }
-        public async Task DownloadAlbumAsync(Uri url)
+        public async Task<string> DownloadAlbumAsync(Uri url)
 		{
-			await DownloadMp3Files(url, MUSIC_FOLDER);
+			return await DownloadMp3Files(url, MUSIC_FOLDER);
 		}
 
-		public async Task DownloadSongAsync(Uri url)
+		public async Task<string> DownloadSongAsync(Uri url)
 		{
-			await DownloadSingleMp3File(url, MUSIC_FOLDER);
+			return await DownloadSingleMp3File(url, MUSIC_FOLDER);
 		}
 
-		private async Task DownloadMp3Files(Uri url, string volumePath)
+		private async Task<string> DownloadMp3Files(Uri url, string volumePath)
 		{
 			try
 			{
@@ -67,19 +67,22 @@ namespace BotApi.Services
                             }
                         }
 					}
+					return $"{bandFolder} - {albumFolder}";
 				}
 				else
 				{
 					_logger.LogWarning("No MP3 links found on the provided URL, or band/album names could not be extracted.");
+					return "";
 				}
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, ex.Message);
 			}
-		}
+            return "";
+        }
 
-		private async Task DownloadSingleMp3File(Uri mp3Link, string volumePath)
+        private async Task<string> DownloadSingleMp3File(Uri mp3Link, string volumePath)
 		{
 			try
 			{
@@ -92,15 +95,19 @@ namespace BotApi.Services
 
 				var success = await DownloadFile(mp3Link, filePath);
 
-				if (!success)
+
+                if (!success)
 				{
                     _logger.LogError($"Could not download {mp3FileName}");
                 }
+
+				return mp3FileName;
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, ex.Message);
 			}
+			return "";
 		}
 
 		private string CleanFolderName(string folderName)

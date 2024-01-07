@@ -40,16 +40,18 @@ namespace BotApi.Commands
 			var url = update.Message?.Text?.Substring(update.Message.Text.IndexOf(' ') + 1);
             if (!string.IsNullOrWhiteSpace(url))
             {
-				try
-				{
-					await _musifyService.DownloadAlbumAsync(new Uri(url));
+                string title = string.Empty;
+                try
+                {
+					title = await _musifyService.DownloadAlbumAsync(new Uri(url));
 				}
 				catch (Exception ex)
 				{
 					_logger.LogError(ex.Message);
 					await _telegramBotService.ReplyAsync(update, "Something went wrong: " + ex.Message);
+					return;
 				}
-				await _telegramBotService.ReplyAsync(update, "Music Download Complete.");
+				await _telegramBotService.ReplyAsync(update, $"{title} Album Download Complete.");
             }
         }
       
@@ -73,16 +75,18 @@ namespace BotApi.Commands
 			var url = update.Message?.Text?.Substring(update.Message.Text.IndexOf(' ') + 1);
 			if (!string.IsNullOrWhiteSpace(url))
 			{
+				string title = string.Empty;
 				try
 				{
-					await _musifyService.DownloadSongAsync(new Uri(url));
+					title = await _musifyService.DownloadSongAsync(new Uri(url));
 				}
 				catch (Exception ex)
 				{
 					_logger.LogError(ex.Message);
 					await _telegramBotService.ReplyAsync(update, "Something went wrong: " + ex.Message);
+					return;
 				}
-				await _telegramBotService.ReplyAsync(update, "Song Download Complete.");
+				await _telegramBotService.ReplyAsync(update, $"{title} Download Complete.");
 			}
 		}
 

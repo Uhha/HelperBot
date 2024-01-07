@@ -2,7 +2,7 @@
 {
 	public interface IMusifyService
 	{
-		public Task DownloadAlbumAsync(Uri url);
-		public Task DownloadSongAsync(Uri url);
+		public Task<string> DownloadAlbumAsync(Uri url);
+		public Task<string> DownloadSongAsync(Uri url);
 	}
 }
