@@ -57,7 +57,7 @@ namespace BotApiTests
 			{
 				Message = new Message
 				{
-					Text = "/logs 20240121" // Replace with the actual command and date
+					Text = "/logs 01212024" // Replace with the actual command and date
 				}
 			};
 
