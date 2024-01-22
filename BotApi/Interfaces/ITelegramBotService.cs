@@ -11,6 +11,7 @@ namespace BotApi.Interfaces
         Task SendChatActionAsync(long? chatId, ChatAction chatAction);
         Task ReplyAsync(Update update, string message);
         Task SendTextMessageWithButtonsAsync(Update update, string message, IReplyMarkup replyMarkup);
+        Task SendFileAsync(Update update, string filePath);
 
-    }
+	}
 }

@@ -69,6 +69,9 @@ namespace BotApi.Commands
 				case CommandType.MusifyDownloadSong:
 					return _serviceProvider.GetRequiredService<MusifyDownloadSongCommand>();
 
+				case CommandType.GetLogs:
+					return _serviceProvider.GetRequiredService<GetLogsCommand>();
+
 				case CommandType.Unknown:
                     return null;
 
@@ -101,6 +104,7 @@ namespace BotApi.Commands
                 { CommandType.QBProgress, null },
                 { CommandType.MusifyDownloadAlbum, null },
                 { CommandType.MusifyDownloadSong, null },
+                { CommandType.GetLogs, null },
 			};
 
             services.AddSingleton(commandDictionary);
@@ -114,6 +118,7 @@ namespace BotApi.Commands
             services.AddSingleton<QBProgressCommand>();
             services.AddSingleton<MusifyDownloadAlbumCommand>();
             services.AddSingleton<MusifyDownloadSongCommand>();
+            services.AddSingleton<GetLogsCommand>();
 
 		}
 
@@ -135,8 +140,9 @@ namespace BotApi.Commands
             QBProgress,
             MusifyDownloadAlbum,
             MusifyDownloadSong,
+			GetLogs,
 			Unknown,
-        }
+		}
 
         public static Dictionary<string, CommandType> CommandsText = new Dictionary<string, CommandType>
         {
@@ -159,6 +165,7 @@ namespace BotApi.Commands
             {"/qbprogress", CommandType.QBProgress },
             {"/mdlalbum", CommandType.MusifyDownloadAlbum },
             {"/mdlsong", CommandType.MusifyDownloadSong },
+            {"/logs", CommandType.GetLogs },
 
 		};
     }
