@@ -12,20 +12,20 @@ namespace BotApi.Commands
 
 		public override async Task ExecuteAsync(Update update)
 		{
-			var date = update.Message.Text.Substring(update.Message.Text.IndexOf(' ') + 1);
+			var parameter = update.ParseParameters();
 			
-			if (date is null)
+			if (parameter is null)
 			{
 				var today = DateTime.Now.ToString("yyyyMMdd");
-				var filepath = Path.Combine(LOGS_PATH_PREFIX, today, ".log");
+				var filepath = LOGS_PATH_PREFIX + today + ".log";
 
 				await _telegramBotService.SendFileAsync(update, filepath);
 				return;
 			}
 			
-			if (DateTime.TryParse(date, out DateTime requestedDate))
+			if (DateTime.TryParse(parameter.First(), out DateTime requestedDate))
 			{
-				var filepath = Path.Combine(LOGS_PATH_PREFIX, requestedDate.ToString("yyyyMMdd"), ".log");
+				var filepath = LOGS_PATH_PREFIX + requestedDate.ToString("yyyyMMdd") + ".log";
 
 				await _telegramBotService.SendFileAsync(update, filepath);
 				return;
