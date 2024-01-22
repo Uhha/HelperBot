@@ -28,7 +28,7 @@ namespace BotApi.Commands
 			{
 				var filepath = LOGS_PATH_PREFIX + requestedDate.ToString("yyyyMMdd") + ".log";
 
-				await _telegramBotService.SendFileAsync(update, filepath, filename: LOGS_PATH_PREFIX + today + ".txt");
+				await _telegramBotService.SendFileAsync(update, filepath, filename: LOGS_PATH_PREFIX + requestedDate.ToString("yyyyMMdd") + ".txt");
 				return;
 			}
 

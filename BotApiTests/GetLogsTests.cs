@@ -43,8 +43,9 @@ namespace BotApiTests
 			mockTelegramBotService.Verify(
 				service => service.SendFileAsync(
 					It.IsAny<Update>(),
-					It.Is<string>(filepath => filepath.Contains(DateTime.Now.ToString("yyyyMMdd")))
-				),
+					It.Is<string>(filepath => filepath.Contains(DateTime.Now.ToString("yyyyMMdd"))),
+					It.IsAny<string>()
+					),
 				Times.Once
 			);
 		}
@@ -71,7 +72,8 @@ namespace BotApiTests
 			mockTelegramBotService.Verify(
 				service => service.SendFileAsync(
 					It.IsAny<Update>(),
-					It.Is<string>(filepath => filepath.Contains("20240121"))
+					It.Is<string>(filepath => filepath.Contains("20240121")),
+					It.IsAny<string>()
 				),
 				Times.Once
 			);
@@ -97,7 +99,7 @@ namespace BotApiTests
 
 			// Assert
 			mockTelegramBotService.Verify(
-				service => service.SendFileAsync(It.IsAny<Update>(), It.IsAny<string>()),
+				service => service.SendFileAsync(It.IsAny<Update>(), It.IsAny<string>(), It.IsAny<string>()),
 				Times.Never
 			);
 		}
