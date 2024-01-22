@@ -81,13 +81,13 @@ namespace BotApi.Services
             return input.Substring(0, byteCount);
         }
 
-		public async Task SendFileAsync(Update update, string filePath)
+		public async Task SendFileAsync(Update update, string filePath, string? filename)
 		{
             try
             {
                 using (var fileStream = new FileStream(filePath, FileMode.Open))
                 {
-                    var fileInput = new InputFileStream(fileStream, filePath);
+                    var fileInput = new InputFileStream(fileStream, filename ?? filePath);
                     await _botClient.SendDocumentAsync(update.Message.From.Id, fileInput);
                 }
             }

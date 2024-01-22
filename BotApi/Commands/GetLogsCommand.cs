@@ -18,9 +18,9 @@ namespace BotApi.Commands
 			if (parameter.Count() == 0)
 			{
 				var today = DateTime.Now.ToString("yyyyMMdd");
-				var filepath = LOGS_PATH_PREFIX + today + ".txt";
+				var filepath = LOGS_PATH_PREFIX + today + ".log";
 
-				await _telegramBotService.SendFileAsync(update, filepath);
+				await _telegramBotService.SendFileAsync(update, filepath, filename: LOGS_PATH_PREFIX + today + ".txt");
 				return;
 			}
 
@@ -28,7 +28,7 @@ namespace BotApi.Commands
 			{
 				var filepath = LOGS_PATH_PREFIX + requestedDate.ToString("yyyyMMdd") + ".log";
 
-				await _telegramBotService.SendFileAsync(update, filepath);
+				await _telegramBotService.SendFileAsync(update, filepath, filename: LOGS_PATH_PREFIX + today + ".txt");
 				return;
 			}
 
