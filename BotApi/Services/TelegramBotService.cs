@@ -5,6 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BotApi.Services
 {
@@ -47,6 +48,12 @@ namespace BotApi.Services
                 await _botClient.SendTextMessageAsync(update.Message.From.Id, message);
             else if (update.CallbackQuery != null)
                 await _botClient.SendTextMessageAsync(update.CallbackQuery.From.Id, message);
+        }
+
+        public async Task ReplyAsync(long chatId, string message)
+        {
+            message = TruncateLongMessage(message);
+            await _botClient.SendTextMessageAsync(chatId, message);
         }
 
         public async Task SendTextMessageWithButtonsAsync(Update update, string message, IReplyMarkup replyMarkup)
@@ -96,5 +103,17 @@ namespace BotApi.Services
                 await this.ReplyAsync(update, e.Message);
             }
 		}
+
+        public async Task SendPhotoAsync(long chatId, InputFileUrl url)
+        {
+            try
+            {
+                await _botClient.SendPhotoAsync(chatId, url);
+            }
+            catch (Exception e)
+            {
+                await this.ReplyAsync(chatId, e.Message);
+            }
+        }
 	}
 }

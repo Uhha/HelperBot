@@ -1,0 +1,30 @@
+{
+  "clients": [
+    {
+      "chatid": "asdaf123",
+
+      "subscriptions": [
+        {
+          "type": 1,
+          "last_posted_key": "asdasd123"
+        },
+        {
+          "type": 2
+        }
+      ]
+    },
+    {
+      "chatid": "asdafwer33123",
+
+      "subscriptions": [
+        {
+          "type": 1,
+          "last_posted_key": "asdasd123"
+        },
+        {
+          "type": 2
+        }
+      ]
+    }
+  ]
+}

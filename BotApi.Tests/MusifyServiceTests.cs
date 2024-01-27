@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Moq;
 
-namespace BotApiTests
+namespace BotApi.Tests
 {
 	[TestClass]
 	public class MusifyServiceTests

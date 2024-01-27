@@ -21,29 +21,11 @@ namespace BotApi.Commands
         {
             switch (type)
             {
-                case CommandType.ComicSubscribe:
-                    return null;
-
-                case CommandType.FincanceSubscribe:
-                    return null;
+                case CommandType.Subs:
+                    return _serviceProvider.GetRequiredService<GetSubscriptionsCommand>();
 
                 case CommandType.Coins:
                     return _serviceProvider.GetRequiredService<GetCoinsCommand>();
-
-                case CommandType.WakeOnLan:
-                    return null;
-
-                case CommandType.Balance:
-                    return null;
-
-                case CommandType.BalanceAdd:
-                    return null;
-
-                case CommandType.BalanceRemove:
-                    return null;
-
-                case CommandType.BalanceDetails:
-                    return null;
 
                 case CommandType.QBitTorrentSearch:
                     return _serviceProvider.GetRequiredService<QBSearchCommand>();
@@ -89,13 +71,7 @@ namespace BotApi.Commands
             {
                 // The factory will provide the implementation
                 { CommandType.Coins, null },
-                { CommandType.ComicSubscribe, null },
-                { CommandType.FincanceSubscribe, null },
-                { CommandType.WakeOnLan, null },
-                { CommandType.Balance, null },
-                { CommandType.BalanceAdd, null },
-                { CommandType.BalanceRemove, null },
-                { CommandType.BalanceDetails, null },
+                { CommandType.Subs, null },
                 { CommandType.QBitTorrentSearch, null },
                 { CommandType.QBPlugins, null },
                 { CommandType.QBEnablePlugin, null },
@@ -125,13 +101,7 @@ namespace BotApi.Commands
         public enum CommandType
         {
             Coins,
-            ComicSubscribe,
-            FincanceSubscribe,
-            WakeOnLan,
-            Balance,
-            BalanceAdd,
-            BalanceRemove,
-            BalanceDetails,
+            Subs,
             QBitTorrentSearch,
             QBPlugins,
             QBEnablePlugin,
@@ -146,17 +116,9 @@ namespace BotApi.Commands
 
         public static Dictionary<string, CommandType> CommandsText = new Dictionary<string, CommandType>
         {
-            {"/subs", CommandType.ComicSubscribe },
-            {"/finance", CommandType.FincanceSubscribe },
+            {"/subs", CommandType.Subs },
             {"/coins", CommandType.Coins },
             {"/c", CommandType.Coins },
-            {"/wol", CommandType.WakeOnLan },
-            {"/balance", CommandType.Balance },
-            {"/b", CommandType.Balance },
-            {"/balanceadd", CommandType.BalanceAdd },
-            {"/balanceremove", CommandType.BalanceRemove },
-            {"/balancedetails", CommandType.BalanceDetails },
-            {"/bd", CommandType.BalanceDetails },
             {"/qbsearch", CommandType.QBitTorrentSearch },
             {"/qbplugins", CommandType.QBPlugins },
             {"/qbenableplugin", CommandType.QBEnablePlugin },

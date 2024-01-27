@@ -3,6 +3,7 @@ using BotApi.Services;
 using BotApi.Interfaces;
 using BotApi.Commands;
 using Serilog;
+using BotApi.Database;
 
 namespace BotApi
 {
@@ -50,6 +51,8 @@ namespace BotApi
 
 
             builder.Services.AddHostedService<TorrentStatusCheckService>();
+            builder.Services.AddHostedService<SendCoinsBackgroundService>();
+            builder.Services.AddHostedService<SendComicBackgroundService>();
 
             //services.AddHttpContextAccessor();
 
@@ -61,10 +64,7 @@ namespace BotApi
                 return botService;
             });
 
-
             
-
-            builder.Services.AddSingleton<IQBitService, QBitService>();
             //builder.Services.AddSingleton<ITorrentStatusCheckService, TorrentStatusCheckService>();
 
 

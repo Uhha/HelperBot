@@ -1,4 +1,5 @@
 ﻿using BotApi.Commands;
+using BotApi.Database;
 using BotApi.Interfaces;
 using BotApi.Services;
 
@@ -10,10 +11,14 @@ namespace BotApi
         {
             services.AddSingleton<IWebhookService, WebhookService>();
 
-            services.AddSingleton<ICommand, GetCoinsCommand>();
+            //services.AddSingleton<ICommand, GetCoinsCommand>();
+
+            services.AddSingleton<IDB, DB>();
+            services.AddSingleton<IQBitService, QBitService>();
             services.AddSingleton<ICommandFactory, CommandFactory>();
             services.AddSingleton<IQBUrlResolverService, QBUrlResolverService>();
             services.AddSingleton<IMusifyService, MusifyService>();
+            services.AddSingleton<IGetCoinsService,  GetCoinsService>();
 			services.AddSingleton<CommandInvoker>();
 
         }

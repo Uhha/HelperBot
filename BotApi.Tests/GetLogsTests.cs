@@ -4,23 +4,14 @@ using BotApi.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Moq;
+using System.Reflection;
 using Telegram.Bot.Types;
 
-namespace BotApiTests
+namespace BotApi.Tests
 {
 	[TestClass]
 	public class GetLogsTests
 	{
-		//[TestMethod]
-		//public async Task DownloadAlbumTest()
-		//{
-		//	var mock = new Mock<TelegramBotService>();
-		//	TelegramBotService telegram = mock.Object;
-
-		//	var gl = new GetLogsCommand(telegram);
-		//	await gl.ExecuteAsync()
-		//}
-
 		[TestMethod]
 		public async Task ExecuteAsync_NoDateProvided_SendFileWithTodayDate()
 		{
