@@ -1,9 +1,7 @@
 ﻿
 using BotApi.Database;
 using BotApi.Interfaces;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
-using QBittorrent.Client;
 using HtmlAgilityPack;
 using System.Net;
 using System.Security.Cryptography;
@@ -15,11 +13,11 @@ namespace BotApi.Services
     {
         private readonly ITelegramBotService _telegramBotService;
         private readonly IDB _db;
-        private readonly ILogger<TorrentStatusCheckService> _logger;
+        private readonly ILogger<SendComicBackgroundService> _logger;
         private Timer? _timer;
 
         public SendComicBackgroundService(ITelegramBotService telegramBotService, 
-            ILogger<TorrentStatusCheckService> logger,
+            ILogger<SendComicBackgroundService> logger,
             IDB db
             )
         {
@@ -62,7 +60,7 @@ namespace BotApi.Services
 
 
 
-        public async Task SendComicsAsync()
+        private async Task SendComicsAsync()
         {
             await SendComicsAsync(SubscriptionType.Oglaf);
             await SendComicsAsync(SubscriptionType.XKCD);
@@ -183,7 +181,7 @@ namespace BotApi.Services
             };
         }
 
-        
+
 
         private class MessageToSend
         {

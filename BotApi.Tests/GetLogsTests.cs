@@ -1,4 +1,5 @@
 using BotApi.Commands;
+using BotApi.Database;
 using BotApi.Interfaces;
 using BotApi.Services;
 using Microsoft.Extensions.Logging;
