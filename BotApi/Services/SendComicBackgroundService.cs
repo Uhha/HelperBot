@@ -86,7 +86,7 @@ namespace BotApi.Services
                 var chatId = long.Parse(client);
                 var sub = _db.GetSubscription(chatId, subscriptionType);
 
-                var alreadySent = message?.Title.ToHash().Equals(sub?.LastPostedKey?.ToHash());
+                var alreadySent = message?.Title.ToHash().Equals(sub?.LastPostedKey);
                 if (alreadySent ?? false) continue;
 
                 try
@@ -144,7 +144,7 @@ namespace BotApi.Services
             };
         }
 
-        private async Task<MessageToSend> GetXKCDPicture()
+        public async Task<MessageToSend> GetXKCDPicture()
         {
             HttpClient httpclient = new HttpClient();
             ServicePointManager.Expect100Continue = true;
@@ -177,13 +177,13 @@ namespace BotApi.Services
             {
                 Title = attrs["alt"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
                 SubTitle = attrs["title"]?.Value.Replace("&quot;", "\"").Replace("&#39;", "'"),
-                Image = attrs["src"]?.Value.Substring(2)
+                Image = "https:" + attrs["src"]?.Value
             };
         }
 
 
 
-        private class MessageToSend
+        public class MessageToSend
         {
             public string? Title;
             public string? SubTitle;
