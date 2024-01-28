@@ -22,49 +22,62 @@ namespace BotApi.Commands
     public class GetSubscriptionsCommand : BaseCommandAsync
     {
         private IDB _db;
+        private ILogger<GetSubscriptionsCommand> _logger;
 
-        public GetSubscriptionsCommand(ITelegramBotService telegramBotService, IDB db) :base(telegramBotService) 
+        public GetSubscriptionsCommand(ITelegramBotService telegramBotService, 
+            IDB db,
+            ILogger<GetSubscriptionsCommand> logger
+            ) :base(telegramBotService) 
         {
             _db = db;
+            _logger = logger;
         }
 
         public override async Task ExecuteAsync(Update update)
         {
-            var user = update.CallbackQuery?.From.Id;
-            
-            if (user != null)
+            try
             {
-                var parameter = update.CallbackQuery?.Data?.Substring(update.CallbackQuery.Data.IndexOf("=") + 1);
+                var user = update.CallbackQuery?.From.Id;
 
-                if (parameter != null)
+                if (user != null)
                 {
-                    SubscriptionType sub = (SubscriptionType)int.Parse(parameter);
+                    var parameter = update.CallbackQuery?.Data?.Substring(update.CallbackQuery.Data.IndexOf("=") + 1);
 
-                    if (_db.HaveSubscription(user ?? 0, sub))
+                    if (parameter != null)
                     {
-                        _db.RemoveSubscription(user ?? 0, sub);
+                        SubscriptionType sub = (SubscriptionType)int.Parse(parameter);
+
+                        if (_db.HaveSubscription(user ?? 0, sub))
+                        {
+                            _db.RemoveSubscription(user ?? 0, sub);
+                            await _telegramBotService.ReplyAsync(update, $"Removed subscription to {sub}");
+                        }
+                        else
+                        {
+                            _db.AddSubscription(user ?? 0, sub);
+                            await _telegramBotService.ReplyAsync(update, $"Added subscription to {sub}");
+                        }
                     }
-                    else
-                        _db.AddSubscription(user ?? 0, sub);
+                    return;
                 }
 
 
-                await _telegramBotService.ReplyAsync(update, "Preparing Files for Download!");
-                await _telegramBotService.ReplyAsync(update, "Download Started.");
-                return;
+                var inlineKeyboardMarkup = new InlineKeyboardMarkup
+                   (
+                       new[]
+                           {
+                            new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.CoinCapMarket.ToString(), "/subs=" + (int)SubscriptionType.CoinCapMarket) },
+                            new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.XKCD.ToString(), "/subs=" + (int)SubscriptionType.XKCD) },
+                            new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.Oglaf.ToString(), "/subs=" + (int)SubscriptionType.Oglaf) },
+                           }
+                   );
+                await _telegramBotService.SendTextMessageWithButtonsAsync(update, "Select Subscription Type:", inlineKeyboardMarkup);
             }
-
-
-            var inlineKeyboardMarkup = new InlineKeyboardMarkup
-               (
-                   new[]
-                       {
-                            new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.CoinCapMarket.ToString(), "/subs=" + SubscriptionType.CoinCapMarket) },
-                            new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.XKCD.ToString(), "/subs=" + SubscriptionType.XKCD) },
-                            new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.Oglaf.ToString(), "/subs=" + SubscriptionType.Oglaf) },
-                       }
-               );
-            await _telegramBotService.SendTextMessageWithButtonsAsync(update, "Select Subscription Type:", inlineKeyboardMarkup);
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, e);
+                throw;
+            }
         }
 
         
