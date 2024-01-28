@@ -86,7 +86,7 @@ namespace BotApi.Commands
             services.AddSingleton(commandDictionary);
 
             services.AddSingleton<GetCoinsCommand>();
-            services.AddSingleton<GetSubscriptionsCommand>();
+            services.AddScoped<GetSubscriptionsCommand>();
             services.AddSingleton<QBSearchCommand>();
             services.AddSingleton<QBPluginsCommand>();
             services.AddSingleton<QBEnablePluginCommand>();

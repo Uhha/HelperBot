@@ -93,6 +93,7 @@ namespace BotApi.Services
 
                 try
                 {
+                    sub.LastPostedKey = message?.Title.ToHash();
                     await _telegramBotService.SendTextMessageAsync(chatId, message?.Title?.ToUpper() ?? "");
                     await _telegramBotService.SendTextMessageAsync(chatId, message?.SubTitle ?? "");
                     await _telegramBotService.SendPhotoAsync(chatId, new InputFileUrl(message?.Image ?? ""));
