@@ -21,15 +21,15 @@ namespace BotApi.Commands
 {
     public class GetSubscriptionsCommand : BaseCommandAsync
     {
-        private IDB _db;
+        private IServiceScopeFactory _scopeFactory;
         private ILogger<GetSubscriptionsCommand> _logger;
 
         public GetSubscriptionsCommand(ITelegramBotService telegramBotService, 
-            IDB db,
+            IServiceScopeFactory scopeFactory,
             ILogger<GetSubscriptionsCommand> logger
             ) :base(telegramBotService) 
         {
-            _db = db;
+            _scopeFactory = scopeFactory;
             _logger = logger;
         }
 
@@ -47,15 +47,19 @@ namespace BotApi.Commands
                     {
                         SubscriptionType sub = (SubscriptionType)int.Parse(parameter);
 
-                        if (_db.HaveSubscription(user ?? 0, sub))
+                        using (var scope = _scopeFactory.CreateScope())
                         {
-                            _db.RemoveSubscription(user ?? 0, sub);
-                            await _telegramBotService.ReplyAsync(update, $"Removed subscription to {sub}");
-                        }
-                        else
-                        {
-                            _db.AddSubscription(user ?? 0, sub);
-                            await _telegramBotService.ReplyAsync(update, $"Added subscription to {sub}");
+                            var db = scope.ServiceProvider.GetRequiredService<IDB>();
+                            if (db.HaveSubscription(user ?? 0, sub))
+                            {
+                                db.RemoveSubscription(user ?? 0, sub);
+                                await _telegramBotService.ReplyAsync(update, $"Removed subscription to {sub}");
+                            }
+                            else
+                            {
+                                db.AddSubscription(user ?? 0, sub);
+                                await _telegramBotService.ReplyAsync(update, $"Added subscription to {sub}");
+                            } 
                         }
                     }
                     return;

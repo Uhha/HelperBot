@@ -12,18 +12,18 @@ namespace BotApi.Services
     public class SendComicBackgroundService : IHostedService, IDisposable
     {
         private readonly ITelegramBotService _telegramBotService;
-        private readonly IDB _db;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<SendComicBackgroundService> _logger;
         private Timer? _timer;
 
         public SendComicBackgroundService(ITelegramBotService telegramBotService, 
             ILogger<SendComicBackgroundService> logger,
-            IDB db
+            IServiceScopeFactory scopeFactory
             )
         {
             _telegramBotService = telegramBotService;
             _logger = logger;
-            _db = db;
+            _scopeFactory = scopeFactory;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -68,38 +68,42 @@ namespace BotApi.Services
 
         private async Task SendComicsAsync(SubscriptionType subscriptionType)
         {
-            var clients = _db.GetClientsWithSubscription(subscriptionType);
-
-            MessageToSend message = null;
-            switch (subscriptionType)
+            using (var scope = _scopeFactory.CreateScope())
             {
-                case SubscriptionType.Oglaf:
-                    message = await GetOglafPicture();
-                    break;
-                case SubscriptionType.XKCD:
-                    message = await GetXKCDPicture();
-                    break;
-            }
+                var db = scope.ServiceProvider.GetRequiredService<IDB>();
+                var clients = db.GetClientsWithSubscription(subscriptionType);
 
-            foreach (var client in clients)
-            {
-                var chatId = long.Parse(client);
-                var sub = _db.GetSubscription(chatId, subscriptionType);
-
-                var alreadySent = message?.Title.ToHash().Equals(sub?.LastPostedKey);
-                if (alreadySent ?? false) continue;
-
-                try
+                MessageToSend message = null;
+                switch (subscriptionType)
                 {
-                    sub.LastPostedKey = message?.Title.ToHash();
-                    await _telegramBotService.SendTextMessageAsync(chatId, message?.Title?.ToUpper() ?? "");
-                    await _telegramBotService.SendTextMessageAsync(chatId, message?.SubTitle ?? "");
-                    await _telegramBotService.SendPhotoAsync(chatId, new InputFileUrl(message?.Image ?? ""));
+                    case SubscriptionType.Oglaf:
+                        message = await GetOglafPicture();
+                        break;
+                    case SubscriptionType.XKCD:
+                        message = await GetXKCDPicture();
+                        break;
                 }
-                catch (Exception e)
+
+                foreach (var client in clients)
                 {
-                    _logger.LogError(e.Message, e);
-                }
+                    var chatId = long.Parse(client);
+                    var sub = db.GetSubscription(chatId, subscriptionType);
+
+                    var alreadySent = message?.Title.ToHash().Equals(sub?.LastPostedKey);
+                    if (alreadySent ?? false) continue;
+
+                    try
+                    {
+                        sub.LastPostedKey = message?.Title.ToHash();
+                        await _telegramBotService.SendTextMessageAsync(chatId, message?.Title?.ToUpper() ?? "");
+                        await _telegramBotService.SendTextMessageAsync(chatId, message?.SubTitle ?? "");
+                        await _telegramBotService.SendPhotoAsync(chatId, new InputFileUrl(message?.Image ?? ""));
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e.Message, e);
+                    }
+                } 
             }
         }
 

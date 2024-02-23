@@ -10,20 +10,20 @@ namespace BotApi.Services
     {
         private readonly ILogger<SendCoinsBackgroundService> _logger;
         private IGetCoinsService _getCoinsService;
-        private IDB _db;
+        private IServiceScopeFactory _scopeFactory;
         private ITelegramBotService _telegramBotService;
         private readonly Timer _timer;
 
         public SendCoinsBackgroundService(
             ILogger<SendCoinsBackgroundService> logger, 
             IGetCoinsService getCoinsService,
-            IDB db,
+            IServiceScopeFactory scopeFactory,
             ITelegramBotService telegramBotService
             )
         {
             _logger = logger;
             _getCoinsService = getCoinsService;
-            _db = db;
+            _scopeFactory = scopeFactory;
             _telegramBotService = telegramBotService;
 
             // Calculate the time until the next occurrence of 11:00 AM
@@ -46,12 +46,16 @@ namespace BotApi.Services
 
             var prices = await _getCoinsService.GetPricesAsync(5);
 
-            foreach (var client in _db.GetClientsWithSubscription(SubscriptionType.CoinCapMarket))
+            using (var scope = _scopeFactory.CreateScope())
             {
-                if (long.TryParse(client, out long chatId))
+                var db = scope.ServiceProvider.GetRequiredService<IDB>();
+                foreach (var client in db.GetClientsWithSubscription(SubscriptionType.CoinCapMarket))
                 {
-                    await _telegramBotService.SendTextMessageAsync(chatId, prices.Item1, parseMode: ParseMode.Html);
-                }
+                    if (long.TryParse(client, out long chatId))
+                    {
+                        await _telegramBotService.SendTextMessageAsync(chatId, prices.Item1, parseMode: ParseMode.Html);
+                    }
+                } 
             }
         }
 
