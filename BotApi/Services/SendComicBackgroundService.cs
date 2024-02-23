@@ -103,7 +103,8 @@ namespace BotApi.Services
                     {
                         _logger.LogError(e.Message, e);
                     }
-                } 
+                }
+                db.SaveClientsModel();
             }
         }
 

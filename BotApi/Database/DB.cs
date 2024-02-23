@@ -41,7 +41,7 @@ namespace BotApi.Database
             }
         }
 
-        private void SaveClientsModel()
+        public void SaveClientsModel()
         {
             try
             {

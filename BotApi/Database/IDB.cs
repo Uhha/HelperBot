@@ -3,6 +3,8 @@ namespace BotApi.Database
 {
     public interface IDB
     {
+        void SaveClientsModel();
+
         Client? GetClient(long chatId);
         void AddClient(long chatId);
         Client? RemoveClient(long chatId);
