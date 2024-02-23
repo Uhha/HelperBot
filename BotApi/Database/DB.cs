@@ -8,8 +8,8 @@ namespace BotApi.Database
         private ILogger<DB> _logger;
         private const string JSON_PATH = "Database/clients.json";
         private ClientsModel _clients;
-        private Timer _saveTimer;
-        private bool _isModified = false;
+        //private Timer _saveTimer;
+        //private bool _isModified = false;
         private readonly object _lockObject = new object();
 
         public DB(ILogger<DB> logger)
@@ -19,7 +19,7 @@ namespace BotApi.Database
             try
             {
                 _clients = LoadClientsModel();
-                _saveTimer = new Timer(SaveClientsModel, null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
+                //_saveTimer = new Timer(SaveClientsModel, null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
             }
             catch (Exception e)
             {
@@ -41,19 +41,15 @@ namespace BotApi.Database
             }
         }
 
-        private void SaveClientsModel(object? state)
+        private void SaveClientsModel()
         {
             try
             {
                 lock (_lockObject)
                 {
-                    if (_isModified)
-                    {
-                        string json = JsonSerializer.Serialize(_clients, new JsonSerializerOptions { WriteIndented = true });
-                        File.WriteAllText(JSON_PATH, json);
-                        _logger.LogInformation($"ClientsModel updated to {JSON_PATH}");
-                        _isModified = false;
-                    }
+                    string json = JsonSerializer.Serialize(_clients, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(JSON_PATH, json);
+                    _logger.LogInformation($"ClientsModel updated to {JSON_PATH}");
                 }
             }
             catch (Exception e)
@@ -75,7 +71,7 @@ namespace BotApi.Database
                 {
                     _clients.Clients.Add(new Client(chatId.ToString()));
                     _logger.LogInformation($"New Client Added {chatId}");
-                    _isModified = true;
+                    SaveClientsModel();
                 }
             }
         }
@@ -92,7 +88,7 @@ namespace BotApi.Database
                         client = GetClient(chatId);
                         _clients.Clients.Remove(client);
                         _logger.LogInformation($"Removed client {client}");
-                        _isModified = true;
+                        SaveClientsModel();
                     }
                 }
                 return client;
@@ -128,7 +124,7 @@ namespace BotApi.Database
 
                     client?.Subscriptions.Add(new Subscription(subscriptionType));
                     _logger.LogInformation($"Subscription {subscriptionType} added for user {chatId}");
-                    _isModified = true;
+                    SaveClientsModel();
                 }
             }
             catch (Exception e)
@@ -152,7 +148,7 @@ namespace BotApi.Database
                 {
                     GetClient(chatId)?.Subscriptions.Remove(subscription);
                     _logger.LogInformation($"Removed subscription: {subscription}");
-                    _isModified = true;
+                    SaveClientsModel();
                 }
                 return subscription;
             }
