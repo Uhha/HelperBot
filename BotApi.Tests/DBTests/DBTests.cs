@@ -90,7 +90,7 @@ namespace BotApi.Tests
 
             // Use reflection or PrivateObject to access private method
             MethodInfo saveClientsModelMethod = typeof(DB).GetMethod("SaveClientsModel", BindingFlags.NonPublic | BindingFlags.Instance);
-            saveClientsModelMethod.Invoke(db, new object[] { null });
+            saveClientsModelMethod.Invoke(db, null);
 
             // Use reflection to access private field
             FieldInfo clientsField = typeof(DB).GetField("_clients", BindingFlags.NonPublic | BindingFlags.Instance);
