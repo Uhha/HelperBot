@@ -53,6 +53,7 @@ namespace BotApi
             builder.Services.AddHostedService<TorrentStatusCheckService>();
             builder.Services.AddHostedService<SendCoinsBackgroundService>();
             builder.Services.AddHostedService<SendComicBackgroundService>();
+            builder.Services.AddHostedService<SendSecuritiesBackgroundService>();
 
             //services.AddHttpContextAccessor();
 

@@ -73,6 +73,7 @@ namespace BotApi.Commands
                             new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.CoinCapMarket.ToString(), "/subs=" + (int)SubscriptionType.CoinCapMarket) },
                             new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.XKCD.ToString(), "/subs=" + (int)SubscriptionType.XKCD) },
                             new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.Oglaf.ToString(), "/subs=" + (int)SubscriptionType.Oglaf) },
+                            new [] {  InlineKeyboardButton.WithCallbackData(SubscriptionType.SecuritiesPrices.ToString(), "/subs=" + (int)SubscriptionType.SecuritiesPrices) },
                            }
                    );
                 await _telegramBotService.SendTextMessageWithButtonsAsync(update, "Select Subscription Type:", inlineKeyboardMarkup);

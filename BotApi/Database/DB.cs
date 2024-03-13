@@ -178,6 +178,7 @@ namespace BotApi.Database
                     return true;
 
                 client.Securities.Add(symbol);
+                SaveClientsModel();
                 return true;
             }
             catch (Exception e)
@@ -196,6 +197,7 @@ namespace BotApi.Database
                     return true;
 
                 client.Securities.Remove(symbol);
+                SaveClientsModel();
                 return true;
             }
             catch (Exception e)

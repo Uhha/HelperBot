@@ -49,9 +49,10 @@ namespace BotApi.Database
 
     public enum SubscriptionType
     {
-        Oglaf,
-        XKCD,
-        CoinCapMarket,
+        Oglaf = 0,
+        XKCD = 1,
+        CoinCapMarket = 2,
+        SecuritiesPrices = 3,
     }
 
 }
