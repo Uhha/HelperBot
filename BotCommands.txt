@@ -1,10 +1,13 @@
-coins - enter a number to see crypto prices (coins 5)
-c - short for coins
-balance - see you crypto balance
-b - short for balance
-balancedetails - detailed balance
-bd - short for balancedetails
-balanceadd - add/update a coin on your balance (balanceadd BTC 0.55)
-balanceremove - remove a coin from your balance
+coins/c - enter a number to see crypto prices (coins 5)
 subs - subscribe/unsubscribe to a comic
-finance - subscribe/unsubscribe to a crypto activity monitor
+qbsearch - search qbittorrent
+qbplugins - show qbt plugins
+qbenableplugin - enable qbt plugin
+qbdisableplugin - disable abt plugin
+qbprogress - see qbt torrents progress
+mdlalbum - download album from musify
+mdlsong - download song from musify
+logs - get logs file
+secs - see tracked securities prices
+addsec - add a symbol to track
+remsec - remove a symbol from tracking

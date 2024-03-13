@@ -19,7 +19,9 @@ namespace BotApi
             services.AddSingleton<IQBUrlResolverService, QBUrlResolverService>();
             services.AddSingleton<IMusifyService, MusifyService>();
             services.AddSingleton<IGetCoinsService,  GetCoinsService>();
-			services.AddSingleton<CommandInvoker>();
+            services.AddSingleton<ISecuritiesService,  SecuritiesService>();
+
+            services.AddSingleton<CommandInvoker>();
 
         }
     }

@@ -54,7 +54,16 @@ namespace BotApi.Commands
 				case CommandType.GetLogs:
 					return _serviceProvider.GetRequiredService<GetLogsCommand>();
 
-				case CommandType.Unknown:
+                case CommandType.GetSecurities:
+                    return _serviceProvider.GetRequiredService<GetSecuritiesCommand>();
+
+                case CommandType.AddSecurity:
+                    return _serviceProvider.GetRequiredService<AddSecurityCommand>();
+
+                case CommandType.RemoveSecurity:
+                    return _serviceProvider.GetRequiredService<RemoveSecurityCommand>();
+
+                case CommandType.Unknown:
                     return null;
 
                 default:
@@ -81,7 +90,10 @@ namespace BotApi.Commands
                 { CommandType.MusifyDownloadAlbum, null },
                 { CommandType.MusifyDownloadSong, null },
                 { CommandType.GetLogs, null },
-			};
+                { CommandType.GetSecurities, null },
+                { CommandType.AddSecurity, null },
+                { CommandType.RemoveSecurity, null },
+            };
 
             services.AddSingleton(commandDictionary);
 
@@ -96,8 +108,11 @@ namespace BotApi.Commands
             services.AddSingleton<MusifyDownloadAlbumCommand>();
             services.AddSingleton<MusifyDownloadSongCommand>();
             services.AddSingleton<GetLogsCommand>();
+            services.AddSingleton<GetSecuritiesCommand>();
+            services.AddSingleton<AddSecurityCommand>();
+            services.AddSingleton<RemoveSecurityCommand>();
 
-		}
+        }
 
         public enum CommandType
         {
@@ -112,8 +127,11 @@ namespace BotApi.Commands
             MusifyDownloadAlbum,
             MusifyDownloadSong,
 			GetLogs,
+            GetSecurities,
+            AddSecurity,
+            RemoveSecurity,
 			Unknown,
-		}
+        }
 
         public static Dictionary<string, CommandType> CommandsText = new Dictionary<string, CommandType>
         {
@@ -129,7 +147,10 @@ namespace BotApi.Commands
             {"/mdlalbum", CommandType.MusifyDownloadAlbum },
             {"/mdlsong", CommandType.MusifyDownloadSong },
             {"/logs", CommandType.GetLogs },
+            {"/secs", CommandType.GetSecurities },
+            {"/addsec", CommandType.AddSecurity },
+            {"/remsec", CommandType.RemoveSecurity },
 
-		};
+        };
     }
 }

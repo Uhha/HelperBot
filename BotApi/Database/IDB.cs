@@ -1,4 +1,6 @@
 ﻿
+using Telegram.Bot.Types;
+
 namespace BotApi.Database
 {
     public interface IDB
@@ -15,5 +17,9 @@ namespace BotApi.Database
         Subscription? RemoveSubscription(long chatId, SubscriptionType subscriptionType);
 
         IEnumerable<string> GetClientsWithSubscription(SubscriptionType subscriptionType);
+
+        IList<string> GetSecurities(long chatId);
+        bool AddSecurity(long chatId, string symbol);
+        bool RemoveSecurity(long chatId, string symbol);
     }
 }

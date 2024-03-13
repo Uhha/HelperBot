@@ -22,10 +22,14 @@ namespace BotApi.Database
         [JsonProperty("subscriptions")]
         public IList<Subscription> Subscriptions { get; set; }
 
+        [JsonProperty("securities")]
+        public IList<string> Securities { get; set; }
+
         public Client(string chatId)
         {
             ChatId = chatId;
             Subscriptions = new List<Subscription>();
+            Securities = new List<string>();
         }
     }
 

@@ -163,5 +163,46 @@ namespace BotApi.Database
         {
             return _clients.Clients.Where(o => o.Subscriptions.Any(s => s.Type == subscriptionType)).Select(c => c.ChatId);
         }
+
+        public IList<string> GetSecurities(long chatId)
+        {
+            return GetClient(chatId)?.Securities ?? new List<string>();
+        }
+
+        public bool AddSecurity(long chatId, string symbol)
+        {
+            try
+            {
+                var client = GetClient(chatId);
+                if (client.Securities.Contains(symbol))
+                    return true;
+
+                client.Securities.Add(symbol);
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError(e.Message, e);
+                return false;
+            }
+        }
+
+        public bool RemoveSecurity(long chatId, string symbol)
+        {
+            try
+            {
+                var client = GetClient(chatId);
+                if (!client.Securities.Contains(symbol))
+                    return true;
+
+                client.Securities.Remove(symbol);
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError(e.Message, e);
+                return false;
+            }
+        }
     }
 }
