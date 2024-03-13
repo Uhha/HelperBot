@@ -15,13 +15,13 @@ namespace BotApi.Services
     public class SecuritiesService : ISecuritiesService
     {
         private readonly ILogger<SecuritiesService> _logger;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDB _db;
 
-        public SecuritiesService(ILogger<SecuritiesService> logger, HttpClient httpClient, IDB db)
+        public SecuritiesService(ILogger<SecuritiesService> logger, IHttpClientFactory httpClientFactory, IDB db)
         {
             _logger = logger;
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _db = db;
         }
 
@@ -42,29 +42,33 @@ namespace BotApi.Services
             try
             {
                 string apiUrl = $"https://finance.yahoo.com/quote/{symbol}";
-                HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
 
-                if (response.IsSuccessStatusCode)
+                using (HttpClient httpClient = _httpClientFactory.CreateClient())
                 {
-                    string htmlContent = await response.Content.ReadAsStringAsync();
+                    HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
 
-                    string price = ExtractPriceFromHtml(htmlContent);
-                    string changePercent = ExtractChangePercentFromHtml(htmlContent);
-
-                    if (price != null && changePercent != null)
+                    if (response.IsSuccessStatusCode)
                     {
-                        string result = $"{symbol} ${price} ({changePercent})";
-                        return (result);
+                        string htmlContent = await response.Content.ReadAsStringAsync();
+
+                        string price = ExtractPriceFromHtml(htmlContent);
+                        string changePercent = ExtractChangePercentFromHtml(htmlContent);
+
+                        if (price != null && changePercent != null)
+                        {
+                            string result = $"{symbol} ${price} ({changePercent})";
+                            return (result);
+                        }
+                        else
+                        {
+                            return "";
+                        }
                     }
                     else
                     {
+                        _logger.LogError($"Failed to get prices. Status code: {response.StatusCode}");
                         return "";
                     }
-                }
-                else
-                {
-                    _logger.LogError($"Failed to get prices. Status code: {response.StatusCode}");
-                    return "";
                 }
             }
             catch (Exception ex)

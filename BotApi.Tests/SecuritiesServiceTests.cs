@@ -15,10 +15,15 @@ namespace BotApi.Tests
 			var mock = new Mock<ILogger<SecuritiesService>>();
 			ILogger<SecuritiesService> logger = mock.Object;
 
-            var mockDb = new Mock<IDB>();
-            IDB db = mockDb.Object;
+            var loggerMock = new Mock<ILogger<DB>>();
+            var db = new DB(loggerMock.Object);
 
-            var ms = new SecuritiesService(logger, new HttpClient(), db);
+
+            var hcp = new Mock<IHttpClientFactory>();
+            var httpClient = new HttpClient();
+            hcp.Setup(factory => factory.CreateClient(It.IsAny<string>())).Returns(httpClient);
+
+            var ms = new SecuritiesService(logger, hcp.Object, db);
 			var result = await ms.GetPricesAsync(1233);
 			Assert.IsNotNull(result);
 		}
