@@ -12,14 +12,21 @@ namespace BotApi.Services
     public class TelegramBotService : ITelegramBotService
     {
         private readonly TelegramBotClient _botClient;
+        private readonly ILogger<TelegramBotClient> _logger;
 
-        public TelegramBotService(string botToken)
+        public TelegramBotService(string botToken, ILogger<TelegramBotService> logger)
         {
             _botClient = new TelegramBotClient(botToken);
+            _logger = logger;
         }
 
         public async Task SendTextMessageAsync(long chatId, string message, ParseMode? parseMode = null)
         {
+            if (string.IsNullOrEmpty(message))
+            {
+                _logger.LogWarning("Trying to send an empty message");
+                return;
+            }
             await _botClient.SendTextMessageAsync(chatId, message, parseMode: parseMode);
         }
 

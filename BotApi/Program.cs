@@ -4,6 +4,7 @@ using BotApi.Interfaces;
 using BotApi.Commands;
 using Serilog;
 using BotApi.Database;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BotApi
 {
@@ -61,8 +62,9 @@ namespace BotApi
 
             builder.Services.AddSingleton<ITelegramBotService>(provider =>
             {
+                var logger = provider.GetRequiredService<ILogger<TelegramBotService>>();
                 var botToken = configuration["APIConfig:BotApiKey"]; 
-                var botService = new TelegramBotService(botToken);
+                var botService = new TelegramBotService(botToken, logger);
                 return botService;
             });
 
