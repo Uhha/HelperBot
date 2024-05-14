@@ -27,7 +27,5 @@ namespace BotApi.Tests
 			var result = await ms.GetPricesAsync(1233);
 			Assert.IsNotNull(result);
 		}
-
-	
 	}
 }
