@@ -12,7 +12,7 @@ namespace BotApi.Services
     public class TelegramBotService : ITelegramBotService
     {
         private readonly TelegramBotClient _botClient;
-        private readonly ILogger<TelegramBotClient> _logger;
+        private readonly ILogger<TelegramBotService> _logger;
 
         public TelegramBotService(string botToken, ILogger<TelegramBotService> logger)
         {
