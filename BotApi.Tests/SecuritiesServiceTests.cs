@@ -3,6 +3,7 @@ using BotApi.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Moq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BotApi.Tests
 {
@@ -20,11 +21,11 @@ namespace BotApi.Tests
 
 
             var hcp = new Mock<IHttpClientFactory>();
-            var httpClient = new HttpClient();
+            var httpClient = new HttpClient(new HttpClientHandler());
             hcp.Setup(factory => factory.CreateClient(It.IsAny<string>())).Returns(httpClient);
 
             var ms = new SecuritiesService(logger, hcp.Object, db);
-			var result = await ms.GetPricesAsync(1233);
+			var result = await ms.GetPricesAsync(123444321);
 			Assert.IsNotNull(result);
 		}
 	}

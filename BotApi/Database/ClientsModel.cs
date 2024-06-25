@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using Telegram.Bot.Types;
 
 namespace BotApi.Database
 {
     public class ClientsModel
     {
-        [JsonProperty("clients")]
+        [JsonPropertyName("clients")]
         public IList<Client> Clients { get; set; }
 
         public ClientsModel()
@@ -16,13 +17,13 @@ namespace BotApi.Database
 
     public class Client
     {
-        [JsonProperty("chatid")]
+        [JsonPropertyName("chatid")]
         public string ChatId { get; set; }
 
-        [JsonProperty("subscriptions")]
+        [JsonPropertyName("subscriptions")]
         public IList<Subscription> Subscriptions { get; set; }
 
-        [JsonProperty("securities")]
+        [JsonPropertyName("securities")]
         public IList<string> Securities { get; set; }
 
         public Client(string chatId)
@@ -35,10 +36,10 @@ namespace BotApi.Database
 
     public class Subscription
     {
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public SubscriptionType Type { get; set; }
 
-        [JsonProperty("last_posted_key")]
+        [JsonPropertyName("last_posted_key")]
         public string? LastPostedKey { get; set; }
 
         public Subscription(SubscriptionType type)

@@ -1,7 +1,7 @@
 {
   "clients": [
     {
-      "chatid": "asdaf123",
+      "chatid": "345212334",
 
       "subscriptions": [
         {
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "chatid": "asdafwer33123",
+      "chatid": "1234556132",
 
       "subscriptions": [
         {
@@ -24,6 +24,33 @@
         {
           "type": 2
         }
+      ]
+    },
+    {
+      "chatid": "123444321",
+      "subscriptions": [
+        {
+          "type": 1,
+          "last_posted_key": "DA2371DF44AC9F7FDF33401CD7CD8653"
+        },
+        {
+          "type": 0,
+          "last_posted_key": "4EAC2E7481577396874EE8F316A42DA9"
+        },
+        {
+          "type": 2,
+          "last_posted_key": null
+        },
+        {
+          "type": 3,
+          "last_posted_key": null
+        }
+      ],
+      "securities": [
+        "MSFT",
+        "NVDA",
+        "MNST",
+        "VOO"
       ]
     }
   ]
