@@ -58,9 +58,14 @@ namespace BotApi.Database
             }
         }
 
-        public Client? GetClient(long chatId)
+        public Client GetClient(long chatId)
         {
-            return _clients.Clients.FirstOrDefault(o => o.ChatId == chatId.ToString());
+            var client = _clients.Clients.FirstOrDefault(o => o.ChatId == chatId.ToString());
+            if (client != null)
+                return client;
+
+            AddClient(chatId);
+            return _clients.Clients.First(o => o.ChatId == chatId.ToString()); 
         }
 
         public void AddClient(long chatId)
@@ -102,12 +107,12 @@ namespace BotApi.Database
 
         private bool HaveClient(long chatId)
         {
-            return GetClient(chatId) != null;
+            return _clients.Clients.Any(o => o.ChatId == chatId.ToString());
         }
 
         public Subscription? GetSubscription(long chatId, SubscriptionType subscriptionType)
         {
-            return GetClient(chatId)?.Subscriptions.FirstOrDefault(o => o.Type == subscriptionType);
+            return GetClient(chatId).Subscriptions.FirstOrDefault(o => o.Type == subscriptionType);
         }
 
         public void AddSubscription(long chatId, SubscriptionType subscriptionType)
