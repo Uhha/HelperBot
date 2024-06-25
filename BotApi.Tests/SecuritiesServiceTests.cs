@@ -28,5 +28,24 @@ namespace BotApi.Tests
 			var result = await ms.GetPricesAsync(123444321);
 			Assert.IsNotNull(result);
 		}
-	}
+
+        [TestMethod]
+        public async Task AddSecuritiesTest()
+        {
+            var mock = new Mock<ILogger<SecuritiesService>>();
+            ILogger<SecuritiesService> logger = mock.Object;
+
+            var loggerMock = new Mock<ILogger<DB>>();
+            var db = new DB(loggerMock.Object);
+
+
+            var hcp = new Mock<IHttpClientFactory>();
+            var httpClient = new HttpClient(new HttpClientHandler());
+            hcp.Setup(factory => factory.CreateClient(It.IsAny<string>())).Returns(httpClient);
+
+            var ms = new SecuritiesService(logger, hcp.Object, db);
+            var result = ms.AddSecurity(123444321, "APPL");
+            Assert.IsNotNull(result);
+        }
+    }
 }

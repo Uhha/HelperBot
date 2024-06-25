@@ -23,7 +23,7 @@ namespace BotApi.Database
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, e.Message);
                 throw;
             }
         }
@@ -54,7 +54,7 @@ namespace BotApi.Database
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, e.Message);
             }
         }
 
@@ -95,7 +95,7 @@ namespace BotApi.Database
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, e.Message);
                 throw;
             }
         }
@@ -129,7 +129,7 @@ namespace BotApi.Database
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, e.Message);
             }
         }
 
@@ -154,7 +154,7 @@ namespace BotApi.Database
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, e.Message);
                 return null;
             }
         }
@@ -183,7 +183,7 @@ namespace BotApi.Database
             }
             catch (Exception e)
             {
-                _logger?.LogError(e.Message, e);
+                _logger?.LogError(e, e.Message);
                 return false;
             }
         }
@@ -202,7 +202,7 @@ namespace BotApi.Database
             }
             catch (Exception e)
             {
-                _logger?.LogError(e.Message, e);
+                _logger?.LogError(e, e.Message);
                 return false;
             }
         }

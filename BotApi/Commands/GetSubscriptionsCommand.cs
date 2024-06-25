@@ -80,7 +80,7 @@ namespace BotApi.Commands
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, e.Message);
                 throw;
             }
         }
