@@ -23,7 +23,7 @@ namespace BotApi.Commands
 
             foreach (var drive in drives)
             {
-                if (drive.IsReady)
+                if (drive.IsReady && drive.DriveType == DriveType.Fixed)
                 {
                     sb.AppendLine($"📁 *Drive:* {drive.Name}");
                     sb.AppendLine($"  - *Total Size:* {FormatBytes(drive.TotalSize)}");
