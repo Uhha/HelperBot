@@ -19,13 +19,26 @@ namespace BotApi.Commands
         private string GetDiskSpaceInfoForTelegram()
         {
             var drives = DriveInfo.GetDrives();
+            var seenDrives = new HashSet<string>();
             var sb = new StringBuilder();
 
             foreach (var drive in drives)
             {
+                // Only include real file systems and skip if we've already seen this physical drive
                 if (drive.IsReady && drive.DriveType == DriveType.Fixed)
                 {
-                    sb.AppendLine($"📁 *Drive:* {drive.Name}");
+                    // Check if we have already recorded this drive's root path
+                    var rootPath = Path.GetPathRoot(drive.RootDirectory.FullName);
+
+                    if (seenDrives.Contains(rootPath))
+                    {
+                        continue; // Skip duplicate mount
+                    }
+
+                    // Add root path to seen list to avoid duplicates
+                    seenDrives.Add(rootPath);
+
+                    sb.AppendLine($"📁 *Drive:* {drive.VolumeLabel}");
                     sb.AppendLine($"  - *Total Size:* {FormatBytes(drive.TotalSize)}");
                     sb.AppendLine($"  - *Free Space:* {FormatBytes(drive.AvailableFreeSpace)}");
                     sb.AppendLine();
