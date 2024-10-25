@@ -56,6 +56,7 @@ namespace BotApi
             builder.Services.AddHostedService<SendCoinsBackgroundService>();
             builder.Services.AddHostedService<SendComicBackgroundService>();
             builder.Services.AddHostedService<SendSecuritiesBackgroundService>();
+            builder.Services.AddHostedService<SendDiskCheckWarningBackgroundService>();
 
             //services.AddHttpContextAccessor();
 

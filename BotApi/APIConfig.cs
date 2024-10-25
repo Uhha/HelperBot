@@ -24,5 +24,7 @@ namespace BotApi
         public string? QBLogin { get; set; }
 
         public string? QBPassword { get; set; }
+
+        public long? AdminChatId { get; set; }
     }
 }

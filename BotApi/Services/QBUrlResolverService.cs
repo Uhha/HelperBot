@@ -1,5 +1,4 @@
 ﻿using BotApi.Interfaces;
-using QBittorrent.Client;
 
 namespace BotApi.Services
 {

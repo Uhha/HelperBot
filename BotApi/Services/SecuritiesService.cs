@@ -1,13 +1,6 @@
 ﻿using BotApi.Commands;
 using BotApi.Database;
 using BotApi.Interfaces;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using QBittorrent.Client;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace BotApi.Services
