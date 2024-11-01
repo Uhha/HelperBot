@@ -66,6 +66,9 @@ namespace BotApi.Commands
                 case CommandType.CheckDiskSpace:
                     return _serviceProvider.GetRequiredService<CheckDiskSpaceCommand>();
 
+                case CommandType.CheckDiskTemp:
+                    return _serviceProvider.GetRequiredService<CheckDiscTempCommand>();
+
                 case CommandType.Unknown:
                     return null;
 
@@ -97,6 +100,7 @@ namespace BotApi.Commands
                 { CommandType.AddSecurity, null },
                 { CommandType.RemoveSecurity, null },
                 { CommandType.CheckDiskSpace, null },
+                { CommandType.CheckDiskTemp, null },
             };
 
             services.AddSingleton(commandDictionary);
@@ -116,6 +120,7 @@ namespace BotApi.Commands
             services.AddSingleton<AddSecurityCommand>();
             services.AddSingleton<RemoveSecurityCommand>();
             services.AddSingleton<CheckDiskSpaceCommand>();
+            services.AddSingleton<CheckDiscTempCommand>();
 
         }
 
@@ -136,6 +141,7 @@ namespace BotApi.Commands
             AddSecurity,
             RemoveSecurity,
             CheckDiskSpace,
+            CheckDiskTemp,
 			Unknown,
         }
 
@@ -157,6 +163,7 @@ namespace BotApi.Commands
             {"/addsec", CommandType.AddSecurity },
             {"/remsec", CommandType.RemoveSecurity },
             {"/chkds", CommandType.CheckDiskSpace },
+            {"/chktemp", CommandType.CheckDiskTemp },
 
         };
     }
