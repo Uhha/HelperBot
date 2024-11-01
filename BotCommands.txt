@@ -11,3 +11,5 @@ logs - get logs file
 secs - see tracked securities prices
 addsec - add a symbol to track
 remsec - remove a symbol from tracking
+chkds - check disk space
+chktemp - check host temperature

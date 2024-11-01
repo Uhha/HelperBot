@@ -3,8 +3,6 @@ using BotApi.Services;
 using BotApi.Interfaces;
 using BotApi.Commands;
 using Serilog;
-using BotApi.Database;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BotApi
 {
@@ -57,6 +55,7 @@ namespace BotApi
             builder.Services.AddHostedService<SendComicBackgroundService>();
             builder.Services.AddHostedService<SendSecuritiesBackgroundService>();
             builder.Services.AddHostedService<SendDiskCheckWarningBackgroundService>();
+            builder.Services.AddHostedService<SendTempCheckWarningBackgroundService>();
 
             //services.AddHttpContextAccessor();
 
