@@ -30,23 +30,25 @@ namespace BotApi.Commands
             {
                 // Extract the temperature value from the output
                 string tempString = output.Replace("temp=", "").Replace("'C", "").Trim();
-                if (double.TryParse(tempString, out double temperatureCelsius))
-                {
-                    // Check if the temperature exceeds the threshold
-                    if (temperatureCelsius > thresholdCelsius)
-                    {
-                        sb.AppendLine($"⚠️ *Warning!* High CPU temperature detected!");
-                        sb.AppendLine($"  - *Temperature:* {temperatureCelsius:0.##} °C");
-                    }
-                    else
-                    {
-                        sb.AppendLine($"✅ *Temperature is normal:* {temperatureCelsius:0.##} °C");
-                    }
-                }
-                else
-                {
-                    sb.AppendLine("❌ *Error parsing temperature value.*");
-                }
+                sb.Append(tempString);
+
+                //if (double.TryParse(tempString, out double temperatureCelsius))
+                //{
+                //    // Check if the temperature exceeds the threshold
+                //    if (temperatureCelsius > thresholdCelsius)
+                //    {
+                //        sb.AppendLine($"⚠️ *Warning!* High CPU temperature detected!");
+                //        sb.AppendLine($"  - *Temperature:* {temperatureCelsius:0.##} °C");
+                //    }
+                //    else
+                //    {
+                //        sb.AppendLine($"✅ *Temperature is normal:* {temperatureCelsius:0.##} °C");
+                //    }
+                //}
+                //else
+                //{
+                //    sb.AppendLine("❌ *Error parsing temperature value.*");
+                //}
             }
             else
             {
