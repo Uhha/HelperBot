@@ -24,13 +24,13 @@ namespace BotApi.Commands
             string command = "vcgencmd measure_temp";
 
             // Execute the command and capture the output
-            string output = ExecuteCommand(command);
+            string output = ExecuteCommand(command, sb);
 
             if (output != null)
             {
                 // Extract the temperature value from the output
                 string tempString = output.Replace("temp=", "").Replace("'C", "").Trim();
-                sb.Append(tempString);
+                sb.Append("tempstring=" + tempString);
 
                 //if (double.TryParse(tempString, out double temperatureCelsius))
                 //{
@@ -58,10 +58,11 @@ namespace BotApi.Commands
             return sb.ToString();
         }
 
-        private string ExecuteCommand(string command)
+        private string ExecuteCommand(string command, StringBuilder sb)
         {
             try
             {
+                sb.Append("In Command exec");
                 // Create a new process to run the command
                 var process = new Process
                 {
@@ -77,6 +78,8 @@ namespace BotApi.Commands
 
                 process.Start();
                 string result = process.StandardOutput.ReadToEnd();
+                sb.Append("result=" + result);
+
                 process.WaitForExit();
                 return result;
             }
