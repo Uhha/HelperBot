@@ -11,5 +11,6 @@ namespace BotApi.Interfaces
         Task<IList<string>> GetPricesAsync(long chatId);
         bool AddSecurity(long chatId, string symbol);
         bool RemoveSecurity(long chatId, string symbol);
+        IList<string> ListSecurities(long chatId);
     }
 }

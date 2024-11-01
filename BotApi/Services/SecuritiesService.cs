@@ -2,6 +2,7 @@
 using BotApi.Database;
 using BotApi.Interfaces;
 using System.Text.RegularExpressions;
+using Telegram.Bot.Types;
 
 namespace BotApi.Services
 {
@@ -22,11 +23,14 @@ namespace BotApi.Services
         {
             IList<string> symbols = _db.GetSecurities(chatId);
             IList<string> prices = new List<string>();
+            _logger.LogInformation(nameof(SecuritiesService) + $" Started collecting prices for {symbols.Count} symbols.");
             foreach (string symbol in symbols)
             {
                 var price = await GetPrice(symbol);
+                _logger.LogInformation(nameof(SecuritiesService) + $" Got price for {symbol} : {price}.");
                 prices.Add(price);
             }
+            _logger.LogInformation(nameof(SecuritiesService) + $" Collected total of {prices.Count} prices.");
             return prices;
         }
 
@@ -112,6 +116,11 @@ namespace BotApi.Services
         public bool RemoveSecurity(long chatId, string symbol)
         {
             return _db.RemoveSecurity(chatId, symbol);
+        }
+
+        public IList<string> ListSecurities(long chatId)
+        {
+            return _db.GetSecurities(chatId);
         }
     }
 
