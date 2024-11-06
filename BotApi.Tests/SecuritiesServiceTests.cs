@@ -1,9 +1,8 @@
 using BotApi.Database;
 using BotApi.Services;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BotApi.Tests
 {
@@ -24,7 +23,10 @@ namespace BotApi.Tests
             var httpClient = new HttpClient(new HttpClientHandler());
             hcp.Setup(factory => factory.CreateClient(It.IsAny<string>())).Returns(httpClient);
 
-            var ms = new SecuritiesService(logger, hcp.Object, db);
+            var config = new APIConfig { AlphaVintageAPIKey = "test_key" }; 
+            IOptions<APIConfig> options = Options.Create(config);
+
+            var ms = new SecuritiesService(logger, hcp.Object, db, options);
 			var result = await ms.GetPricesAsync(123444321);
 			Assert.IsNotNull(result);
 		}
@@ -43,7 +45,10 @@ namespace BotApi.Tests
             var httpClient = new HttpClient(new HttpClientHandler());
             hcp.Setup(factory => factory.CreateClient(It.IsAny<string>())).Returns(httpClient);
 
-            var ms = new SecuritiesService(logger, hcp.Object, db);
+            var config = new APIConfig { AlphaVintageAPIKey = "test_key" };
+            IOptions<APIConfig> options = Options.Create(config);
+
+            var ms = new SecuritiesService(logger, hcp.Object, db, options);
             var result = ms.AddSecurity(123444321, "APPL");
             Assert.IsNotNull(result);
         }

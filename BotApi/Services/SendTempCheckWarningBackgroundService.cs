@@ -12,6 +12,9 @@ namespace BotApi.Services
         private readonly IOptions<APIConfig> _apiConfig;
         private readonly ILogger<TorrentStatusCheckService> _logger;
         private Timer _timer;
+        private static readonly TimeSpan RegularInterval = TimeSpan.FromMinutes(10);
+        private static readonly TimeSpan AlertInterval = TimeSpan.FromMinutes(1);
+
 
         public SendTempCheckWarningBackgroundService(ITelegramBotService telegramBotService, IOptions<APIConfig> apiConfig, ILogger<TorrentStatusCheckService> logger)
         {
@@ -24,7 +27,7 @@ namespace BotApi.Services
         {
             _logger.LogInformation($"SendTempCheckWarningBackgroundService StartAsync ran.");
             
-            _timer = new Timer(async state => await GetHighTempWarning(), null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
+            _timer = new Timer(async state => await GetHighTempWarning(), null, TimeSpan.Zero, RegularInterval);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -54,10 +57,12 @@ namespace BotApi.Services
                     double temperatureCelsius = temperatureMillidegrees / 1000.0;
                     if (temperatureCelsius > thresholdCelsius)
                     {
+                        _timer?.Change(TimeSpan.Zero, AlertInterval);
                         sb.AppendLine($"⚠️ *Warning!* High CPU temperature detected!");
                         sb.AppendLine($"  - *Temperature:* {temperatureCelsius:0.##} °C");
                         return sb.ToString();
                     }
+                    _timer?.Change(TimeSpan.Zero, RegularInterval);
                 }
             }
             return null;
