@@ -81,8 +81,8 @@ namespace BotApi.Services
 
                 if (root.TryGetProperty("Global Quote", out var quoteElement))
                 {
-                    var price = quoteElement.GetProperty("05. price").GetString();
-                    var changePercent = quoteElement.GetProperty("10. change percent").GetString();
+                    var price = decimal.Parse(quoteElement.GetProperty("05. price").GetString() ?? "0").ToString("0.00");
+                    var changePercent = decimal.Parse(quoteElement.GetProperty("10. change percent").GetString()?.TrimEnd('%') ?? "0").ToString("0.00") + "%";
 
                     return $"{symbol} ${price} ({changePercent})";
                 }
