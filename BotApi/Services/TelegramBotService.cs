@@ -47,20 +47,22 @@ namespace BotApi.Services
             await _botClient.SetWebhookAsync(webHookUrl);
         }
 
-        public async Task ReplyAsync(Update update, string message) 
+        public async Task<Message> ReplyAsync(Update update, string message) 
         {
             message = TruncateLongMessage(message);
 
             if (update.Message != null)
-                await _botClient.SendTextMessageAsync(update.Message.From.Id, message);
+                return await _botClient.SendTextMessageAsync(update.Message.From.Id, message);
             else if (update.CallbackQuery != null)
-                await _botClient.SendTextMessageAsync(update.CallbackQuery.From.Id, message);
+                return await _botClient.SendTextMessageAsync(update.CallbackQuery.From.Id, message);
+
+            return null;
         }
 
-        public async Task ReplyAsync(long chatId, string message)
+        public async Task<Message> ReplyAsync(long chatId, string message)
         {
             message = TruncateLongMessage(message);
-            await _botClient.SendTextMessageAsync(chatId, message);
+            return await _botClient.SendTextMessageAsync(chatId, message);
         }
 
         public async Task SendTextMessageWithButtonsAsync(Update update, string message, IReplyMarkup replyMarkup)
@@ -122,5 +124,10 @@ namespace BotApi.Services
                 await this.ReplyAsync(chatId, e.Message);
             }
         }
-	}
+
+        public async Task EditMessageAsync(ChatId chatId, int messageId, string message, ParseMode parseMode)
+        {
+            await _botClient.EditMessageTextAsync(chatId, messageId,message, parseMode);
+        }
+    }
 }

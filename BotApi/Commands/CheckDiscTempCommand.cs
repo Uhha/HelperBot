@@ -1,35 +1,50 @@
 ﻿using BotApi.Interfaces;
-using Microsoft.Extensions.ObjectPool;
-using System.Diagnostics;
-using System.Globalization;
 using System.Text;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace BotApi.Commands
 {
 	public class CheckDiscTempCommand : BaseCommandAsync
 	{
-		public CheckDiscTempCommand(ITelegramBotService telegramBotService) : base(telegramBotService)
+        private static readonly string _temperatureFilePath = "/sys/class/thermal/thermal_zone0/temp";
+        private static readonly double _thresholdCelsius = 75.0;
+        private static int? _lastMessageId;
+        private static DateTime _dateSent = DateTime.MinValue;
+
+        public CheckDiscTempCommand(ITelegramBotService telegramBotService) : base(telegramBotService)
 		{
 		}
 
 		public override async Task ExecuteAsync(Update update)
 		{
-			await _telegramBotService.ReplyAsync(update, GetTemperatureWarningFallback());
+            string newMessage = GetTemperatureWarningFallback();
+
+            int minutesPassed = (int)(DateTime.Now - _dateSent).TotalMinutes;
+
+            if (minutesPassed < 5 && _lastMessageId.HasValue)
+            {
+                await _telegramBotService.EditMessageAsync(update.Message.Chat.Id, _lastMessageId.Value, newMessage, ParseMode.Markdown);
+            }
+            else
+            {
+                var message = await _telegramBotService.ReplyAsync(update, newMessage);
+                _lastMessageId = message.MessageId;
+                _dateSent = message.Date;
+            }
 		}
 
-        public string GetTemperatureWarningFallback(double thresholdCelsius = 75.0)
+        public string GetTemperatureWarningFallback()
         {
-            string temperatureFilePath = "/sys/class/thermal/thermal_zone0/temp";
             var sb = new StringBuilder();
 
-            if (System.IO.File.Exists(temperatureFilePath))
+            if (System.IO.File.Exists(_temperatureFilePath))
             {
-                string tempString = System.IO.File.ReadAllText(temperatureFilePath).Trim();
+                string tempString = System.IO.File.ReadAllText(_temperatureFilePath).Trim();
                 if (double.TryParse(tempString, out double temperatureMillidegrees))
                 {
                     double temperatureCelsius = temperatureMillidegrees / 1000.0;
-                    if (temperatureCelsius > thresholdCelsius)
+                    if (temperatureCelsius > _thresholdCelsius)
                     {
                         sb.AppendLine($"⚠️ *Warning!* High CPU temperature detected!");
                         sb.AppendLine($"  - *Temperature:* {temperatureCelsius:0.##} °C");

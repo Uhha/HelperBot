@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using QBittorrent.Client;
 using System.Text;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace BotApi.Services
 {
@@ -15,6 +16,10 @@ namespace BotApi.Services
         private static readonly TimeSpan RegularInterval = TimeSpan.FromMinutes(10);
         private static readonly TimeSpan AlertInterval = TimeSpan.FromMinutes(1);
 
+        private static readonly string _temperatureFilePath = "/sys/class/thermal/thermal_zone0/temp";
+        private static readonly double _thresholdCelsius = 75.0;
+        private static int? _lastMessageId;
+        private static DateTime _dateSent = DateTime.MinValue;
 
         public SendTempCheckWarningBackgroundService(ITelegramBotService telegramBotService, IOptions<APIConfig> apiConfig, ILogger<TorrentStatusCheckService> logger)
         {
@@ -38,24 +43,36 @@ namespace BotApi.Services
 
         private async Task GetHighTempWarning()
         {
-            var message = GetTemperatureWarningFallback();
+            var newMessage = GetTemperatureWarningFallback();
 
-            if (message is not null && _apiConfig.Value.AdminChatId is not null)
-                await _telegramBotService.ReplyAsync(_apiConfig.Value.AdminChatId ?? 0, message);
+            if (newMessage is null || _apiConfig.Value.AdminChatId is null)
+                return;
+
+            int minutesPassed = (int)(DateTime.Now - _dateSent).TotalMinutes;
+
+            if (minutesPassed < 5 && _lastMessageId.HasValue)
+            {
+                await _telegramBotService.EditMessageAsync(_apiConfig.Value.AdminChatId, _lastMessageId.Value, newMessage, ParseMode.Markdown);
+            }
+            else
+            {
+                var message = await _telegramBotService.ReplyAsync(_apiConfig.Value.AdminChatId ?? 0, newMessage);
+                _lastMessageId = message.MessageId;
+                _dateSent = message.Date;
+            }
         }
 
-        private string? GetTemperatureWarningFallback(double thresholdCelsius = 75.0)
+        private string? GetTemperatureWarningFallback()
         {
-            string temperatureFilePath = "/sys/class/thermal/thermal_zone0/temp";
             var sb = new StringBuilder();
 
-            if (System.IO.File.Exists(temperatureFilePath))
+            if (System.IO.File.Exists(_temperatureFilePath))
             {
-                string tempString = System.IO.File.ReadAllText(temperatureFilePath).Trim();
+                string tempString = System.IO.File.ReadAllText(_temperatureFilePath).Trim();
                 if (double.TryParse(tempString, out double temperatureMillidegrees))
                 {
                     double temperatureCelsius = temperatureMillidegrees / 1000.0;
-                    if (temperatureCelsius > thresholdCelsius)
+                    if (temperatureCelsius > _thresholdCelsius)
                     {
                         _timer?.Change(TimeSpan.Zero, AlertInterval);
                         sb.AppendLine($"⚠️ *Warning!* High CPU temperature detected!");
@@ -72,7 +89,5 @@ namespace BotApi.Services
         {
             _timer?.Dispose();
         }
-
     }
-
 }
