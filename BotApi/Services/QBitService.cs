@@ -66,8 +66,10 @@ namespace BotApi.Services
                 DownloadFolder = downloadFolder
             };
 
+            _logger.Log(LogLevel.Information, "Setting the cookie.");
             SetCookie(tf, torrentFileUrl);
-            
+
+            _logger.Log(LogLevel.Information, "Adding the torrent.");
             await _qBittorrentClient.AddTorrentsAsync(tf);
 
             await Task.Delay(TimeSpan.FromSeconds(15));
@@ -76,6 +78,7 @@ namespace BotApi.Services
 
         private async Task AddTorrentOwnership(AddTorrentUrlsRequest tf, long user)
         {
+            _logger.Log(LogLevel.Information, "Adding the torrent ownership.");
             var torrents = await GetTorrentListAsync();
             var top = torrents.OrderByDescending(o => o.AddedOn).Take(1);
             ActiveTorrents.Add(top.First().Hash, user);
