@@ -19,4 +19,5 @@ jobs:
           with:
             context: "{{defaultContext}}:BotApi"
             push: true
+            platforms: linux/arm64
             tags: uhha/helperbot:latest, uhha/helperbot:${{ github.run_number }}
