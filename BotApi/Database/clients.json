@@ -2,40 +2,42 @@
   "clients": [
     {
       "chatid": "345212334",
-
       "subscriptions": [
         {
           "type": 1,
-          "last_posted_key": "asdasd123"
+          "last_posted_key": "BF776B2C49968CCF32C8755BCD4F6955"
         },
         {
-          "type": 2
+          "type": 2,
+          "last_posted_key": null
         }
-      ]
+      ],
+      "securities": []
     },
     {
       "chatid": "1234556132",
-
       "subscriptions": [
         {
           "type": 1,
-          "last_posted_key": "asdasd123"
+          "last_posted_key": "BF776B2C49968CCF32C8755BCD4F6955"
         },
         {
-          "type": 2
+          "type": 2,
+          "last_posted_key": null
         }
-      ]
+      ],
+      "securities": []
     },
     {
       "chatid": "123444321",
       "subscriptions": [
         {
           "type": 1,
-          "last_posted_key": "DA2371DF44AC9F7FDF33401CD7CD8653"
+          "last_posted_key": "BF776B2C49968CCF32C8755BCD4F6955"
         },
         {
           "type": 0,
-          "last_posted_key": "4EAC2E7481577396874EE8F316A42DA9"
+          "last_posted_key": "B0553AD522B7EF336444B6C0035DB509"
         },
         {
           "type": 2,

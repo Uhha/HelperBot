@@ -13,13 +13,13 @@ namespace BotApi
 
             //services.AddSingleton<ICommand, GetCoinsCommand>();
 
-            services.AddScoped<IDB, DB>();
-            services.AddSingleton<IQBitService, QBitService>();
-            services.AddSingleton<ICommandFactory, CommandFactory>();
-            services.AddSingleton<IQBUrlResolverService, QBUrlResolverService>();
-            services.AddSingleton<IMusifyService, MusifyService>();
-            services.AddSingleton<IGetCoinsService,  GetCoinsService>();
-            services.AddSingleton<ISecuritiesService,  SecuritiesService>();
+            services.AddTransient<IDB, DB>();
+            services.AddTransient<IQBitService, QBitService>();
+            services.AddTransient<ICommandFactory, CommandFactory>();
+            services.AddTransient<IQBUrlResolverService, QBUrlResolverService>();
+            services.AddTransient<IMusifyService, MusifyService>();
+            services.AddTransient<IGetCoinsService,  GetCoinsService>();
+            services.AddTransient<ISecuritiesService,  SecuritiesService>();
 
             services.AddSingleton<CommandInvoker>();
 
