@@ -20,21 +20,21 @@ namespace BotApi.Services
             _logger = logger;
         }
 
-        public async Task SendTextMessageAsync(long chatId, string message, ParseMode? parseMode = null)
+        public async Task SendTextMessageAsync(long chatId, string message, ParseMode parseMode = ParseMode.None)
         {
             if (string.IsNullOrEmpty(message))
             {
                 _logger.LogWarning("Trying to send an empty message");
                 return;
             }
-            await _botClient.SendTextMessageAsync(chatId, message, parseMode: parseMode);
+            await _botClient.SendMessage(chatId, message, parseMode: parseMode);
         }
 
         public async Task SendChatActionAsync(long? chatId, ChatAction chatAction)
         {
             try
             {
-                await _botClient.SendChatActionAsync(chatId, chatAction);
+                await _botClient.SendChatAction(chatId, chatAction);
             }
             catch (Exception)
             {
@@ -44,7 +44,7 @@ namespace BotApi.Services
 
         public async Task SetWebhookAsync(string webHookUrl)
         {
-            await _botClient.SetWebhookAsync(webHookUrl);
+            await _botClient.SetWebhook(webHookUrl);
         }
 
         public async Task<Message> ReplyAsync(Update update, string message) 
@@ -52,9 +52,9 @@ namespace BotApi.Services
             message = TruncateLongMessage(message);
 
             if (update.Message != null)
-                return await _botClient.SendTextMessageAsync(update.Message.From.Id, message);
+                return await _botClient.SendMessage(update.Message.From.Id, message);
             else if (update.CallbackQuery != null)
-                return await _botClient.SendTextMessageAsync(update.CallbackQuery.From.Id, message);
+                return await _botClient.SendMessage(update.CallbackQuery.From.Id, message);
 
             return null;
         }
@@ -62,18 +62,18 @@ namespace BotApi.Services
         public async Task<Message> ReplyAsync(long chatId, string message)
         {
             message = TruncateLongMessage(message);
-            return await _botClient.SendTextMessageAsync(chatId, message);
+            return await _botClient.SendMessage(chatId, message);
         }
 
-        public async Task SendTextMessageWithButtonsAsync(Update update, string message, IReplyMarkup replyMarkup)
+        public async Task SendTextMessageWithButtonsAsync(Update update, string message, ReplyMarkup replyMarkup)
         {
             if (update.Message != null)
             {
-                await _botClient.SendTextMessageAsync(update.Message.From.Id, message, replyMarkup: replyMarkup);
+                await _botClient.SendMessage(update.Message.From.Id, message, replyMarkup: replyMarkup);
             }
             else if (update.CallbackQuery != null)
             {
-                await _botClient.SendTextMessageAsync(update.CallbackQuery.From.Id, message, replyMarkup: replyMarkup);
+                await _botClient.SendMessage(update.CallbackQuery.From.Id, message, replyMarkup: replyMarkup);
             }
         }
 
@@ -104,7 +104,7 @@ namespace BotApi.Services
                 using (var fileStream = new FileStream(filePath, FileMode.Open))
                 {
                     var fileInput = new InputFileStream(fileStream, filename ?? filePath);
-                    await _botClient.SendDocumentAsync(update.Message.From.Id, fileInput);
+                    await _botClient.SendDocument(update.Message.From.Id, fileInput);
                 }
             }
             catch (Exception e)
@@ -117,7 +117,7 @@ namespace BotApi.Services
         {
             try
             {
-                await _botClient.SendPhotoAsync(chatId, url);
+                await _botClient.SendPhoto(chatId, url);
             }
             catch (Exception e)
             {
@@ -127,7 +127,7 @@ namespace BotApi.Services
 
         public async Task EditMessageAsync(ChatId chatId, int messageId, string message, ParseMode parseMode)
         {
-            await _botClient.EditMessageTextAsync(chatId, messageId,message, parseMode);
+            await _botClient.EditMessageText(chatId, messageId,message, parseMode);
         }
     }
 }
