@@ -39,8 +39,8 @@ namespace BotApi
 
 
 
-			// Configure common services
-			builder.Services.AddControllers().AddNewtonsoftJson();
+            // Configure common services
+            builder.Services.AddControllers();//.AddNewtonsoftJson();
             builder.Services.AddMvc();
             builder.Services.AddRouting();
             builder.Services.AddHttpClient();

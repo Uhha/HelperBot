@@ -1,7 +1,6 @@
 using BotApi.Commands;
 using BotApi.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using QBittorrent.Client;
 using Telegram.Bot.Types;
 
 namespace BotApi.Controllers
@@ -34,7 +33,7 @@ namespace BotApi.Controllers
             {
                 await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
                 var commandTypeTuple = _webhookService.GetCommandType(update);
-                
+
                 _logger.LogInformation($"Commnad {commandTypeTuple.command} being executed.");
 
                 Task.Run(async () =>
@@ -50,7 +49,5 @@ namespace BotApi.Controllers
                 return StatusCode(500);
             }
         }
-
-       
     }
 }
