@@ -1,27 +1,9 @@
 ﻿using BotApi.Interfaces;
-using BotApi.Services;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
-using Microsoft.OpenApi.Services;
-using Newtonsoft.Json;
 using QBittorrent.Client;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.IO.Pipelines;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
-using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using static BotApi.Commands.RegisterCommands;
 
 namespace BotApi.Commands
 {
@@ -31,8 +13,6 @@ namespace BotApi.Commands
         private readonly IQBUrlResolverService _qBUrlResolverService;
         //private static readonly int MAX_MESSAGE_SIZE = 4096;
         private static readonly int MAX_NUMBER_OF_ENTRIES_TO_RETURN = 5;
-
-        
 
         public QBSearchCommand(ITelegramBotService telegramBotService, IQBitService qBitService, IQBUrlResolverService qBUrlResolverService) :base(telegramBotService) 
         {
@@ -49,17 +29,28 @@ namespace BotApi.Commands
             
             if (searchText != null && searchText.Length > 0)
             {
+                int searchId = 0;
                 _qBUrlResolverService.Clear();
 
-                var searchId = await _qBitService.StartSearchAsync(searchText);
-                await _telegramBotService.ReplyAsync(update, "Search started.");
-
-                var results = await PollForResults(searchId);
-
-                if (results != null && results.Results.Count > 0)
+                try
                 {
-                    await SendSearchData(update, results, searchId);
-                    return;
+                    searchId = await _qBitService.StartSearchAsync(searchText);
+                
+
+                    await _telegramBotService.ReplyAsync(update, "Search started.");
+
+                    var results = await PollForResults(searchId);
+
+                    if (results != null && results.Results.Count > 0)
+                    {
+                        await SendSearchData(update, results, searchId);
+                        return;
+                    }
+                }
+                catch (Exception e)
+                {
+                    await _telegramBotService.ReplyAsync(update, $"ERROR: {e.Message}");
+                    throw;
                 }
             }
 

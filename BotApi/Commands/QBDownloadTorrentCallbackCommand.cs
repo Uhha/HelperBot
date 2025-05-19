@@ -8,25 +8,37 @@ namespace BotApi.Commands
     {
         private readonly IQBitService _qBitService;
         private readonly IQBUrlResolverService _qBUrlResolverService;
+        private readonly ILogger<QBDownloadTorrentCallbackCommand> _logger;
 
-        public QBDownloadTorrentCallbackCommand(ITelegramBotService telegramBotService, IQBitService qBitService, IQBUrlResolverService qBUrlResolverService) :base(telegramBotService) 
+        public QBDownloadTorrentCallbackCommand(ITelegramBotService telegramBotService, IQBitService qBitService, 
+            IQBUrlResolverService qBUrlResolverService, ILogger<QBDownloadTorrentCallbackCommand> logger) :base(telegramBotService) 
         {
             _qBitService = qBitService;
             _qBUrlResolverService = qBUrlResolverService;
+            _logger = logger;
         }
 
         public override async Task ExecuteAsync(Update update)
         {
             var user = update.CallbackQuery.From.Id;
             var parameters = update.CallbackQuery.Data.Substring(update.CallbackQuery.Data.IndexOf("=") + 1);
-            if (parameters.Contains("$p"))
+            try
             {
-                var p = parameters.Split("$p");
-                var uri = _qBUrlResolverService.GetUrl(p[0]);
-                await _telegramBotService.ReplyAsync(update, "Preparing Files for Download!");
-                await _qBitService.AddTorrentAsync(uri.ToString(), p[1], user);
-                await _telegramBotService.ReplyAsync(update, "Download Started.");
-                return;
+                if (parameters.Contains("$p"))
+                {
+                    var p = parameters.Split("$p");
+                    var uri = _qBUrlResolverService.GetUrl(p[0]);
+                    await _telegramBotService.ReplyAsync(update, "Preparing Files for Download!");
+                    await _qBitService.AddTorrentAsync(uri.ToString(), p[1], user);
+                    await _telegramBotService.ReplyAsync(update, "Download Started.");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, e);
+                await _telegramBotService.ReplyAsync(update, $"ERROR: {e.Message}");
+                throw;
             }
 
             var inlineKeyboardMarkup = new InlineKeyboardMarkup
