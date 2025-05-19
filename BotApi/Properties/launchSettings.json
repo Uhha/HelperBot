@@ -35,7 +35,7 @@
       "environmentVariables": {
         "ASPNETCORE_URLS": "https://+:9006;http://+:9005"
       },
-      "publishAllPorts": true,
+      "publishAllPorts": false,
       "useSSL": true
     }
   },
