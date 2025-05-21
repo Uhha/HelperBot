@@ -1,11 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
-using System;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-
-namespace BotApi
+﻿namespace BotApi
 {
     public class APIConfig
     {
@@ -29,5 +22,6 @@ namespace BotApi
         
         public string? AlphaVintageAPIKey { get; set; }
 
+        public string? TicketmasterApiKey { get; set; }
     }
 }
