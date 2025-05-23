@@ -2,10 +2,12 @@
 using BotApi.Interfaces;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using System.Net.Http;
+using System;
 using System.Web;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using Ticketmaster.Discovery;
+using Ticketmaster.Discovery.Models;
 
 namespace BotApi.Commands
 {
@@ -15,6 +17,7 @@ namespace BotApi.Commands
         private IOptions<APIConfig> _apiConfig;
         private IHttpClientFactory _httpsClientFactory;
         private const string TicketmasterBaseUrl = "https://app.ticketmaster.com/discovery/v2/events.json";
+        private DiscoveryApi _discoveryApi;
 
         public GetLiveConcertsCommand(ITelegramBotService telegramBotService, 
             IOptions<APIConfig> apiConfig,
@@ -26,6 +29,11 @@ namespace BotApi.Commands
             _logger = logger;
             _apiConfig = apiConfig;
             _httpsClientFactory = httpClientFactory;
+
+            _discoveryApi = new DiscoveryApi(_apiConfig.Value.TicketmasterApiKey);
+
+            
+
         }
 
         public override async Task ExecuteAsync(Update update)
@@ -49,7 +57,13 @@ namespace BotApi.Commands
 
                             await _telegramBotService.ReplyAsync(update, message);
                         }
-                        
+
+                        if (cn == LiveConcertsActionType.AddBand)
+                        {
+                            var message = await SearchBandAsync("Ghost");
+                            await _telegramBotService.ReplyAsync(update, string.Join("\n\n", message));
+                        }
+
                     }
                     return;
                 }
@@ -76,47 +90,42 @@ namespace BotApi.Commands
 
         public async Task<List<string>> GetUpcomingConcertsAsync(List<string> artistNames, string city = "New York")
         {
-            var foundConcerts = new List<string>();
+            var results = new List<string>();
 
             foreach (var artist in artistNames)
             {
-                var query = HttpUtility.ParseQueryString(string.Empty);
-                query["apikey"] = _apiConfig.Value.TicketmasterApiKey;
-                query["keyword"] = artist;
-                query["city"] = city;
-                query["countryCode"] = "US";
-                query["radius"] = "125"; // miles
-                query["unit"] = "miles";
-                query["size"] = "5"; // limit to 5 events per artist
+                var searchRequest = new SearchEventsRequest()
+                    .AddQueryParameter("Keyword", artist)
+                    .AddQueryParameter("City", city)
+                    .AddQueryParameter("ClassificationName", "music")
+                    .AddQueryParameter("CountryCode", "US")
+                    .AddQueryParameter("Size", 5);
 
-                var url = $"{TicketmasterBaseUrl}?{query}";
-
-                var client = _httpsClientFactory.CreateClient();
-
-                var response = await client.GetAsync(url);
-                if (!response.IsSuccessStatusCode)
-                    continue;
-
-                var content = await response.Content.ReadAsStringAsync();
-                var json = JObject.Parse(content);
-
-                var events = json["_embedded"]?["events"];
-                if (events != null)
+                try
                 {
-                    foreach (var ev in events)
-                    {
-                        var name = ev["name"]?.ToString();
-                        var date = ev["dates"]?["start"]?["localDate"]?.ToString();
-                        var venue = ev["_embedded"]?["venues"]?[0]?["name"]?.ToString();
-                        var urlLink = ev["url"]?.ToString();
+                    var response = await _discoveryApi.Events.Search(searchRequest);
 
-                        var summary = $"{artist}: {name} on {date} at {venue}\n{urlLink}";
-                        foundConcerts.Add(summary);
+                    if (response?.Embedded?.Events != null)
+                    {
+                        foreach (var ev in response.Embedded.Events)
+                        {
+                            var name = ev.Name;
+                            var date = ev.Dates?.Start?.LocalDate;
+                            var venue = ev.Embedded?.Venues?[0]?.Name;
+                            //var url = ev.Url;
+
+                            results.Add($"{artist}: {name} on {date} at {venue}\n");
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Load events failed", e);
+                    throw;
                 }
             }
 
-            return foundConcerts;
+            return results;
         }
 
         public string FormatTelegramMessage(List<string> concerts)
@@ -125,6 +134,35 @@ namespace BotApi.Commands
                 return "No upcoming concerts found.";
 
             return "🎵 *Upcoming Concerts in NYC:*\n\n" + string.Join("\n\n", concerts);
+        }
+
+        public async Task<List<string>> SearchBandAsync(string keyword)
+        {
+            var results = new List<string>();
+
+            var request = new SearchAttractionsRequest()
+                .AddQueryParameter("Keyword", keyword)
+                .AddQueryParameter("ClassificationName", "music")
+                .AddQueryParameter("CountryCode", "US")
+                .AddQueryParameter("Size", 10);
+            
+
+            var response = await _discoveryApi.Attractions.Search(request);
+
+            if (response?.Embedded?.Attractions != null)
+            {
+                foreach (var artist in response.Embedded.Attractions)
+                {
+                    var name = artist.Name;
+                    var id = artist.Id;
+                    var genre = artist.Classifications?[0]?.Genre?.Name;
+                    var segment = artist.Classifications?[0]?.Segment?.Name;
+
+                    results.Add($"{name} ({genre ?? "Unknown Genre"}) [{id}]");
+                }
+            }
+
+            return results;
         }
 
         public enum LiveConcertsActionType
