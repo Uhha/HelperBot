@@ -36,7 +36,7 @@ namespace BotApi.Commands
             var torrents = await _qBitService.GetTorrentListAsync();
             if (torrents.Count == 0)
             {
-                await _telegramBotService.ReplyAsync(update, "No Avtive Torrents Found.");
+                await _telegramBotService.ReplyAsync(update, "No Active Torrents Found.");
                 return;
             }
 

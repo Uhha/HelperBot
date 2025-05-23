@@ -16,7 +16,7 @@ namespace BotApi
             services.AddTransient<IDB, DB>();
             services.AddTransient<IQBitService, QBitService>();
             services.AddTransient<ICommandFactory, CommandFactory>();
-            services.AddTransient<IQBUrlResolverService, QBUrlResolverService>();
+            services.AddSingleton<IQBUrlResolverService, QBUrlResolverService>();
             services.AddTransient<IMusifyService, MusifyService>();
             services.AddTransient<IGetCoinsService,  GetCoinsService>();
             services.AddTransient<ISecuritiesService,  SecuritiesService>();

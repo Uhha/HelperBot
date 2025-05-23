@@ -69,6 +69,9 @@ namespace BotApi.Commands
                 case CommandType.CheckDiskTemp:
                     return _serviceProvider.GetRequiredService<CheckDiscTempCommand>();
 
+                case CommandType.LiveConcerts:
+                    return _serviceProvider.GetRequiredService<GetLiveConcertsCommand>();
+
                 case CommandType.Unknown:
                     return null;
 
@@ -101,6 +104,7 @@ namespace BotApi.Commands
                 { CommandType.RemoveSecurity, null },
                 { CommandType.CheckDiskSpace, null },
                 { CommandType.CheckDiskTemp, null },
+                { CommandType.LiveConcerts, null },
             };
 
             services.AddSingleton(commandDictionary);
@@ -121,6 +125,7 @@ namespace BotApi.Commands
             services.AddSingleton<RemoveSecurityCommand>();
             services.AddSingleton<CheckDiskSpaceCommand>();
             services.AddSingleton<CheckDiscTempCommand>();
+            services.AddSingleton<GetLiveConcertsCommand>();
 
         }
 
@@ -142,7 +147,8 @@ namespace BotApi.Commands
             RemoveSecurity,
             CheckDiskSpace,
             CheckDiskTemp,
-			Unknown,
+            LiveConcerts,
+            Unknown,
         }
 
         public static Dictionary<string, CommandType> CommandsText = new Dictionary<string, CommandType>
@@ -164,6 +170,7 @@ namespace BotApi.Commands
             {"/remsec", CommandType.RemoveSecurity },
             {"/chkds", CommandType.CheckDiskSpace },
             {"/chktemp", CommandType.CheckDiskTemp },
+            {"/live", CommandType.LiveConcerts },
 
         };
     }

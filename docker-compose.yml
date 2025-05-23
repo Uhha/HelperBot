@@ -1,0 +1,36 @@
+services:
+  botapi:
+    container_name: helperbot
+    image: ${DOCKER_REGISTRY-}botapi
+    build:
+      context: .
+      dockerfile: BotApi/Dockerfile
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 9005:9005
+    volumes:
+      - /c/docker/appdata/helperbot/music:/app/music
+      - /c/docker/appdata/helperbot/logs:/app/logs
+      - /c/docker/appdata/helperbot/database:/app/Database
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    platform: linux/amd64
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - WEBUI_PORT=8383
+    ports:
+      - 8383:8383
+      - 6882:6881
+      - 6882:6881/udp
+    volumes:
+      - /c/docker/appdata/qbittorrent/config:/config
+      - /c/docker/appdata/qbittorrent/media:/downloads
+    restart: unless-stopped
