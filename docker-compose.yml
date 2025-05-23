@@ -16,7 +16,6 @@ services:
       - /c/docker/appdata/helperbot/logs:/app/logs
       - /c/docker/appdata/helperbot/database:/app/Database
     restart: unless-stopped
-    network_mode: bridge
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -35,4 +34,3 @@ services:
       - /c/docker/appdata/qbittorrent/config:/config
       - /c/docker/appdata/qbittorrent/media:/downloads
     restart: unless-stopped
-    network_mode: bridge

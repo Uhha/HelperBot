@@ -36,7 +36,7 @@
         "ASPNETCORE_URLS": "http://+:9005"
       },
       "publishAllPorts": false,
-      "useSSL": true
+      "useSSL": false
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",

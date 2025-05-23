@@ -4,7 +4,7 @@ namespace BotApi.Services
 {
     public class QBUrlResolverService : IQBUrlResolverService
     {
-        private Dictionary<string, Uri> _urls;
+        private static Dictionary<string, Uri> _urls;
 
         public QBUrlResolverService()
         {
