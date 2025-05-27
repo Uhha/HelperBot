@@ -50,7 +50,6 @@ namespace BotApi.Commands
 
                         case ExpectedReplyType.BandSearch:
                             var message = await SearchBandAsync(update.Message.Text);
-                            _clientReplyStateService.ClearExpectedReply(chatId);
                             await _telegramBotService.ReplyAsync(update, string.Join("\n\n", message));
                             break;
 
@@ -74,6 +73,7 @@ namespace BotApi.Commands
                             await _telegramBotService.ReplyAsync(update, "Band removed.");
                             break;
                     }
+                    _clientReplyStateService.ClearExpectedReply(chatId);
                 }
 
                 var user = update.CallbackQuery?.From.Id;
