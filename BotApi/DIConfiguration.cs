@@ -13,6 +13,7 @@ namespace BotApi
 
             //services.AddSingleton<ICommand, GetCoinsCommand>();
 
+            services.AddSingleton<ClientReplyStateService>();
             services.AddTransient<IDB, DB>();
             services.AddTransient<IQBitService, QBitService>();
             services.AddTransient<ICommandFactory, CommandFactory>();

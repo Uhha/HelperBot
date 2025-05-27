@@ -1,7 +1,9 @@
 using BotApi.Commands;
 using BotApi.Interfaces;
+using BotApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
+using static BotApi.Commands.RegisterCommands;
 
 namespace BotApi.Controllers
 {
@@ -13,17 +15,20 @@ namespace BotApi.Controllers
         private readonly IWebhookService _webhookService;
         private readonly ITelegramBotService _bot;
         private readonly CommandInvoker _commandInvoker;
+        private readonly ClientReplyStateService _clientReplyStateService;
 
         public WebhookController(ILogger<WebhookController> logger, 
             IWebhookService webhookService, 
             ITelegramBotService bot,
-            CommandInvoker commandInvoker
+            CommandInvoker commandInvoker,
+            ClientReplyStateService clientReplyStateService
         )
         {
             _logger = logger;
             _webhookService = webhookService;
             _bot = bot;
             _commandInvoker = commandInvoker;
+            _clientReplyStateService = clientReplyStateService;
         }
 
         [HttpPost]
@@ -32,7 +37,19 @@ namespace BotApi.Controllers
             try
             {
                 await _bot.SendChatActionAsync(update.Message?.Chat?.Id, Telegram.Bot.Types.Enums.ChatAction.Typing);
+                
                 var commandTypeTuple = _webhookService.GetCommandType(update);
+                
+                if (_clientReplyStateService.GetExpectedReply(update.Message?.Chat?.Id) != ExpectedReplyType.None)
+                {
+                    switch (_clientReplyStateService.GetExpectedReply(update.Message?.Chat?.Id))
+                    {
+                        case ExpectedReplyType.BandSearch:
+                        case ExpectedReplyType.AddBand:
+                            commandTypeTuple = (CommandType.LiveConcerts, false);
+                            break;
+                    }
+                }
 
                 _logger.LogInformation($"Commnad {commandTypeTuple.command} being executed.");
 

@@ -1,6 +1,4 @@
 ﻿
-using Telegram.Bot.Types;
-
 namespace BotApi.Database
 {
     public interface IDB
@@ -21,5 +19,9 @@ namespace BotApi.Database
         IList<string> GetSecurities(long chatId);
         bool AddSecurity(long chatId, string symbol);
         bool RemoveSecurity(long chatId, string symbol);
+
+        bool AddBand(long chatId, string bandId);
+        string RemoveBand(long chatId, string bandId);
+        IList<string> GetBands(long chatId);
     }
 }

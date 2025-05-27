@@ -1,9 +1,9 @@
 ﻿using BotApi.Database;
 using BotApi.Interfaces;
+using BotApi.Services;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Web;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Ticketmaster.Discovery;
@@ -16,52 +16,103 @@ namespace BotApi.Commands
         private ILogger<GetLiveConcertsCommand> _logger;
         private IOptions<APIConfig> _apiConfig;
         private IHttpClientFactory _httpsClientFactory;
-        private const string TicketmasterBaseUrl = "https://app.ticketmaster.com/discovery/v2/events.json";
+        private readonly ClientReplyStateService _clientReplyStateService;
+        private readonly IDB _db;
         private DiscoveryApi _discoveryApi;
 
         public GetLiveConcertsCommand(ITelegramBotService telegramBotService, 
             IOptions<APIConfig> apiConfig,
             IHttpClientFactory httpClientFactory,
-            ILogger<GetLiveConcertsCommand> logger
+            ILogger<GetLiveConcertsCommand> logger,
+            ClientReplyStateService clientReplyStateService,
+            IDB db
 
             ) :base(telegramBotService) 
         {
             _logger = logger;
             _apiConfig = apiConfig;
             _httpsClientFactory = httpClientFactory;
-
+            _clientReplyStateService = clientReplyStateService;
+            _db = db;
             _discoveryApi = new DiscoveryApi(_apiConfig.Value.TicketmasterApiKey);
-
-            
-
         }
 
         public override async Task ExecuteAsync(Update update)
         {
             try
             {
+                if (update.Message?.Chat?.Id is { } chatId)
+                {
+                    switch (_clientReplyStateService.GetExpectedReply(chatId)) 
+                    {
+                        case ExpectedReplyType.None:
+                            break;
+
+                        case ExpectedReplyType.BandSearch:
+                            var message = await SearchBandAsync(update.Message.Text);
+                            _clientReplyStateService.ClearExpectedReply(chatId);
+                            await _telegramBotService.ReplyAsync(update, string.Join("\n\n", message));
+                            break;
+
+                        case ExpectedReplyType.AddBand:
+
+                            var bandId = update.Message.Text;
+                            if (bandId == null)
+                                break;
+
+                            _db.AddBand(chatId, bandId);
+                            await _telegramBotService.ReplyAsync(update, "Band added.");
+                            break;
+
+                        case ExpectedReplyType.RemoveBand:
+
+                            var bandIdToRemove = update.Message.Text;
+                            if (bandIdToRemove == null)
+                                break;
+
+                            _db.RemoveBand(chatId, bandIdToRemove);
+                            await _telegramBotService.ReplyAsync(update, "Band removed.");
+                            break;
+                    }
+                }
+
                 var user = update.CallbackQuery?.From.Id;
 
                 if (user != null)
                 {
                     var parameter = update.CallbackQuery?.Data?.Substring(update.CallbackQuery.Data.IndexOf("=") + 1);
-
+                    
                     if (parameter != null)
                     {
+                        var callbackChatId = update.CallbackQuery?.Message?.Chat.Id ?? 0;
+
                         LiveConcertsActionType cn = (LiveConcertsActionType)int.Parse(parameter);
 
                         if (cn == LiveConcertsActionType.UpcomingConcerts)
                         {
-                            var concerts = await GetUpcomingConcertsAsync(["Lamb of god", "Ghost"]);
+                            var bands = _db.GetBands(callbackChatId);
+                            var concerts = await GetUpcomingConcertsAsync(bands.ToList());
                             var message = FormatTelegramMessage(concerts);
 
                             await _telegramBotService.ReplyAsync(update, message);
                         }
 
+                        if (cn == LiveConcertsActionType.SearchBand)
+                        {
+                            await _telegramBotService.ReplyAsync(update, "Enter Band Name:");
+                            _clientReplyStateService.SetExpectedReply(callbackChatId, ExpectedReplyType.BandSearch);
+                        }
+
                         if (cn == LiveConcertsActionType.AddBand)
                         {
-                            var message = await SearchBandAsync("Ghost");
-                            await _telegramBotService.ReplyAsync(update, string.Join("\n\n", message));
+                            await _telegramBotService.ReplyAsync(update, "Enter Band ID:");
+                            _clientReplyStateService.SetExpectedReply(callbackChatId, ExpectedReplyType.AddBand);
+                        }
+
+                        if (cn == LiveConcertsActionType.RemoveBand)
+                        {
+                            await _telegramBotService.ReplyAsync(update, "Enter Band ID to Remove:");
+                            _clientReplyStateService.SetExpectedReply(callbackChatId, ExpectedReplyType.RemoveBand);
                         }
 
                     }
@@ -73,10 +124,11 @@ namespace BotApi.Commands
                    (
                        new[]
                            {
-                            new [] {  InlineKeyboardButton.WithCallbackData(LiveConcertsActionType.UpcomingConcerts.ToString(), "/live=" + (int)LiveConcertsActionType.UpcomingConcerts) },
-                            new [] {  InlineKeyboardButton.WithCallbackData(LiveConcertsActionType.AddBand.ToString(), "/live=" + (int)LiveConcertsActionType.AddBand) },
-                            new [] {  InlineKeyboardButton.WithCallbackData(LiveConcertsActionType.RemoveBand.ToString(), "/live=" + (int)LiveConcertsActionType.RemoveBand) },
-                            new [] {  InlineKeyboardButton.WithCallbackData(LiveConcertsActionType.ChangeArea.ToString(), "/live=" + (int)LiveConcertsActionType.ChangeArea) },
+                            new [] {  InlineKeyboardButton.WithCallbackData("Upcoming Concerts", "/live=" + (int)LiveConcertsActionType.UpcomingConcerts) },
+                            new [] {  InlineKeyboardButton.WithCallbackData("Search Band", "/live=" + (int)LiveConcertsActionType.SearchBand) },
+                            new [] {  InlineKeyboardButton.WithCallbackData("Add Band", "/live=" + (int)LiveConcertsActionType.AddBand) },
+                            new [] {  InlineKeyboardButton.WithCallbackData("Remove Band", "/live=" + (int)LiveConcertsActionType.RemoveBand) },
+                            //new [] {  InlineKeyboardButton.WithCallbackData("Change Area", "/live=" + (int)LiveConcertsActionType.ChangeArea) },
                            }
                    );
                 await _telegramBotService.SendTextMessageWithButtonsAsync(update, "Select Option:", inlineKeyboardMarkup);
@@ -88,14 +140,14 @@ namespace BotApi.Commands
             }
         }
 
-        public async Task<List<string>> GetUpcomingConcertsAsync(List<string> artistNames, string city = "New York")
+        public async Task<List<string>> GetUpcomingConcertsAsync(List<string> artistIds, string city = "New York")
         {
             var results = new List<string>();
 
-            foreach (var artist in artistNames)
+            foreach (var artistId in artistIds)
             {
                 var searchRequest = new SearchEventsRequest()
-                    .AddQueryParameter("Keyword", artist)
+                    .AddQueryParameter("AttractionId", artistId)
                     .AddQueryParameter("City", city)
                     .AddQueryParameter("ClassificationName", "music")
                     .AddQueryParameter("CountryCode", "US")
@@ -114,7 +166,7 @@ namespace BotApi.Commands
                             var venue = ev.Embedded?.Venues?[0]?.Name;
                             //var url = ev.Url;
 
-                            results.Add($"{artist}: {name} on {date} at {venue}\n");
+                            results.Add($"{artistId}: {name} on {date} at {venue}\n");
                         }
                     }
                 }
@@ -136,8 +188,11 @@ namespace BotApi.Commands
             return "🎵 *Upcoming Concerts in NYC:*\n\n" + string.Join("\n\n", concerts);
         }
 
-        public async Task<List<string>> SearchBandAsync(string keyword)
+        public async Task<List<string>> SearchBandAsync(string? keyword)
         {
+            if (string.IsNullOrEmpty(keyword))
+                return new List<string>();
+
             var results = new List<string>();
 
             var request = new SearchAttractionsRequest()
@@ -168,6 +223,7 @@ namespace BotApi.Commands
         public enum LiveConcertsActionType
         {
             UpcomingConcerts,
+            SearchBand,
             AddBand,
             RemoveBand,
             ChangeArea

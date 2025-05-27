@@ -211,5 +211,48 @@ namespace BotApi.Database
                 return false;
             }
         }
+
+        public bool AddBand(long chatId, string bandId)
+        {
+            try
+            {
+                var client = GetClient(chatId);
+                if (client.Bands.Contains(bandId))
+                    return true;
+
+                client.Bands.Add(bandId);
+                SaveClientsModel();
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return false;
+            }
+        }
+
+        public string RemoveBand(long chatId, string bandId)
+        {
+            try
+            {
+                var client = GetClient(chatId);
+                if (!client.Bands.Contains(bandId))
+                    return "";
+
+                client.Bands.Remove(bandId);
+                SaveClientsModel();
+                return bandId;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return "";
+            }
+        }
+
+        public IList<string> GetBands(long chatId)
+        {
+            return GetClient(chatId)?.Bands ?? new List<string>();
+        }
     }
 }
