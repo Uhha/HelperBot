@@ -27,14 +27,14 @@ namespace BotApi.Database
         public IList<string> Securities { get; set; }
 
         [JsonPropertyName("bands")]
-        public IList<string> Bands { get; set; }
+        public IList<Band> Bands { get; set; }
 
         public Client(string chatId)
         {
             ChatId = chatId;
             Subscriptions = new List<Subscription>();
             Securities = new List<string>();
-            Bands = new List<string>();
+            Bands = new List<Band>();
         }
     }
 
@@ -50,6 +50,18 @@ namespace BotApi.Database
         {
             Type = type;
         }
+    }
+
+    public class Band
+    {
+        [JsonPropertyName("band_id")]
+        public string BandId { get; set; }
+
+        [JsonPropertyName("band_name")]
+        public string BandName { get; set; }
+
+        [JsonPropertyName("genre")]
+        public string Genre { get; set; }
     }
 
     public enum SubscriptionType

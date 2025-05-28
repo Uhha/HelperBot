@@ -212,15 +212,15 @@ namespace BotApi.Database
             }
         }
 
-        public bool AddBand(long chatId, string bandId)
+        public bool AddBand(long chatId, string bandId, string bandName, string genre)
         {
             try
             {
                 var client = GetClient(chatId);
-                if (client.Bands.Contains(bandId))
+                if (client.Bands.Any(x => x.BandId == bandId))
                     return true;
 
-                client.Bands.Add(bandId);
+                client.Bands.Add(new Band() { BandId = bandId, BandName = bandName, Genre = genre });
                 SaveClientsModel();
                 return true;
             }
@@ -236,10 +236,11 @@ namespace BotApi.Database
             try
             {
                 var client = GetClient(chatId);
-                if (!client.Bands.Contains(bandId))
+                var band = client.Bands.FirstOrDefault(x => x.BandId == bandId);
+                if (band == null)
                     return "";
 
-                client.Bands.Remove(bandId);
+                client.Bands.Remove(band);
                 SaveClientsModel();
                 return bandId;
             }
@@ -250,9 +251,9 @@ namespace BotApi.Database
             }
         }
 
-        public IList<string> GetBands(long chatId)
+        public IList<Band> GetBands(long chatId)
         {
-            return GetClient(chatId)?.Bands ?? new List<string>();
+            return GetClient(chatId)?.Bands ?? new List<Band>();
         }
     }
 }

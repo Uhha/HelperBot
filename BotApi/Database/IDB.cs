@@ -20,8 +20,8 @@ namespace BotApi.Database
         bool AddSecurity(long chatId, string symbol);
         bool RemoveSecurity(long chatId, string symbol);
 
-        bool AddBand(long chatId, string bandId);
+        bool AddBand(long chatId, string bandId, string bandName, string genre);
         string RemoveBand(long chatId, string bandId);
-        IList<string> GetBands(long chatId);
+        IList<Band> GetBands(long chatId);
     }
 }

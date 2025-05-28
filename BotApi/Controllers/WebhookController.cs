@@ -45,7 +45,6 @@ namespace BotApi.Controllers
                     switch (_clientReplyStateService.GetExpectedReply(update.Message?.Chat?.Id))
                     {
                         case ExpectedReplyType.BandSearch:
-                        case ExpectedReplyType.AddBand:
                             commandTypeTuple = (CommandType.LiveConcerts, false);
                             break;
                     }
