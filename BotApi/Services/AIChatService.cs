@@ -10,7 +10,8 @@ namespace BotApi.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<AIChatService> _logger;
-        private const string LM_STUDIO_URL = "http://192.168.86.26:11230/v1/chat/completions";
+        private const string LM_STUDIO_URL = "http://192.168.86.26:11230/api/v1/models";
+        private const string LM_CHAT_URL = "http://192.168.86.26:11230/api/v1/chat";
 
         public AIChatService(HttpClient httpClient, ILogger<AIChatService> logger)
         {
@@ -66,7 +67,7 @@ namespace BotApi.Services
                     "application/json"
                 );
 
-                var response = await _httpClient.PostAsync(LM_STUDIO_URL, requestContent);
+                var response = await _httpClient.PostAsync(LM_CHAT_URL, requestContent);
 
                 if (!response.IsSuccessStatusCode)
                 {
