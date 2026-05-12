@@ -44,21 +44,10 @@ namespace BotApi.Services
             try
             {
                 var requestContent = new StringContent(
-                    JsonSerializer.Serialize(new
+                    JsonSerializer.Serialize<LLMRequest>(new LLMRequest
                     {
                         model = "qwen/qwen3.5-9B",
                         input = prompt
-                        //temperature = 0.7f,
-                        //max_tokens = 1024,
-                        //top_p = 0.9f,
-                        //stream = false,
-                        //presence_penalty = 0.0f,
-                        //frequency_penalty = 0.0f,
-                        //repeat_penalty = 1.0f,
-                        //n = 1,
-                        //stop = new[] { "\n\n", "\n", " ", "" },
-                        //max_context_tokens = 4096,
-                        //ttl = 900
                     }),
                     Encoding.UTF8,
                     "application/json"
@@ -100,6 +89,24 @@ namespace BotApi.Services
             }
         }
 
+
+        public class LLMRequest
+        {
+            public string model { get; set; }
+            public string input { get; set; }
+            //public Integration[] integrations { get; set; }
+            //public int context_length { get; set; }
+            //public int temperature { get; set; }
+        }
+
+        public class Integration
+        {
+            public string type { get; set; }
+            public string server_label { get; set; }
+            public string server_url { get; set; }
+            public string[] allowed_tools { get; set; }
+            public string id { get; set; }
+        }
 
         public class LLMResponse
         {
