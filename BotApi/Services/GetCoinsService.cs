@@ -1,9 +1,6 @@
-﻿using BotApi.Commands;
-using BotApi.Interfaces;
-using Microsoft.Extensions.Logging;
+﻿using BotApi.Interfaces;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using QBittorrent.Client;
 using System.Net;
 using System.Text;
 
