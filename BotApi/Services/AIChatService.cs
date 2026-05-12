@@ -47,18 +47,18 @@ namespace BotApi.Services
                     JsonSerializer.Serialize(new
                     {
                         model = "qwen/qwen3.5-9B",
-                        input = prompt,
-                        temperature = 0.7f,
-                        max_tokens = 1024,
-                        top_p = 0.9f,
-                        stream = false,
-                        presence_penalty = 0.0f,
-                        frequency_penalty = 0.0f,
-                        repeat_penalty = 1.0f,
-                        n = 1,
-                        stop = new[] { "\n\n", "\n", " ", "" },
-                        max_context_tokens = 4096,
-                        ttl = 900
+                        input = prompt
+                        //temperature = 0.7f,
+                        //max_tokens = 1024,
+                        //top_p = 0.9f,
+                        //stream = false,
+                        //presence_penalty = 0.0f,
+                        //frequency_penalty = 0.0f,
+                        //repeat_penalty = 1.0f,
+                        //n = 1,
+                        //stop = new[] { "\n\n", "\n", " ", "" },
+                        //max_context_tokens = 4096,
+                        //ttl = 900
                     }),
                     Encoding.UTF8,
                     "application/json"
@@ -73,7 +73,7 @@ namespace BotApi.Services
                 }
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                
+
                 // Extract content from JSON response using simple string manipulation
                 // The response format is: {"id":"...","choices":[{"finish_reason":"...","index":0,"message":{"content":"..."}}]}
                 var startIndex = jsonResponse.IndexOf("\"content\":\"", StringComparison.OrdinalIgnoreCase);
@@ -99,6 +99,52 @@ namespace BotApi.Services
                 return null;
             }
         }
+
+
+        public class LLMResponse
+        {
+            //public string model_instance_id { get; set; }
+            public Output[] output { get; set; }
+            //public Stats stats { get; set; }
+            //public string response_id { get; set; }
+        }
+
+        public class Stats
+        {
+            public int input_tokens { get; set; }
+            public int total_output_tokens { get; set; }
+            public int reasoning_output_tokens { get; set; }
+            public float tokens_per_second { get; set; }
+            public float time_to_first_token_seconds { get; set; }
+            public float model_load_time_seconds { get; set; }
+        }
+
+        public class Output
+        {
+            public string type { get; set; }
+            public string tool { get; set; }
+            public Arguments arguments { get; set; }
+            public string output { get; set; }
+            public Provider_Info provider_info { get; set; }
+            public string content { get; set; }
+        }
+
+        public class Arguments
+        {
+            public string sort { get; set; }
+            public string query { get; set; }
+            public int limit { get; set; }
+            public string url { get; set; }
+        }
+
+        public class Provider_Info
+        {
+            public string server_label { get; set; }
+            public string type { get; set; }
+            public string plugin_id { get; set; }
+        }
+
+
 
     }
 }
