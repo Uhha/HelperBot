@@ -72,6 +72,9 @@ namespace BotApi.Commands
                 case CommandType.LiveConcerts:
                     return _serviceProvider.GetRequiredService<GetLiveConcertsCommand>();
 
+                case CommandType.AIChat:
+                    return _serviceProvider.GetRequiredService<AIChatCommand>();
+
                 case CommandType.Unknown:
                     return null;
 
@@ -105,6 +108,7 @@ namespace BotApi.Commands
                 { CommandType.CheckDiskSpace, null },
                 { CommandType.CheckDiskTemp, null },
                 { CommandType.LiveConcerts, null },
+                { CommandType.AIChat, null },
             };
 
             services.AddSingleton(commandDictionary);
@@ -126,6 +130,7 @@ namespace BotApi.Commands
             services.AddSingleton<CheckDiskSpaceCommand>();
             services.AddSingleton<CheckDiscTempCommand>();
             services.AddSingleton<GetLiveConcertsCommand>();
+            services.AddSingleton<AIChatCommand>();
 
         }
 
@@ -148,6 +153,7 @@ namespace BotApi.Commands
             CheckDiskSpace,
             CheckDiskTemp,
             LiveConcerts,
+            AIChat,
             Unknown,
         }
 
@@ -171,6 +177,7 @@ namespace BotApi.Commands
             {"/chkds", CommandType.CheckDiskSpace },
             {"/chktemp", CommandType.CheckDiskTemp },
             {"/live", CommandType.LiveConcerts },
+            {"/p", CommandType.AIChat },
 
         };
     }

@@ -10,11 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{7D038991-F3AB-4038-A7DF-BF93FFA6A4AC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{3BB59DE7-BEE2-49FE-B93C-07D50922D3E7}"
-	ProjectSection(SolutionItems) = preProject
-		Readme\images\telebot.png = Readme\images\telebot.png
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotApi", "BotApi\BotApi.csproj", "{C9858E4F-D606-48AE-B521-FEDFA64F2785}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotApi.Tests", "BotApi.Tests\BotApi.Tests.csproj", "{710033F0-0F62-456E-B75A-FB1D186EAFA2}"
@@ -45,7 +40,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7D038991-F3AB-4038-A7DF-BF93FFA6A4AC} = {37E2D7A2-D636-489D-B1B0-322B96A57E36}
-		{3BB59DE7-BEE2-49FE-B93C-07D50922D3E7} = {7D038991-F3AB-4038-A7DF-BF93FFA6A4AC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3AB3BE6B-53BE-400D-80AF-F7B4C843E7B7}
