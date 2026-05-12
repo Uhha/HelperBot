@@ -23,6 +23,7 @@ namespace BotApi
             services.AddTransient<ISecuritiesService,  SecuritiesService>();
 
             services.AddSingleton<CommandInvoker>();
+            services.AddSingleton<IAIChatService, AIChatService>();
 
         }
     }

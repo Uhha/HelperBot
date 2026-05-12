@@ -1,3 +1,4 @@
+using BotApi.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Text;
@@ -5,7 +6,7 @@ using System.Text.Json;
 
 namespace BotApi.Services
 {
-    public class AIChatService
+    public class AIChatService : IAIChatService
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<AIChatService> _logger;
