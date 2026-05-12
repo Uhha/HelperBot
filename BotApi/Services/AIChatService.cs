@@ -47,10 +47,7 @@ namespace BotApi.Services
                     JsonSerializer.Serialize(new
                     {
                         model = "qwen/qwen3.5-9B",
-                        messages = new[]
-                        {
-                            new { role = "user", content = prompt }
-                        },
+                        input = prompt,
                         temperature = 0.7f,
                         max_tokens = 1024,
                         top_p = 0.9f,
