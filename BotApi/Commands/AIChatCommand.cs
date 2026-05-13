@@ -1,4 +1,4 @@
-using BotApi.Interfaces;
+using BotApi.Extensions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -59,7 +59,38 @@ namespace BotApi.Commands
                 }
 
                 _logger.LogInformation("AI Response: {Response}", response);
-                await _telegramBotService.SendTextMessageAsync(update.Message.Chat.Id, response, parseMode: ParseMode.Html);
+
+                // Split long responses into multiple messages for Telegram
+                var messageChunks = response.SplitIntoTelegramMessages();
+
+                if (messageChunks.Count > 1)
+                {
+                    // Send first chunk immediately
+                    await _telegramBotService.SendTextMessageAsync(
+                        update.Message.Chat.Id, 
+                        messageChunks[0], 
+                        parseMode: ParseMode.Html);
+
+                    // Send remaining chunks with a small delay between each
+                    for (int i = 1; i < messageChunks.Count; i++)
+                    {
+                        await Task.Delay(500); // Small delay to avoid rate limiting
+                        await _telegramBotService.SendTextMessageAsync(
+                            update.Message.Chat.Id, 
+                            messageChunks[i], 
+                            parseMode: ParseMode.Html);
+                    }
+
+                    _logger.LogInformation("Sent {Count} message chunks for AI response", messageChunks.Count);
+                }
+                else
+                {
+                    // Single message - send as before
+                    await _telegramBotService.SendTextMessageAsync(
+                        update.Message.Chat.Id, 
+                        response, 
+                        parseMode: ParseMode.Html);
+                }
             }
             catch (Exception e)
             {
