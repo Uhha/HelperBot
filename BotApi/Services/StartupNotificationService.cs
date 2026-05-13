@@ -1,0 +1,97 @@
+using BotApi.Interfaces;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Telegram.Bot.Types.Enums;
+
+namespace BotApi.Services
+{
+    public class StartupNotificationService : IHostedService, IDisposable
+    {
+        private readonly ITelegramBotService _telegramBotService;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<StartupNotificationService> _logger;
+        private bool _hasNotified = false;
+
+        public StartupNotificationService(
+            ITelegramBotService telegramBotService,
+            IConfiguration configuration,
+            ILogger<StartupNotificationService> logger)
+        {
+            _telegramBotService = telegramBotService;
+            _configuration = configuration;
+            _logger = logger;
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            // Get the admin chat ID from configuration
+            var adminChatIdStr = _configuration["APIConfig:AdminChatId"];
+            
+            if (string.IsNullOrEmpty(adminChatIdStr))
+            {
+                _logger.LogWarning("AdminChatId not configured. Skipping startup notification.");
+                return;
+            }
+
+            long adminChatId;
+            if (!long.TryParse(adminChatIdStr, out adminChatId))
+            {
+                _logger.LogError($"Invalid AdminChatId format: {adminChatIdStr}");
+                return;
+            }
+
+            // Get Docker image tag from environment variable or use default
+            var dockerTag = Environment.GetEnvironmentVariable("DOCKER_TAG") 
+                           ?? Environment.GetEnvironmentVariable("VERSION")
+                           ?? "unknown";
+
+            // Clean up version string (remove 'v' prefix if present for cleaner display)
+            var cleanVersion = dockerTag.StartsWith("v") ? dockerTag[1..] : dockerTag;
+
+            _logger.LogInformation($"Sending startup notification for version: {cleanVersion}");
+
+            try
+            {
+                // Send notification message to admin chat
+                await _telegramBotService.SendTextMessageAsync(
+                    chatId: adminChatId,
+                    text: $"🚀 New deployment detected!\n\n" +
+                           $"📦 Version: <code>{cleanVersion}</code>\n" +
+                           $"⏰ Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                    parseMode: HTML);
+
+                _hasNotified = true;
+                _logger.LogInformation("Startup notification sent successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send startup notification.");
+            }
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            // Optionally send a shutdown message
+            var adminChatIdStr = _configuration["APIConfig:AdminChatId"];
+            if (!string.IsNullOrEmpty(adminChatIdStr) && long.TryParse(adminChatIdStr, out var adminChatId))
+            {
+                try
+                {
+                    await _telegramBotService.SendTextMessageAsync(
+                        chatId: adminChatId,
+                        text: "🔴 Bot is shutting down...",
+                        parseMode: HTML);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send shutdown notification.");
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            // Cleanup if needed
+        }
+    }
+}

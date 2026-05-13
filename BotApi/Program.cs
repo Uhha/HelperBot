@@ -56,6 +56,7 @@ namespace BotApi
             builder.Services.AddHostedService<SendSecuritiesBackgroundService>();
             builder.Services.AddHostedService<SendDiskCheckWarningBackgroundService>();
             builder.Services.AddHostedService<SendTempCheckWarningBackgroundService>();
+            builder.Services.AddHostedService<StartupNotificationService>();
 
             //services.AddHttpContextAccessor();
 
@@ -90,8 +91,15 @@ namespace BotApi
             await qbitService.Auth();
 
             var webHookUrl = configuration["APIConfig:WebHookUrl"];
+            var adminChatIdStr = configuration["APIConfig:AdminChatId"];
             var telegramService = app.Services.GetRequiredService<ITelegramBotService>();
             await telegramService.SetWebhookAsync(webHookUrl);
+
+            // Log if AdminChatId is configured
+            if (!string.IsNullOrEmpty(adminChatIdStr))
+            {
+                _logger.LogInformation("AdminChatId is configured for startup notifications.");
+            }
 
             if (app.Environment.IsDevelopment())
             {
