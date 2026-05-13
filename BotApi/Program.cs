@@ -98,7 +98,7 @@ namespace BotApi
             // Log if AdminChatId is configured
             if (!string.IsNullOrEmpty(adminChatIdStr))
             {
-                _logger.LogInformation("AdminChatId is configured for startup notifications.");
+                Console.WriteLine("AdminChatId is configured for startup notifications.");
             }
 
             if (app.Environment.IsDevelopment())

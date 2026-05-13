@@ -10,7 +10,6 @@ namespace BotApi.Services
         private readonly ITelegramBotService _telegramBotService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<StartupNotificationService> _logger;
-        private bool _hasNotified = false;
 
         public StartupNotificationService(
             ITelegramBotService telegramBotService,
@@ -55,12 +54,11 @@ namespace BotApi.Services
                 // Send notification message to admin chat
                 await _telegramBotService.SendTextMessageAsync(
                     chatId: adminChatId,
-                    text: $"🚀 New deployment detected!\n\n" +
+                    message: $"🚀 New deployment detected!\n\n" +
                            $"📦 Version: <code>{cleanVersion}</code>\n" +
                            $"⏰ Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
-                    parseMode: HTML);
+                    parseMode: ParseMode.Html);
 
-                _hasNotified = true;
                 _logger.LogInformation("Startup notification sent successfully.");
             }
             catch (Exception ex)
@@ -79,8 +77,8 @@ namespace BotApi.Services
                 {
                     await _telegramBotService.SendTextMessageAsync(
                         chatId: adminChatId,
-                        text: "🔴 Bot is shutting down...",
-                        parseMode: HTML);
+                        message: "🔴 Bot is shutting down...",
+                        parseMode: ParseMode.Html);
                 }
                 catch (Exception ex)
                 {
