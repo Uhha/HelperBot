@@ -61,26 +61,25 @@ namespace BotApi.Services
                     return null;
                 }
 
-                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var responseMessage = await response.Content.ReadAsStringAsync();
 
-                // Extract content from JSON response using simple string manipulation
-                // The response format is: {"id":"...","choices":[{"finish_reason":"...","index":0,"message":{"content":"..."}}]}
-                var startIndex = jsonResponse.IndexOf("\"content\":\"", StringComparison.OrdinalIgnoreCase);
-                if (startIndex == -1)
+                var llmResponse = JsonSerializer.Deserialize<LLMResponse>(responseMessage);
+
+                if (llmResponse?.output == null || llmResponse.output.Length == 0)
                 {
-                    _logger.LogWarning("Could not find content in LM Studio response");
+                    _logger.LogWarning("No output in LLM response");
                     return null;
                 }
 
-                startIndex += 10; // Skip past "content":"
-                var endIndex = jsonResponse.IndexOf("\"", startIndex);
-                if (endIndex == -1)
+                // Extract content from the first output item
+                var content = llmResponse.output[0].content;
+                if (string.IsNullOrEmpty(content))
                 {
-                    _logger.LogWarning("Could not find end of content in LM Studio response");
+                    _logger.LogWarning("Empty content in LLM response");
                     return null;
                 }
 
-                return jsonResponse.Substring(startIndex, endIndex - startIndex);
+                return content;
             }
             catch (Exception ex)
             {
