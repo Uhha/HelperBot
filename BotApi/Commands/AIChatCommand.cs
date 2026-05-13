@@ -1,4 +1,5 @@
 using BotApi.Extensions;
+using BotApi.Interfaces;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
