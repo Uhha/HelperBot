@@ -42,13 +42,13 @@ namespace BotApi.Services
 
             // Get Docker image tag from VERSION.txt file or environment variable or use default
             var versionFile = Path.Combine(AppContext.BaseDirectory, "VERSION.txt");
-            string? dockerTag = null;
+            string dockerTag = string.Empty;
             
             if (File.Exists(versionFile))
             {
                 try
                 {
-                    dockerTag = File.ReadAllText(versionFile).Trim();
+                    dockerTag = File.ReadAllText(versionFile).Trim() ?? "";
                 }
                 catch (Exception ex)
                 {
@@ -57,7 +57,7 @@ namespace BotApi.Services
             }
 
             // Clean up version string (remove 'v' prefix if present for cleaner display)
-            var cleanVersion = dockerTag?.StartsWith("v") ? dockerTag[1..] : dockerTag ?? "unknown";
+            string cleanVersion = (dockerTag.StartsWith("v")) ? dockerTag[1..] : dockerTag ?? "unknown";
 
             _logger.LogInformation($"Sending startup notification for version: {cleanVersion}");
 
