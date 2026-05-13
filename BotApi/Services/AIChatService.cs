@@ -71,11 +71,20 @@ namespace BotApi.Services
                     return null;
                 }
 
-                // Extract content from the first output item
-                var content = llmResponse.output[0].content;
+                // Find the message output item (skip reasoning blocks)
+                var messageOutput = llmResponse.output.FirstOrDefault(o => o.type == "message");
+                
+                if (messageOutput == null)
+                {
+                    _logger.LogWarning("No message output found in LLM response. Available types: {Types}", 
+                        string.Join(", ", llmResponse.output.Select(o => o.type)));
+                    return null;
+                }
+
+                var content = messageOutput.content;
                 if (string.IsNullOrEmpty(content))
                 {
-                    _logger.LogWarning("Empty content in LLM response");
+                    _logger.LogWarning("Empty content in message output");
                     return null;
                 }
 
