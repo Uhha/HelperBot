@@ -1,3 +1,4 @@
+using System.IO;
 using BotApi.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -39,13 +40,24 @@ namespace BotApi.Services
                 return;
             }
 
-            // Get Docker image tag from environment variable or use default
-            var dockerTag = Environment.GetEnvironmentVariable("DOCKER_TAG") 
-                           ?? Environment.GetEnvironmentVariable("VERSION")
-                           ?? "unknown";
+            // Get Docker image tag from VERSION.txt file or environment variable or use default
+            var versionFile = Path.Combine(AppContext.BaseDirectory, "VERSION.txt");
+            string? dockerTag = null;
+            
+            if (File.Exists(versionFile))
+            {
+                try
+                {
+                    dockerTag = File.ReadAllText(versionFile).Trim();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to read VERSION.txt file.");
+                }
+            }
 
             // Clean up version string (remove 'v' prefix if present for cleaner display)
-            var cleanVersion = dockerTag.StartsWith("v") ? dockerTag[1..] : dockerTag;
+            var cleanVersion = dockerTag?.StartsWith("v") ? dockerTag[1..] : dockerTag ?? "unknown";
 
             _logger.LogInformation($"Sending startup notification for version: {cleanVersion}");
 

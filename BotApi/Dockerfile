@@ -25,6 +25,7 @@ RUN dotnet publish "BotApi.csproj" -c Release -o /app/publish --no-self-containe
 FROM base AS final
 WORKDIR /app
 ARG VERSION=latest
-ENV DOCKER_TAG=${VERSION}
+ENV DOCKER_TAG=${VERSION:-latest}
+RUN echo "$DOCKER_TAG" > /app/VERSION.txt
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "BotApi.dll"]
