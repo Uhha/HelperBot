@@ -46,7 +46,7 @@ namespace BotApi.Services
                 var requestContent = new StringContent(
                     JsonSerializer.Serialize<LLMRequest>(new LLMRequest
                     {
-                        model = "qwen/qwen3.5-9b",
+                        //model = "qwen/qwen3.5-9b",
                         input = prompt
                     }),
                     Encoding.UTF8,
